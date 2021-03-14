@@ -3,7 +3,7 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model');
 
-class AdSubCategory extends Model {
+class SeasonDivision extends Model {
 }
 
-module.exports = AdSubCategory;
+module.exports = SeasonDivision;

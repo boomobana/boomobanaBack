@@ -34,6 +34,6 @@ Route.group(() => {
   Route.post('/me', 'UserController.me');
   Route.post('/change/profile', 'UserController.changeProfile');
   Route.post('/change/password', 'UserController.changePassword');
-
+  Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
 }).prefix('api').middleware('auth');
 

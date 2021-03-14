@@ -3,7 +3,10 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model');
 
-class Ad extends Model {
+class ResidenceOptionConnect extends Model {
+  Option() {
+
+  }
 }
 
-module.exports = Ad;
+module.exports = ResidenceOptionConnect;

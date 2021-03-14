@@ -3,7 +3,7 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model');
 
-class AdFile extends Model {
+class SeasonConnect extends Model {
 }
 
-module.exports = AdFile;
+module.exports = SeasonConnect;
