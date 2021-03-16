@@ -9,7 +9,7 @@ class ResidenceController {
     return response.json(userIsExist);
   }
 
-  async add({ request, response }) {
+  async add({ auth, request, response }) {
     const rules      = {
       name: 'required',
       description: 'required',
@@ -27,6 +27,7 @@ class ResidenceController {
     let res         = new Residence();
     res.name        = name;
     res.description = description;
+    res.user_id     = auth.user.id;
     res.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
@@ -57,7 +58,7 @@ class ResidenceController {
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
-  async changeCapacity({ request, response }) {
+  async changeLocation({ request, response }) {
     const rules      = {
       residence_id: 'required',
       count_toilet: 'required',

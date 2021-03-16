@@ -32,7 +32,23 @@ class ResidenceFileController {
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
-  async changeDiscription({ request, response }) {
+  async fetchFile({ request, response }) {
+    const rules      = {
+      residence_id: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          residence_id,
+        } = request.all();
+
+    let res = await ResidenceFile.query().where('residence_id', residence_id).fetch();
+    return response.json(res);
+  }
+
+  async changeDescription({ request, response }) {
     const rules      = {
       id: 'required',
       description: 'required',

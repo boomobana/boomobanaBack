@@ -12,7 +12,7 @@ const { validate }           = require('@adonisjs/validator/src/Validator');
  * Resourceful controller for interacting with residenceoptionconnects
  */
 class ResidenceOptionConnectController {
-  async create() {
+  async create({ request, response }) {
     const rules      = {
       residence_id: 'required',
       residence_option_id: 'required',
@@ -26,13 +26,16 @@ class ResidenceOptionConnectController {
           residence_id,
           residence_option_id,
           description,
-        }                     = request.all();
-    let resOC                 = new ResidenceOptionConnect();
-    resOC.residence_id        = residence_id;
-    resOC.residence_option_id = residence_option_id;
-    resOC.description         = description;
-    resOC.save();
-
+        } = request.all();
+    try {
+      let resOC                 = new ResidenceOptionConnect();
+      resOC.residence_id        = residence_id;
+      resOC.residence_option_id = residence_option_id;
+      resOC.description         = description;
+      resOC.save();
+    } catch (e) {
+      console.log(e);
+    }
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }

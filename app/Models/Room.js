@@ -4,6 +4,9 @@
 const Model = use('Model');
 
 class Room extends Model {
+  static get table() {
+    return 'rooms';
+  }
 }
 
 module.exports = Room;

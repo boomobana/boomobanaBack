@@ -3,8 +3,8 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
-const ResidenceTypeOption = require('../../Models/ResidenceTypeOption');
-const Residence           = require('../../Models/Residence');
+const ResidenceTypeOption = use('App/Models/ResidenceTypeOption');
+const Residence           = use('App/Models/Residence');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const { validate }        = require('@adonisjs/validator/src/Validator');
@@ -13,6 +13,20 @@ const { validate }        = require('@adonisjs/validator/src/Validator');
  * Resourceful controller for interacting with residencetypeoptions
  */
 class ResidenceTypeOptionController {
+  /**
+   * Show a list of all residenceoptions.
+   * GET residenceoptions
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {View} ctx.view
+   */
+  async index({ request, response, view }) {
+    let data = await ResidenceTypeOption.all();
+    return response.json(data);
+  }
+
   async changeType({ request, response }) {
     const rules      = {
       residence_id: 'required',

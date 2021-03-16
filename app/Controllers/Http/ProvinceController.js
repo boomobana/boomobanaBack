@@ -2,18 +2,17 @@
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
-
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const ResidenceOption = use('App/Models/ResidenceOption');
+const Province = use('App/Models/Province');
 
 /**
- * Resourceful controller for interacting with residenceoptions
+ * Resourceful controller for interacting with provinces
  */
-class ResidenceOptionController {
+class ProvinceController {
   /**
-   * Show a list of all residenceoptions.
-   * GET residenceoptions
+   * Show a list of all provinces.
+   * GET provinces
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -21,12 +20,16 @@ class ResidenceOptionController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    return response.json(await ResidenceOption.all());
+    try {
+      return response.json(await Province.all());
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   /**
-   * Render a form to be used for creating a new residenceoption.
-   * GET residenceoptions/create
+   * Render a form to be used for creating a new province.
+   * GET provinces/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -37,8 +40,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Create/save a new residenceoption.
-   * POST residenceoptions
+   * Create/save a new province.
+   * POST provinces
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -48,8 +51,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Display a single residenceoption.
-   * GET residenceoptions/:id
+   * Display a single province.
+   * GET provinces/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -60,8 +63,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Render a form to update an existing residenceoption.
-   * GET residenceoptions/:id/edit
+   * Render a form to update an existing province.
+   * GET provinces/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,8 +75,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Update residenceoption details.
-   * PUT or PATCH residenceoptions/:id
+   * Update province details.
+   * PUT or PATCH provinces/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -83,8 +86,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Delete a residenceoption with id.
-   * DELETE residenceoptions/:id
+   * Delete a province with id.
+   * DELETE provinces/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -94,4 +97,4 @@ class ResidenceOptionController {
   }
 }
 
-module.exports = ResidenceOptionController;
+module.exports = ProvinceController;

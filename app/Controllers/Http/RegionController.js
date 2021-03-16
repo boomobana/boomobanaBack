@@ -2,18 +2,17 @@
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
-
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const ResidenceOption = use('App/Models/ResidenceOption');
+const Region = use('App/Models/Region');
 
 /**
- * Resourceful controller for interacting with residenceoptions
+ * Resourceful controller for interacting with regions
  */
-class ResidenceOptionController {
+class RegionController {
   /**
-   * Show a list of all residenceoptions.
-   * GET residenceoptions
+   * Show a list of all regions.
+   * GET regions
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -21,12 +20,12 @@ class ResidenceOptionController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    return response.json(await ResidenceOption.all());
+    return response.json(await Region.all());
   }
 
   /**
-   * Render a form to be used for creating a new residenceoption.
-   * GET residenceoptions/create
+   * Render a form to be used for creating a new region.
+   * GET regions/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -37,8 +36,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Create/save a new residenceoption.
-   * POST residenceoptions
+   * Create/save a new region.
+   * POST regions
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -48,8 +47,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Display a single residenceoption.
-   * GET residenceoptions/:id
+   * Display a single region.
+   * GET regions/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -60,8 +59,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Render a form to update an existing residenceoption.
-   * GET residenceoptions/:id/edit
+   * Render a form to update an existing region.
+   * GET regions/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,8 +71,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Update residenceoption details.
-   * PUT or PATCH residenceoptions/:id
+   * Update region details.
+   * PUT or PATCH regions/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -83,8 +82,8 @@ class ResidenceOptionController {
   }
 
   /**
-   * Delete a residenceoption with id.
-   * DELETE residenceoptions/:id
+   * Delete a region with id.
+   * DELETE regions/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -94,4 +93,4 @@ class ResidenceOptionController {
   }
 }
 
-module.exports = ResidenceOptionController;
+module.exports = RegionController;
