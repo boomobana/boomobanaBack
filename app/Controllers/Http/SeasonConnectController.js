@@ -3,7 +3,7 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
-const SeasonConnect = require('../../Models/SeasonConnect');
+const SeasonConnect = use('App/Models/SeasonConnect');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const { validate }  = require('@adonisjs/validator/src/Validator');
@@ -17,7 +17,6 @@ class SeasonConnectController {
       residence_id: 'required',
       sd_id: 'required',
       price: 'required',
-      description: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -27,13 +26,15 @@ class SeasonConnectController {
           residence_id,
           sd_id,
           price,
-          description,
-        }               = request.all();
-    let seasCo          = new SeasonConnect();
-    seasCo.residence_id = residence_id;
-    seasCo.sd_id        = sd_id;
+        }      = request.all();
+    let seasCo = new SeasonConnect();
+
+    if (await SeasonConnect.query().where('sd_id', sd_id).where('residence_id', residence_id).last())
+      seasCo = await SeasonConnect.query().where('sd_id', sd_id).where('residence_id', residence_id).last();
+
+    seasCo.residence_id = parseInt(residence_id);
+    seasCo.sd_id        = parseInt(sd_id);
     seasCo.price        = price;
-    seasCo.description  = description;
     seasCo.save();
 
     return response.json({ status_code: 200, status_text: 'Successfully Done' });

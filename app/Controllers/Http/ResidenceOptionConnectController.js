@@ -3,7 +3,8 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
-const ResidenceOptionConnect = require('../../Models/ResidenceOptionConnect');
+const ResidenceOptionConnect = use('App/Models/ResidenceOptionConnect');
+const ResidenceOption        = use('App/Models/ResidenceOption');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const { validate }           = require('@adonisjs/validator/src/Validator');

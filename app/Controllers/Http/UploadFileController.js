@@ -5,29 +5,12 @@ const fs      = require('fs');
 const Helpers = use('Helpers');
 let driver    = use('Drive');
 let Env       = use('Env');
+const {
+        sleep,
+        makeid,
+      }       = require('../Helper');
 
 class UploadFileController {
-  makeid(length = 12, length2 = 12, length3 = 12) {
-    var result           = '';
-    var result2          = '';
-    var result3          = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    for (var i = 0; i < length2; i++) {
-      result2 += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    for (var i = 0; i < length3; i++) {
-      result3 += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result + '-' + result2 + '-' + result3;
-  }
-
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 
   async Upload({ request, response }) {
 
@@ -66,13 +49,13 @@ class UploadFileController {
         type_file = 2;
         break;
     }
-    let slug = this.makeid(10, 20, 10);
+    let slug = makeid(10, 20, 10);
     let name = `${slug}.${profilePic.subtype}`;
     await profilePic.move(Helpers.tmpPath('uploads'), {
       name: name,
       overwrite: true,
     });
-    await this.sleep(1000);
+    await sleep(1000);
     try {
       let file = `${Helpers.tmpPath('uploads')}/${name}`;
       let dir  = Env.get('FTP_DIR');

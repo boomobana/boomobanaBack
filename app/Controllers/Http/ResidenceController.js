@@ -2,34 +2,56 @@
 
 const { validate } = require('@adonisjs/validator/src/Validator');
 const Residence    = use('App/Models/Residence');
+const FavoriteAd   = use('App/Models/FavoriteAd');
+const { sleep }    = require('../Helper');
 
 class ResidenceController {
   async Fetch({ request, response }) {
-    let userIsExist = await Residence.query().with('File').last();
+    let userIsExist = Residence.query().with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+
+    return response.json(await userIsExist.fetch());
+  }
+
+  async favoriteFetch({ request, response }) {
+    let userIsExist = FavoriteAd.query().with('Residence');
+
+    return response.json(await userIsExist.fetch());
+  }
+
+  async FetchMy({ auth, response }) {
+    let userIsExist = await Residence.query().orderBy('id', 'desc').where('user_id', auth.user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').fetch();
+    return response.json(userIsExist);
+  }
+
+  async Find({ request, response }) {
+    let userIsExist = await Residence.query().where('id', request.body.residence_id).with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last();
     return response.json(userIsExist);
   }
 
   async add({ auth, request, response }) {
     const rules      = {
-      name: 'required',
+      title: 'required',
       description: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
       return response.json(validation.messages());
     }
-
     let {
-          name,
+          title,
           description,
-        } = request.all();
-
-    let res         = new Residence();
-    res.name        = name;
+        }   = request.all();
+    let res = new Residence();
+    if (request.body.residence_id != 0) {
+      res = await Residence.query().where('id', request.body.residence_id).last();
+    }
+    res.title       = title;
     res.description = description;
     res.user_id     = auth.user.id;
     res.save();
-    response.json({ status_code: 200, status_text: 'Successfully Done' });
+    await sleep(1000);
+    let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.user.id).last();
+    response.json({ status_code: 200, status_text: 'Successfully Done', id: residence.id });
   }
 
   async changeCapacity({ request, response }) {
@@ -101,6 +123,96 @@ class ResidenceController {
     res.real_address   = real_address;
     res.lat            = lat;
     res.lng            = lng;
+    res.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async changeDate({ request, response }) {
+    const rules      = {
+      residence_id: 'required',
+      before_reserve: 'required',
+      start_delivery: 'required',
+      end_delivery: 'required',
+      discharge: 'required',
+      after_reserve: 'required',
+      min_reserve: 'required',
+      max_reserve: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          before_reserve,
+          start_delivery,
+          end_delivery,
+          discharge,
+          after_reserve,
+          min_reserve,
+          max_reserve,
+          residence_id,
+        } = request.all();
+
+    let res            = await Residence.query().where('id', residence_id).last();
+    res.before_reserve = before_reserve;
+    res.start_delivery = start_delivery;
+    res.end_delivery   = end_delivery;
+    res.discharge      = discharge;
+    res.after_reserve  = after_reserve;
+    res.min_reserve    = min_reserve;
+    res.max_reserve    = max_reserve;
+    res.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async changePriceMaxMan({ request, response }) {
+    const rules      = {
+      residence_id: 'required',
+      price_max_man: 'required',
+      week_discount: 'required',
+      month_discount: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          residence_id,
+          price_max_man,
+          week_discount,
+          month_discount,
+        } = request.all();
+
+    let res            = await Residence.query().where('id', residence_id).last();
+    res.price_max_man  = price_max_man;
+    res.week_discount  = week_discount;
+    res.month_discount = month_discount;
+    res.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async changeRules({ request, response }) {
+    const rules      = {
+      residence_id: 'required',
+      sign_calendar: 'required',
+      sign_rules_site: 'required',
+      cancel_policy_id: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          residence_id,
+          sign_calendar,
+          sign_rules_site,
+          cancel_policy_id,
+        } = request.all();
+
+    let res              = await Residence.query().where('id', residence_id).last();
+    res.sign_calendar    = sign_calendar;
+    res.sign_rules_site  = sign_rules_site;
+    res.cancel_policy_id = cancel_policy_id;
     res.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }

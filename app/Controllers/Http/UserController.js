@@ -64,7 +64,7 @@ class UserController {
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
-  async FinallRegister({ request, response }) {
+  async FinalRegister({ request, response }) {
     const rules      = {
       mobile: 'required|unique:users,mobile',
       code: 'required',
@@ -175,8 +175,6 @@ class UserController {
     if (request.hasBody('email')) {
       const rules      = {
         mobile: 'required',
-        code: 'required',
-        password: 'required',
       };
       const validation = await validate(request.all(), rules);
       if (validation.fails()) {
@@ -188,6 +186,20 @@ class UserController {
       userIsExist.region = region;
     if (request.hasBody('city'))
       userIsExist.city = city;
+    userIsExist.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async changeAvatar({ auth, request, response }) {
+    const {
+            avatar,
+          } = request.all();
+
+    let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
+    if (!userIsExist)
+      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+    console.log(userIsExist);
+    userIsExist.avatar = avatar;
     userIsExist.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
