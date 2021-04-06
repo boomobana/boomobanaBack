@@ -3,19 +3,67 @@
 const { validate } = require('@adonisjs/validator/src/Validator');
 const Residence    = use('App/Models/Residence');
 const FavoriteAd   = use('App/Models/FavoriteAd');
+const ViewAd       = use('App/Models/ViewAd');
 const { sleep }    = require('../Helper');
 
 class ResidenceController {
-  async Fetch({ request, response }) {
-    let userIsExist = Residence.query().with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+  async Fetch({ auth, request, response }) {
+    let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+    if (typeof request.body.type === 'string') {
+      if (request.body.type == 'residence') {
+        userIsExist.where('type', '1');
+        if (typeof request.body.text == 'string') {
+          userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+        }
+      } else if (request.body.type == 'amlak') {
+        userIsExist.where('type', '2');
+        if (typeof request.body.text == 'string') {
+          userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+        }
+      } else {
+        userIsExist.orWhere('title', request.body.text);
+      }
+    }
+    try {
+      if (typeof request.body.save === 'boolean') {
+        if (request.body.save === true) {
+          if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.user.id).last()) {
+            let va     = new ViewAd();
+            va.text    = request.body.text;
+            va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
+            va.user_id = auth.user.id;
+            va.type    = 1;
+            va.save();
+          }
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return response.json(await userIsExist.fetch());
+  }
+
+  async favoriteFetch({ auth, request, response }) {
+    let userIsExist = FavoriteAd.query().where('user_id', auth.user.id).orderBy('id', 'desc').with('Residence');
 
     return response.json(await userIsExist.fetch());
   }
 
-  async favoriteFetch({ request, response }) {
-    let userIsExist = FavoriteAd.query().with('Residence');
-
-    return response.json(await userIsExist.fetch());
+  async favoriteAdd({ auth, request, response }) {
+    let ad = await FavoriteAd.query().where('user_id', auth.user.id).where('ad_id', request.body.residence_id).last();
+    if (ad) {
+      console.log('here', ad.id);
+      let rem = await FavoriteAd.find(ad.id);
+      rem.delete();
+      // rem.;
+      console.log(rem);
+    } else {
+      let newFa     = new FavoriteAd();
+      newFa.user_id = auth.user.id;
+      newFa.ad_id   = request.body.residence_id;
+      newFa.save();
+    }
+    return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
   async FetchMy({ auth, response }) {
@@ -23,8 +71,23 @@ class ResidenceController {
     return response.json(userIsExist);
   }
 
-  async Find({ request, response }) {
-    let userIsExist = await Residence.query().where('id', request.body.residence_id).with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last();
+  async Find({ auth, request, response }) {
+    let userIsExist = await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last();
+    try {
+      if (typeof request.body.save === 'boolean') {
+        if (request.body.save === true) {
+          if (!await ViewAd.query().where('ad_id', request.body.residence_id).where('user_id', auth.user.id).last()) {
+            let va     = new ViewAd();
+            va.ad_id   = request.body.residence_id;
+            va.user_id = auth.user.id;
+            va.type    = 2;
+            va.save();
+          }
+        }
+      }
+    } catch (e) {
+      // console.log(e);
+    }
     return response.json(userIsExist);
   }
 
@@ -32,6 +95,7 @@ class ResidenceController {
     const rules      = {
       title: 'required',
       description: 'required',
+      type: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -40,6 +104,7 @@ class ResidenceController {
     let {
           title,
           description,
+          type,
         }   = request.all();
     let res = new Residence();
     if (request.body.residence_id != 0) {
@@ -47,6 +112,7 @@ class ResidenceController {
     }
     res.title       = title;
     res.description = description;
+    res.type        = type;
     res.user_id     = auth.user.id;
     res.save();
     await sleep(1000);
@@ -215,6 +281,14 @@ class ResidenceController {
     res.cancel_policy_id = cancel_policy_id;
     res.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async searchSaveText({ auth, request, response }) {
+    return response.json(await ViewAd.query().where('user_id', auth.user.id).where('type', '1').fetch());
+  }
+
+  async searchSavePost({ auth, request, response }) {
+    return response.json(await ViewAd.query().where('user_id', auth.user.id).where('type', '2').with('Residence').fetch());
   }
 }
 

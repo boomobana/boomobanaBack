@@ -20,6 +20,7 @@ Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
+  // Route.post('/login/with/mobile', 'UserController.wihMobile');
   Route.post('/login', 'UserController.login');
   Route.post('/code', 'UserController.getCode');
   Route.post('/register', 'UserController.FinalRegister');
@@ -31,6 +32,7 @@ Route.post('/api/upload', 'UploadFileController.Upload');
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
 Route.post('/get/festivals', 'FestivalController.index');
 Route.post('/api/region', 'RegionController.index');
+Route.post('/find/user/details', 'UserController.findUser');
 Route.post('/api/province', 'ProvinceController.index');
 Route.post('/api/residence/fetch/last', 'ResidenceController.Fetch');
 Route.post('/api/residence/find', 'ResidenceController.Find');
@@ -67,6 +69,10 @@ Route.group(() => {
   Route.post('/residence/price/max/man', 'ResidenceController.changePriceMaxMan');
   Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
 
+  Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
+
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
+  Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
+  Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
 }).prefix('api').middleware('auth');
 

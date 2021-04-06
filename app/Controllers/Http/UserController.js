@@ -8,6 +8,25 @@ const { validate }  = use('Validator');
 const Hash          = use('Hash');
 
 class UserController {
+  async wihMobile({ auth, request, response }) {
+    const rules      = {
+      mobile: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+
+    const { mobile } = request.all();
+    let user         = new UserCode();
+    user.mobile      = mobile;
+    user.code        = Math.floor(Math.random() * (999999 - 111111) + 111111);
+    user.password    = Math.floor(Math.random() * (999999 - 111111) + 111111);
+    user.save();
+
+    return response.json({ status_code: 200, status_text: 'Success Login' });
+  }
+
   async login({ auth, request, response }) {
     const rules      = {
       mobile: 'required',
@@ -30,6 +49,10 @@ class UserController {
     } catch (error) {
       response.send('You are not logged in');
     }
+  }
+
+  async findUser({ auth, request, response }) {
+    return response.json(await User.query().where('slug', request.body.slug).with('residence').last());
   }
 
   async getCode({ request, response }) {
