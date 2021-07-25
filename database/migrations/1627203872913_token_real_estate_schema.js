@@ -3,17 +3,17 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema');
 
-class ProvinceSchema extends Schema {
+class TokenRealEstateSchema extends Schema {
   up() {
-    this.create('provinces', (table) => {
+    this.create('token_real_estates', (table) => {
       table.increments();
       table.timestamps();
     });
   }
 
   down() {
-    this.drop('provinces');
+    this.drop('token_real_estates');
   }
 }
 
-module.exports = ProvinceSchema;
+module.exports = TokenRealEstateSchema;

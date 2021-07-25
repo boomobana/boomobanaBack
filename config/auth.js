@@ -91,4 +91,14 @@ module.exports = {
     uid: 'mobile',
     password: 'password',
   },
+  realEstate: {
+    serializer: 'lucid',
+    model: 'App/Models/RealEstate',
+    scheme: 'jwt',
+    uid: 'mobile',
+    password: 'password',
+    options: {
+      secret: Env.get('APP_KEY'),
+    },
+  },
 };

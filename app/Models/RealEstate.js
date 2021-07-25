@@ -4,6 +4,9 @@
 const Model = use('Model');
 
 class RealEstate extends Model {
+  tokens() {
+    return this.hasMany('App/Models/TokenRealEstate');
+  }
 }
 
 module.exports = RealEstate;

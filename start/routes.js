@@ -20,12 +20,12 @@ Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
-  // Route.post('/login/with/mobile', 'UserController.wihMobile');
-  Route.post('/login', 'UserController.login');
-  Route.post('/code', 'UserController.getCode');
-  Route.post('/register', 'UserController.FinalRegister');
-  Route.post('/forgot/code', 'UserController.requestForgetPass');
-  Route.post('/forgot/change', 'UserController.changeForgotPassword');
+  Route.post('/login/with/mobile', 'AuthController.wihMobile');
+  Route.post('/login', 'AuthController.login');
+  Route.post('/code', 'AuthController.getCode');
+  Route.post('/register', 'AuthController.FinalRegister');
+  Route.post('/forgot/code', 'AuthController.requestForgetPass');
+  Route.post('/forgot/change', 'AuthController.changeForgotPassword');
 }).middleware('guest');
 Route.post('/api/polici/fetch', 'PoliciController.index');
 Route.post('/api/upload', 'UploadFileController.Upload');

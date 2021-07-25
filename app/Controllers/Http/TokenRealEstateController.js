@@ -2,17 +2,16 @@
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
+
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const Province = use('App/Models/Province');
-
 /**
- * Resourceful controller for interacting with provinces
+ * Resourceful controller for interacting with tokenrealestates
  */
-class ProvinceController {
+class TokenRealEstateController {
   /**
-   * Show a list of all provinces.
-   * GET provinces
+   * Show a list of all tokenrealestates.
+   * GET tokenrealestates
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -20,16 +19,11 @@ class ProvinceController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    try {
-      return response.json(await Province.all());
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   /**
-   * Render a form to be used for creating a new province.
-   * GET provinces/create
+   * Render a form to be used for creating a new tokenrealestate.
+   * GET tokenrealestates/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -40,8 +34,8 @@ class ProvinceController {
   }
 
   /**
-   * Create/save a new province.
-   * POST provinces
+   * Create/save a new tokenrealestate.
+   * POST tokenrealestates
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -51,8 +45,8 @@ class ProvinceController {
   }
 
   /**
-   * Display a single province.
-   * GET provinces/:id
+   * Display a single tokenrealestate.
+   * GET tokenrealestates/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -63,8 +57,8 @@ class ProvinceController {
   }
 
   /**
-   * Render a form to update an existing province.
-   * GET provinces/:id/edit
+   * Render a form to update an existing tokenrealestate.
+   * GET tokenrealestates/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -75,8 +69,8 @@ class ProvinceController {
   }
 
   /**
-   * Update province details.
-   * PUT or PATCH provinces/:id
+   * Update tokenrealestate details.
+   * PUT or PATCH tokenrealestates/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -86,8 +80,8 @@ class ProvinceController {
   }
 
   /**
-   * Delete a province with id.
-   * DELETE provinces/:id
+   * Delete a tokenrealestate with id.
+   * DELETE tokenrealestates/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -97,4 +91,4 @@ class ProvinceController {
   }
 }
 
-module.exports = ProvinceController;
+module.exports = TokenRealEstateController;
