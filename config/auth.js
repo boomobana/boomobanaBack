@@ -101,4 +101,14 @@ module.exports = {
       secret: Env.get('APP_KEY'),
     },
   },
+  user: {
+    serializer: 'lucid',
+    model: 'App/Models/User',
+    scheme: 'jwt',
+    uid: 'mobile',
+    password: 'password',
+    options: {
+      secret: Env.get('APP_KEY'),
+    },
+  },
 };

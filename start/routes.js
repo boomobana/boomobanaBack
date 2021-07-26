@@ -21,6 +21,8 @@ Route.group(() => {
     return { greeting: 'Hello world in JSON' };
   });
   Route.post('/login/with/mobile', 'AuthController.wihMobile');
+  Route.post('/code/with/mobile', 'AuthController.wihMobileCode');
+  Route.post('/final/code/signup', 'AuthController.FinalRegisterCode');
   Route.post('/login', 'AuthController.login');
   Route.post('/code', 'AuthController.getCode');
   Route.post('/register', 'AuthController.FinalRegister');
@@ -42,7 +44,7 @@ Route.group(() => {
     return { greeting: 'Hello world in JSON' };
   });
 
-  Route.post('/me', 'UserController.me');
+  Route.post('/me', 'AuthController.me');
   Route.post('/change/profile', 'UserController.changeProfile');
   Route.post('/change/avatar', 'UserController.changeAvatar');
   Route.post('/change/password', 'UserController.changePassword');
