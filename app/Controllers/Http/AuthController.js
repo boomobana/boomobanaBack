@@ -67,7 +67,7 @@ class AuthController {
       if (rule === 'realEstate') {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
-          let logins = await auth.authenticator(rule).loginViaId(realEstate.id);
+          let logins = await auth.authenticator(rule).generate(realEstate);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
           return response.json({ status_code: 202, rule: rule, status_text: 'User Is Not Exist' });
@@ -75,7 +75,7 @@ class AuthController {
       } else if (rule === 'user') {
         let user = await User.query().where('mobile', mobile).first();
         if (!!user && !!user.id) {
-          let logins = await auth.authenticator(rule).attempt(user.mobile);
+          let logins = await auth.authenticator(rule).generate(user);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
           return response.json({ status_code: 202, rule: rule, status_text: 'User Is Not Exist' });
