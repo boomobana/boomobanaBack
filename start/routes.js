@@ -76,5 +76,5 @@ Route.group(() => {
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
   Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
-}).prefix('api').middleware('auth');
+}).prefix('api').middleware(['auth:realEstate'])
 
