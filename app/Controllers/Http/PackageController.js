@@ -4,7 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-
+var Package = use('App/Models/Package');
 /**
  * Resourceful controller for interacting with packages
  */
@@ -18,7 +18,8 @@ class PackageController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, view }) {
+  async index({ request, response }) {
+    return response.json(await Package.all());
   }
 
   /**

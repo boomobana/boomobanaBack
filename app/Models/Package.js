@@ -4,6 +4,9 @@
 const Model = use('Model');
 
 class Package extends Model {
+  static get table() {
+    return 'packages';
+  }
 }
 
 module.exports = Package;

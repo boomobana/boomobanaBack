@@ -20,6 +20,7 @@ Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
+  Route.post('/package', 'PackageController.index');
   Route.post('/login/with/mobile', 'AuthController.wihMobile');
   Route.post('/code/with/mobile', 'AuthController.wihMobileCode');
   Route.post('/final/code/signup', 'AuthController.FinalRegisterCode');
@@ -76,5 +77,8 @@ Route.group(() => {
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
   Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
-}).prefix('api').middleware(['auth:realEstate'])
 
+  Route.post('/ticket/list', 'TicketController.index');
+  Route.post('/ticket/add', 'TicketController.create');
+  Route.post('/ticket/delete', 'TicketController.destroy');
+}).prefix('api/realEstate').middleware(['auth:realEstate']);
