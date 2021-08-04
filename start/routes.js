@@ -31,7 +31,6 @@ Route.group(() => {
   Route.post('/forgot/change', 'AuthController.changeForgotPassword');
 }).middleware('guest');
 Route.post('/api/polici/fetch', 'PoliciController.index');
-Route.post('/api/upload', 'UploadFileController.Upload');
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
 Route.post('/get/festivals', 'FestivalController.index');
 Route.post('/api/region', 'RegionController.index');
@@ -44,6 +43,7 @@ Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
+  Route.post('/upload', 'UploadFileController.Upload');
 
   Route.post('/me', 'AuthController.me');
   Route.post('/change/profile', 'UserController.changeProfile');

@@ -8,7 +8,6 @@ const UserCode      = use('App/Models/UserCode'),
       Hash          = use('Hash');
 
 class AuthController {
-
   async wihMobile({ auth, request, response }) {
     const rules            = {
       mobile: 'required',
@@ -316,6 +315,34 @@ class AuthController {
     await new Sms().sendCodeForgot(pr.token, pr.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
 
+  }
+
+  async changeForgotPassword({ request, response }) {
+    const rules      = {
+      mobile: 'required',
+      code: 'required',
+      password: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    const { mobile, code, password } = request.all();
+
+    let userIsExist = await User.query().where('mobile', mobile).last();
+    if (!userIsExist)
+      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+
+    let reqResetIsExist = await PasswordReset.query().where('mobile', mobile).last();
+    if (!reqResetIsExist)
+      return response.json({ status_code: 401, status_text: 'درخواست ارسال کنید' });
+    if (reqResetIsExist.token != code)
+      return response.json({ status_code: 401, status_text: 'کد ارسالی صحیح نیست' });
+
+    // userIsExist.password = await Hash.make(password);
+    userIsExist.password = password;
+    userIsExist.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }
 
