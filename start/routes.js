@@ -30,14 +30,8 @@ Route.group(() => {
   Route.post('/forgot/code', 'AuthController.requestForgetPass');
   Route.post('/forgot/change', 'AuthController.changeForgotPassword');
 }).middleware('guest');
-Route.post('/api/polici/fetch', 'PoliciController.index');
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
-Route.post('/get/festivals', 'FestivalController.index');
-Route.post('/api/region', 'RegionController.index');
 Route.post('/find/user/details', 'UserController.findUser');
-Route.post('/api/province', 'ProvinceController.index');
-Route.post('/api/residence/fetch/last', 'ResidenceController.Fetch');
-Route.post('/api/residence/find', 'ResidenceController.Find');
 
 Route.group(() => {
   Route.get('/', () => {
@@ -77,8 +71,15 @@ Route.group(() => {
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
   Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
-
+}).prefix('api/realEstate').middleware(['auth:realEstate']);
+Route.group(() => {
   Route.post('/ticket/list', 'TicketController.index');
   Route.post('/ticket/add', 'TicketController.create');
   Route.post('/ticket/delete', 'TicketController.destroy');
-}).prefix('api/realEstate').middleware(['auth:realEstate']);
+  Route.post('/polici/fetch', 'PoliciController.index');
+  Route.post('/festivals', 'FestivalController.index');
+  Route.post('/region', 'RegionController.index');
+  Route.post('/province', 'ProvinceController.index');
+  Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
+  Route.post('/residence/find', 'ResidenceController.Find');
+}).prefix('api/realEstate');
