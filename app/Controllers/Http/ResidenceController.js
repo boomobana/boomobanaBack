@@ -120,6 +120,64 @@ class ResidenceController {
     response.json({ status_code: 200, status_text: 'Successfully Done', id: residence.id });
   }
 
+  async addMelk({ auth, request, response }) {
+    const rules      = {
+      title: 'required',
+      description: 'required',
+      lat: 'required',
+      lng: 'required',
+      province_id: 'required',
+      region_id: 'required',
+      RTO1: 'required',
+      RTO2: 'required',
+      RTO3: 'required',
+      month_discount: 'required',
+      floor_area: 'required',
+      count_bathroom: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          title,
+          description,
+          type,
+          lat,
+          lng,
+          province_id,
+          region_id,
+          RTO1,
+          RTO2,
+          RTO3,
+          month_discount,
+          floor_area,
+          count_bathroom,
+        }   = request.all();
+    let res = new Residence();
+    if (request.body.residence_id != 0) {
+      res = await Residence.query().where('id', request.body.residence_id).last();
+    }
+    res.title          = title;
+    res.description    = description;
+    res.type           = type;
+    res.lat            = lat;
+    res.lng            = lng;
+    res.province_id    = province_id;
+    res.region_id      = region_id;
+    res.rto_1          = RTO1;
+    res.rto_2          = RTO2;
+    res.rto_3          = RTO3;
+    res.month_discount = month_discount;
+    res.floor_area     = floor_area;
+    res.count_bathroom = count_bathroom;
+    res.user_id        = auth.user.id;
+    await res.save();
+    await sleep(1000);
+    let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.user.id).last();
+    response.json({ status_code: 200, status_text: 'Successfully Done', id: residence.id });
+  }
+
   async changeCapacity({ request, response }) {
     const rules      = {
       residence_id: 'required',
