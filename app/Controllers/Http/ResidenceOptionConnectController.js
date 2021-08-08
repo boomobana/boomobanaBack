@@ -17,7 +17,6 @@ class ResidenceOptionConnectController {
     const rules      = {
       residence_id: 'required',
       residence_option_id: 'required',
-      description: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -26,13 +25,13 @@ class ResidenceOptionConnectController {
     let {
           residence_id,
           residence_option_id,
-          description,
         } = request.all();
     try {
       let resOC                 = new ResidenceOptionConnect();
       resOC.residence_id        = residence_id;
       resOC.residence_option_id = residence_option_id;
-      resOC.description         = description;
+      if (typeof request.input('description') !== undefined)
+        resOC.description = request.input('description');
       resOC.save();
     } catch (e) {
       console.log(e);

@@ -32,12 +32,12 @@ Route.group(() => {
 }).middleware('guest');
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
 Route.post('/find/user/details', 'UserController.findUser');
+Route.post('/upload', 'UploadFileController.Upload');
 
 Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
-  Route.post('/upload', 'UploadFileController.Upload');
 
   Route.post('/me', 'AuthController.me');
   Route.post('/change/profile', 'UserController.changeProfile');
