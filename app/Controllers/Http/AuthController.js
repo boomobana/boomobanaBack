@@ -174,9 +174,6 @@ class AuthController {
         return response.json(validation.messages());
       }
     }
-    let userIsExist = await User.query().where('mobile', mobile).first();
-    if (userIsExist)
-      return response.json({ status_code: 401, status_text: 'کاربر موجود می باشد' });
     let countUserReq = await UserCode.query().where('mobile', mobile).fetch();
     if (countUserReq.rows.length >= 10)
       return response.json({ status_code: 401, status_text: 'تعداد درخواست های شما زیاد می باشد' });
