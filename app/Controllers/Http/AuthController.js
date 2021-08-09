@@ -125,7 +125,7 @@ class AuthController {
 
   async getCode({ request, response }) {
     const rules      = {
-      mobile: 'required|unique:users,mobile',
+      mobile: 'required',
       firstname: 'required',
       lastname: 'required',
       password: 'required',
@@ -147,10 +147,35 @@ class AuthController {
             password,
             firstname,
             lastname,
-          }         = request.all();
+          } = request.all();
     const {
             rule,
-          }         = request.headers();
+          } = request.headers();
+    if (rule === 'realEstate') {
+      const rules      = {
+        mobile: 'required|unique:real_estate,mobile',
+        firstname: 'required',
+        lastname: 'required',
+        password: 'required',
+      };
+      const validation = await validate(request.all(), rules);
+      if (validation.fails()) {
+        return response.json(validation.messages());
+      }
+
+    } else if (rule === 'user') {
+      const rules      = {
+        mobile: 'required|unique:users,mobile',
+        firstname: 'required',
+        lastname: 'required',
+        password: 'required',
+      };
+      const validation = await validate(request.all(), rules);
+      if (validation.fails()) {
+        return response.json(validation.messages());
+      }
+
+    }
     let userIsExist = await User.query().where('mobile', mobile).first();
     if (userIsExist)
       return response.json({ status_code: 401, status_text: 'کاربر موجود می باشد' });
