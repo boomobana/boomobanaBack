@@ -134,9 +134,24 @@ class AuthController {
     if (validation.fails()) {
       return response.json(validation.messages());
     }
+    const rulesHeader      = {
+      rule: 'required',
+    };
+    const validationHeader = await validate(request.headers(), rulesHeader);
+    if (validationHeader.fails()) {
+      return response.json(validationHeader.messages());
+    }
 
-    const { mobile, password, firstname, lastname } = request.all();
-    let userIsExist                                 = await User.query().where('mobile', mobile).first();
+    const {
+            mobile,
+            password,
+            firstname,
+            lastname,
+          }         = request.all();
+    const {
+            rule,
+          }         = request.headers();
+    let userIsExist = await User.query().where('mobile', mobile).first();
     if (userIsExist)
       return response.json({ status_code: 401, status_text: 'کاربر موجود می باشد' });
     let countUserReq = await UserCode.query().where('mobile', mobile).fetch();
@@ -147,6 +162,7 @@ class AuthController {
     user.lastname  = lastname;
     user.mobile    = mobile;
     user.password  = password;
+    user.rule      = rule;
     user.code      = Math.floor(Math.random() * (999999 - 111111) + 111111);
     user.used      = '1';
     var sms        = await new Sms().sendCodeRegister(user.code, user.mobile);
