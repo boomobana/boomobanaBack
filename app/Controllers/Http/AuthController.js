@@ -285,7 +285,7 @@ class AuthController {
 
   async FinalRegister({ request, response }) {
     const rules      = {
-      mobile: 'required|unique:users,mobile',
+      mobile: 'required',
       code: 'required',
     };
     const validation = await validate(request.all(), rules);
@@ -293,20 +293,58 @@ class AuthController {
       return response.json(validation.messages());
     }
 
-    const { code, mobile } = request.all();
-    let userIsExist        = await UserCode.query().where('mobile', mobile).last();
+    const { code, mobile }  = request.all();
+    const rulesHeaders      = {
+      rule: 'required',
+    };
+    const validationHeaders = await validate(request.headers(), rulesHeaders);
+    if (validationHeaders.fails()) {
+      return response.json(validationHeaders.messages());
+    }
+
+    const {
+            rule,
+          }         = request.headers();
+    let userIsExist = await UserCode.query().where('mobile', mobile).last();
     if (!userIsExist)
       return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
     if (userIsExist.code !== code)
       return response.json({ status_code: 401, status_text: 'کد ارسالی اشتباه می باشد' });
-    const user     = new User();
-    user.firstname = userIsExist.firstname;
-    user.lastname  = userIsExist.lastname;
-    user.mobile    = userIsExist.mobile;
-    user.password  = userIsExist.password;
-    // user.password = Hash.make(request.input('password'));
-    user.save();
+    if (rule === 'user') {
+      const rules      = {
+        mobile: 'required|unique:users,mobile',
+        code: 'required',
+      };
+      const validation = await validate(request.all(), rules);
+      if (validation.fails()) {
+        return response.json(validation.messages());
+      }
 
+      const user     = new User();
+      user.firstname = userIsExist.firstname;
+      user.lastname  = userIsExist.lastname;
+      user.mobile    = userIsExist.mobile;
+      user.password  = userIsExist.password;
+      // user.password = Hash.make(request.input('password'));
+      user.save();
+    } else if (rule === 'realEstate') {
+      const rules      = {
+        mobile: 'required|unique:real_estate,mobile',
+        code: 'required',
+      };
+      const validation = await validate(request.all(), rules);
+      if (validation.fails()) {
+        return response.json(validation.messages());
+      }
+
+      const user     = new RealEstate();
+      user.firstname = userIsExist.firstname;
+      user.lastname  = userIsExist.lastname;
+      user.mobile    = userIsExist.mobile;
+      user.password  = userIsExist.password;
+      // user.password = Hash.make(request.input('password'));
+      user.save();
+    }
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
