@@ -225,8 +225,6 @@ class AuthController {
           }         = request.headers();
     let userIsExist = await UserCode.query().where('rule', rule).where('mobile', mobile).last();
     var userStart;
-    if (!userIsExist)
-      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
     if (userIsExist.code !== code)
       return response.json({ status_code: 401, status_text: 'کد ارسالی اشتباه می باشد' });
     if (rule === 'user') {
@@ -329,8 +327,6 @@ class AuthController {
             rule,
           }         = request.headers();
     let userIsExist = await UserCode.query().where('mobile', mobile).last();
-    if (!userIsExist)
-      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
     if (userIsExist.code !== code)
       return response.json({ status_code: 401, status_text: 'کد ارسالی اشتباه می باشد' });
     if (rule === 'user') {
