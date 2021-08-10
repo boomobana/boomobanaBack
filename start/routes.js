@@ -70,14 +70,20 @@ Route.group(() => {
 
   Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
 
+  Route.post('/advisor/add', 'AdvisorController.create');
+  Route.post('/advisor/fetch', 'AdvisorController.index');
+  Route.post('/advisor/find', 'AdvisorController.find');
+
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
   Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
-}).prefix('api/realEstate').middleware(['auth:realEstate']);
-Route.group(() => {
+
   Route.post('/ticket/list', 'TicketController.index');
   Route.post('/ticket/add', 'TicketController.create');
   Route.post('/ticket/delete', 'TicketController.destroy');
+
+}).prefix('api/realEstate').middleware(['auth:realEstate']);
+Route.group(() => {
   Route.post('/polici/fetch', 'PoliciController.index');
   Route.post('/festivals', 'FestivalController.index');
   Route.post('/region', 'RegionController.index');
