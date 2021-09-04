@@ -24,6 +24,7 @@ Route.group(() => {
   Route.post('/login/with/mobile', 'AuthController.wihMobile');
   Route.post('/code/with/mobile', 'AuthController.wihMobileCode');
   Route.post('/final/code/signup', 'AuthController.FinalRegisterCode');
+  Route.post('/final/finall/signup', 'AuthController.FinallRegisterrrr');
   Route.post('/login', 'AuthController.login');
   Route.post('/code', 'AuthController.getCode');
   Route.post('/register', 'AuthController.FinalRegister');
@@ -87,6 +88,12 @@ Route.group(() => {
   Route.post('/package/buy/:id', 'PackageController.create');
   Route.post('/package/fetch', 'PackageBuyController.index');
   Route.post('/trade/fetch', 'TradeController.index');
+
+  Route.post('/setting/ads/add', 'SettingAdsRealEstateController.index');
+  Route.post('/setting/ads/fetch', 'SettingAdsRealEstateController.fetch');
+  Route.post('/setting/ads/option/add', 'SettingAdsRealEstateOptionController.index');
+  Route.post('/setting/ads/option/fetch', 'SettingAdsRealEstateOptionController.fetch');
+  Route.post('/setting/ads/connect/fetch', 'SettingAdsRealEstateConnectController.index');
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');

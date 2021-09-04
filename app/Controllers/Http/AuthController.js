@@ -240,9 +240,72 @@ class AuthController {
       await userStart.save();
     } else if (rule === 'realEstate') {
       const mobileRule       = {
+        mobile: 'unique:real_estates,mobile',
+      };
+      const mobileValidation = await validate(request.all(), mobileRule);
+      if (mobileValidation.fails()) {
+        return response.json(mobileValidation.messages());
+      }
+      userStart           = new RealEstate();
+      userStart.firstname = firstname;
+      userStart.lastname  = lastname;
+      userStart.mobile    = mobile;
+      userStart.password  = password;
+      await userStart.save();
+    } else {
+      return response.json({ status_code: 404, status_text: 'not found' });
+    }
+    let us;
+    if (rule === 'user')
+      us = await User.query().where('id', userStart.id).last();
+    else if (rule === 'realEstate')
+      us = await RealEstate.query().where('id', userStart.id).last();
+
+    console.log(userStart);
+    let logins = await auth.authenticator(rule).generate(us);
+    response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
+  }
+
+  async FinallRegisterrrr({ auth, request, response }) {
+    const rules            = {
+      mobile: 'required',
+      password: 'required',
+      firstname: 'required',
+      lastname: 'required',
+    };
+    const validation       = await validate(request.all(), rules);
+    const rulesHeader      = {
+      rule: 'required',
+    };
+    const validationHeader = await validate(request.headers(), rulesHeader);
+
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    } else if (validationHeader.fails()) {
+      return response.json(validationHeader.messages());
+    }
+    const {
+            mobile,
+            firstname,
+            lastname,
+            password,
+          } = request.all();
+    const {
+            rule,
+          } = request.headers();
+    var userStart;
+    if (rule === 'user') {
+      userStart           = await User.query().where('mobile', mobile).last();
+      userStart.firstname = firstname;
+      userStart.lastname  = lastname;
+      userStart.mobile    = mobile;
+      userStart.password  = password;
+      await userStart.save();
+    } else if (rule === 'realEstate') {
+      const mobileRule       = {
         firstname_en: 'required',
         lastname_en: 'required',
-        mobile: 'unique:real_estates,mobile',
+        mobile: 'required',
         tell: 'required',
         sos: 'required',
         email: 'required',
@@ -270,7 +333,7 @@ class AuthController {
               statute,
               address,
             }                           = request.all();
-      userStart                         = new RealEstate();
+      userStart                         = await RealEstate.query().where('mobile', mobile).last();
       userStart.firstname               = firstname;
       userStart.lastname                = lastname;
       userStart.firstname_en            = firstname_en;

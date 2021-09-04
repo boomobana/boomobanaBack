@@ -70,30 +70,32 @@ class ResidenceController {
   async FetchMy({ auth, request, response }) {
     let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
 
-    if (typeof request.body.typeSearch === 'string') {
+    if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
       userIsExist.where('type', request.body.typeSearch);
     }
-    if (typeof request.body.provinceId === 'string') {
+    if (typeof request.body.provinceId === 'string' && request.body.provinceId !== null && request.body.provinceId !== '') {
       userIsExist.where('province_id', request.body.provinceId);
     }
-    if (typeof request.body.rto_2 === 'string') {
+    if (typeof request.body.rto_2 === 'string' && request.body.rto_2 !== null && request.body.rto_2 !== '') {
       userIsExist.where('rto_2', request.body.rto_2);
     }
-    if (typeof request.body.rto_3 === 'string') {
+    if (typeof request.body.rto_3 === 'string' && request.body.rto_3 !== null && request.body.rto_3 !== '') {
       userIsExist.where('rto_3', request.body.rto_3);
     }
-    if (typeof request.body.count_bathroom === 'string') {
+    if (typeof request.body.count_bathroom === 'string' && request.body.count_bathroom !== null && request.body.count_bathroom !== '') {
       userIsExist.where('count_bathroom', request.body.count_bathroom);
     }
-    if (typeof request.body.all_area === 'string') {
+    if (typeof request.body.all_area === 'string' && request.body.all_area !== null && request.body.all_area !== '') {
       userIsExist.where('all_area', request.body.all_area);
     }
-    if (typeof request.body.floor_area === 'string') {
+    if (typeof request.body.floor_area === 'string' && request.body.floor_area !== null && request.body.floor_area !== '') {
       userIsExist.where('floor_area', request.body.floor_area);
     }
-    if (typeof request.body.month_discount === 'string') {
+    if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '') {
       userIsExist.where('month_discount', request.body.month_discount);
     }
+    if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
+      console.log(request.body);
     return response.json(await userIsExist.fetch());
   }
 
@@ -158,6 +160,7 @@ class ResidenceController {
       RTO1: 'required',
       RTO2: 'required',
       RTO3: 'required',
+      real_address: 'required',
       month_discount: 'required',
       floor_area: 'required',
       count_bathroom: 'required',
@@ -169,6 +172,7 @@ class ResidenceController {
     let {
           title,
           description,
+          real_address,
           type,
           lat,
           lng,
@@ -188,6 +192,7 @@ class ResidenceController {
     }
     res.title          = title;
     res.description    = description;
+    res.real_address   = real_address;
     res.type           = type;
     res.lat            = lat;
     res.lng            = lng;
