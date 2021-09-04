@@ -40,6 +40,7 @@ class ResidenceController {
     } catch (e) {
       console.log(e);
     }
+
     return response.json(await userIsExist.fetch());
   }
 
@@ -66,9 +67,34 @@ class ResidenceController {
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
-  async FetchMy({ auth, response }) {
-    let userIsExist = await Residence.query().orderBy('id', 'desc').where('user_id', auth.user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').fetch();
-    return response.json(userIsExist);
+  async FetchMy({ auth, request, response }) {
+    let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+
+    if (typeof request.body.typeSearch === 'string') {
+      userIsExist.where('type', request.body.typeSearch);
+    }
+    if (typeof request.body.provinceId === 'string') {
+      userIsExist.where('province_id', request.body.provinceId);
+    }
+    if (typeof request.body.rto_2 === 'string') {
+      userIsExist.where('rto_2', request.body.rto_2);
+    }
+    if (typeof request.body.rto_3 === 'string') {
+      userIsExist.where('rto_3', request.body.rto_3);
+    }
+    if (typeof request.body.count_bathroom === 'string') {
+      userIsExist.where('count_bathroom', request.body.count_bathroom);
+    }
+    if (typeof request.body.all_area === 'string') {
+      userIsExist.where('all_area', request.body.all_area);
+    }
+    if (typeof request.body.floor_area === 'string') {
+      userIsExist.where('floor_area', request.body.floor_area);
+    }
+    if (typeof request.body.month_discount === 'string') {
+      userIsExist.where('month_discount', request.body.month_discount);
+    }
+    return response.json(await userIsExist.fetch());
   }
 
   async Find({ auth, request, response }) {
