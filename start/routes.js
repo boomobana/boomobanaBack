@@ -82,8 +82,16 @@ Route.group(() => {
   Route.post('/ticket/add', 'TicketController.create');
   Route.post('/ticket/delete', 'TicketController.destroy');
 
+  Route.post('/transaction/fetch', 'TransactionController.index');
+
+  Route.post('/package/buy/:id', 'PackageController.create');
+  Route.post('/package/fetch', 'PackageBuyController.index');
+  Route.post('/trade/fetch', 'TradeController.index');
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
+  Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
+  Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
+
   Route.post('/polici/fetch', 'PoliciController.index');
   Route.post('/festivals', 'FestivalController.index');
   Route.post('/region', 'RegionController.index');

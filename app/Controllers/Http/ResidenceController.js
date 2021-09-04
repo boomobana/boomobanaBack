@@ -126,6 +126,7 @@ class ResidenceController {
       description: 'required',
       lat: 'required',
       lng: 'required',
+      all_area: 'required',
       province_id: 'required',
       region_id: 'required',
       RTO1: 'required',
@@ -152,6 +153,7 @@ class ResidenceController {
           RTO3,
           month_discount,
           floor_area,
+          all_area,
           count_bathroom,
         }   = request.all();
     let res = new Residence();
@@ -165,6 +167,7 @@ class ResidenceController {
     res.lng            = lng;
     res.province_id    = province_id;
     res.region_id      = region_id;
+    res.all_area       = all_area;
     res.rto_1          = RTO1;
     res.rto_2          = RTO2;
     res.rto_3          = RTO3;

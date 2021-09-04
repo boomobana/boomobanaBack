@@ -31,9 +31,9 @@
     "mysql": "^2.18.1",
     "request": "^2.88.2",
     "sqlite3": "^5.0.2",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zarinpal-checkout": "^0.2.7"
   },
-  "devDependencies": {},
   "autoload": {
     "App": "./app"
   }

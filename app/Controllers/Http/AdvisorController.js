@@ -119,6 +119,7 @@ class AdvisorController {
     newRealAdviserRealEstate.count_file_archive = count_file_archive;
     newRealAdviserRealEstate.status             = 0;
     await newRealAdviserRealEstate.save();
+    return response.json({ status_code: 200 });
   }
 
   /**

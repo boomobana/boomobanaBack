@@ -4,7 +4,9 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-var Package = use('App/Models/Package');
+var Package     = use('App/Models/Package');
+var Transaction = use('App/Models/Transaction');
+
 /**
  * Resourceful controller for interacting with packages
  */
@@ -31,7 +33,22 @@ class PackageController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create({ request, response, view }) {
+  async create({ request, response, auth }) {
+    let { rule }                   = request.headers();
+    let { id }                     = request.params;
+    let { title, price, discount } = await Package.query().where('id', id).last();
+    let slug                       = Math.floor(Math.random() * 100000000000);
+    let newBuy                     = new Transaction();
+    newBuy.user_id                 = auth.authenticator(rule).user.id;
+    newBuy.slug                    = slug;
+    newBuy.gateway                 = 'zarinpal';
+    newBuy.type_of_transaction     = 'package';
+    newBuy.ref_3                   = id;
+    newBuy.price                   = parseInt(price) - parseInt(discount);
+    newBuy.price_without           = price;
+    newBuy.description             = `خرید پکیج ${title}`;
+    await newBuy.save();
+    return response.json({ status_code: 200, slug: slug });
   }
 
   /**
