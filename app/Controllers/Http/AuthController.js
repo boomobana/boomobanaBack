@@ -34,7 +34,6 @@ class AuthController {
     user.save();
 
     var sms = await new Sms().sendCodeRegister(user.code, user.mobile);
-    console.log(sms);
     return response.json({ status_code: 200, status_text: 'Success Login' });
   }
 
@@ -101,7 +100,6 @@ class AuthController {
       return response.json(headerValidation.messages());
     }
     const { mobile, password } = request.all();
-    console.log(request.header('rule'));
     // let authUser               = await auth.attempt(mobile, password);
     let authUser = await auth.authenticator(request.header('rule')).attempt(mobile, password);
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
@@ -261,17 +259,96 @@ class AuthController {
     else if (rule === 'realEstate')
       us = await RealEstate.query().where('id', userStart.id).last();
 
-    console.log(userStart);
     let logins = await auth.authenticator(rule).generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
 
   async FinallRegisterrrr({ auth, request, response }) {
+    const rulesHeader      = {
+      rule: 'required',
+    };
+    const validationHeader = await validate(request.headers(), rulesHeader);
+    const mobileRule       = {
+      name: 'required',
+      name_en: 'required',
+      mobile: 'required',
+      tell: 'required',
+      logo: 'required',
+      sos: 'required',
+      email: 'required',
+      site_url: 'required',
+      social_url: 'required',
+      economic_code: 'required',
+      registration_number: 'required',
+      business_license: 'required',
+      business_license_number: 'required',
+      statute: 'required',
+      address: 'required',
+    };
+    const mobileValidation = await validate(request.all(), mobileRule);
+    if (mobileValidation.fails()) {
+      return response.json(mobileValidation.messages());
+    } else if (validationHeader.fails()) {
+      return response.json(validationHeader.messages());
+    }
+    const {
+            rule,
+          } = request.headers();
+    var userStart;
+
+    const {
+            name,
+            mobile,
+            name_en,
+            tell,
+            sos,
+            logo,
+            email,
+            site_url,
+            social_url,
+            economic_code,
+            registration_number,
+            business_license,
+            business_license_number,
+            statute,
+            address,
+          }                           = request.all();
+    userStart                         = await RealEstate.query().where('mobile', mobile).last();
+    userStart.name                    = name;
+    userStart.name_en                 = name_en;
+    userStart.mobile                  = mobile;
+    userStart.tell                    = tell;
+    userStart.sos                     = sos;
+    userStart.logo                    = logo;
+    userStart.email                   = email;
+    userStart.site_url                = site_url;
+    userStart.social_url              = social_url;
+    userStart.economic_code           = economic_code;
+    userStart.registration_number     = registration_number;
+    userStart.business_license        = business_license;
+    userStart.business_license_number = business_license_number;
+    userStart.statute                 = statute;
+    userStart.address                 = address;
+    userStart.pageSignup              = 3;
+    await userStart.save();
+    let us     = await RealEstate.query().where('id', userStart.id).last();
+    let logins = await auth.authenticator(rule).generate(us);
+    response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
+  }
+
+  async SendModirDet({ auth, request, response }) {
     const rules            = {
       mobile: 'required',
-      password: 'required',
       firstname: 'required',
       lastname: 'required',
+      firstname_en: 'required',
+      lastname_en: 'required',
+      national_id: 'required',
+      male: 'required',
+      avatar: 'required',
+      kartMeli: 'required',
+      about: 'required',
+      birthday: 'required',
     };
     const validation       = await validate(request.all(), rules);
     const rulesHeader      = {
@@ -285,81 +362,37 @@ class AuthController {
       return response.json(validationHeader.messages());
     }
     const {
+            rule,
+          }                = request.headers();
+    var userStart;
+    const {
             mobile,
             firstname,
             lastname,
-            password,
-          } = request.all();
-    const {
-            rule,
-          } = request.headers();
-    var userStart;
-    if (rule === 'user') {
-      userStart           = await User.query().where('mobile', mobile).last();
-      userStart.firstname = firstname;
-      userStart.lastname  = lastname;
-      userStart.mobile    = mobile;
-      userStart.password  = password;
-      await userStart.save();
-    } else if (rule === 'realEstate') {
-      const mobileRule       = {
-        firstname_en: 'required',
-        lastname_en: 'required',
-        mobile: 'required',
-        tell: 'required',
-        sos: 'required',
-        email: 'required',
-        economic_code: 'required',
-        registration_number: 'required',
-        business_license: 'required',
-        business_license_number: 'required',
-        statute: 'required',
-        address: 'required',
-      };
-      const mobileValidation = await validate(request.all(), mobileRule);
-      if (mobileValidation.fails()) {
-        return response.json(mobileValidation.messages());
-      }
-      const {
-              firstname_en,
-              lastname_en,
-              tell,
-              sos,
-              email,
-              economic_code,
-              registration_number,
-              business_license,
-              business_license_number,
-              statute,
-              address,
-            }                           = request.all();
-      userStart                         = await RealEstate.query().where('mobile', mobile).last();
-      userStart.firstname               = firstname;
-      userStart.lastname                = lastname;
-      userStart.firstname_en            = firstname_en;
-      userStart.lastname_en             = lastname_en;
-      userStart.mobile                  = mobile;
-      userStart.tell                    = tell;
-      userStart.sos                     = sos;
-      userStart.email                   = email;
-      userStart.economic_code           = economic_code;
-      userStart.registration_number     = registration_number;
-      userStart.business_license        = business_license;
-      userStart.business_license_number = business_license_number;
-      userStart.statute                 = statute;
-      userStart.address                 = address;
-      userStart.password                = password;
-      await userStart.save();
-    } else {
-      return response.json({ status_code: 404, status_text: 'not found' });
-    }
-    let us;
-    if (rule === 'user')
-      us = await User.query().where('id', userStart.id).last();
-    else if (rule === 'realEstate')
-      us = await RealEstate.query().where('id', userStart.id).last();
-
-    console.log(userStart);
+            firstname_en,
+            lastname_en,
+            national_id,
+            male,
+            avatar,
+            kartMeli,
+            about,
+            birthday,
+          }                = request.all();
+    userStart              = await RealEstate.query().where('mobile', mobile).last();
+    userStart.firstname    = firstname;
+    userStart.lastname     = lastname;
+    userStart.firstname_en = firstname_en;
+    userStart.lastname_en  = lastname_en;
+    userStart.national_id  = national_id;
+    userStart.male         = male;
+    userStart.mobile       = mobile;
+    userStart.avatar       = avatar;
+    userStart.kartMeli     = kartMeli;
+    userStart.about        = about;
+    userStart.birthday     = birthday;
+    userStart.pageSignup   = 2;
+    await userStart.save();
+    let us     = await RealEstate.query().where('id', userStart.id).last();
     let logins = await auth.authenticator(rule).generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }

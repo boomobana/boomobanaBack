@@ -24,6 +24,7 @@ Route.group(() => {
   Route.post('/login/with/mobile', 'AuthController.wihMobile');
   Route.post('/code/with/mobile', 'AuthController.wihMobileCode');
   Route.post('/final/code/signup', 'AuthController.FinalRegisterCode');
+  Route.post('/send/modir/det', 'AuthController.SendModirDet');
   Route.post('/final/finall/signup', 'AuthController.FinallRegisterrrr');
   Route.post('/login', 'AuthController.login');
   Route.post('/code', 'AuthController.getCode');
