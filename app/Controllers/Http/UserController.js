@@ -2,6 +2,7 @@
 
 const UserCode      = use('App/Models/UserCode');
 const User          = use('App/Models/User');
+const RealEstate    = use('App/Models/RealEstate');
 const PasswordReset = use('App/Models/PasswordReset');
 const Sms           = use('App/Controllers/Http/SmsSender');
 const { validate }  = use('Validator');
@@ -23,9 +24,14 @@ class UserController {
             email,
             region,
             city,
-          } = request.all();
-
-    let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
+          }        = request.all();
+    const { rule } = request.headers();
+    let userIsExist;
+    if (rule === 'user') {
+      userIsExist = await User.query().where('mobile', auth.user.mobile).last();
+    } else if (rule === 'realEstate') {
+      userIsExist = await RealEstate.query().where('mobile', auth.user.mobile).last();
+    }
     if (!userIsExist)
       return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
 
