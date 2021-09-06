@@ -244,11 +244,12 @@ class AuthController {
       if (mobileValidation.fails()) {
         return response.json(mobileValidation.messages());
       }
-      userStart           = new RealEstate();
-      userStart.firstname = firstname;
-      userStart.lastname  = lastname;
-      userStart.mobile    = mobile;
-      userStart.password  = password;
+      userStart            = new RealEstate();
+      userStart.firstname  = firstname;
+      userStart.lastname   = lastname;
+      userStart.mobile     = mobile;
+      userStart.pageSignup = 1;
+      userStart.password   = password;
       await userStart.save();
     } else {
       return response.json({ status_code: 404, status_text: 'not found' });
