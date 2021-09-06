@@ -95,6 +95,16 @@ Route.group(() => {
   Route.post('/setting/ads/option/add', 'SettingAdsRealEstateOptionController.index');
   Route.post('/setting/ads/option/fetch', 'SettingAdsRealEstateOptionController.fetch');
   Route.post('/setting/ads/connect/fetch', 'SettingAdsRealEstateConnectController.index');
+
+  Route.post('/customer/fetch', 'RealEstateCustomerController.index');
+  Route.post('/customer/add', 'RealEstateCustomerController.create');
+  Route.post('/customer/remove', 'RealEstateCustomerController.remove');
+  Route.post('/customer/find', 'RealEstateCustomerController.find');
+
+  Route.post('/event/fetch', 'RealEstateEventController.index');
+  Route.post('/event/add', 'RealEstateEventController.create');
+  Route.post('/event/remove', 'RealEstateEventController.remove');
+  Route.post('/event/find', 'RealEstateEventController.find');
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
