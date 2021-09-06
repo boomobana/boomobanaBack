@@ -50,7 +50,7 @@ class TransactionController {
       return response.send('payed before');
     let resp = await zarinpal.PaymentRequest({
       Amount: price, // In Tomans
-      CallbackURL: 'http://localhost:3333/api/realEstate/gateway/zarinpal/verify/' + slug,
+      CallbackURL: 'http://amlak.boomobana.com:3333/api/realEstate/gateway/zarinpal/verify/' + slug,
       Description: description,
     });
     console.log(resp);
