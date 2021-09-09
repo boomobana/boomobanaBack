@@ -33,7 +33,9 @@ class PackageBuyController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create({ request, response, view }) {
+  async isVip({ request, response, auth }) {
+    //todo check this user has vip panel?
+    return response.json({ status_code: 200 });
   }
 
   /**

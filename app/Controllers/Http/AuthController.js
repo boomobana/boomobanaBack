@@ -66,6 +66,7 @@ class AuthController {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
           let logins = await auth.authenticator(rule).generate(realEstate);
+          await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
           return response.json({ status_code: 202, rule: rule, status_text: 'User Is Not Exist' });
@@ -74,6 +75,7 @@ class AuthController {
         let user = await User.query().where('mobile', mobile).first();
         if (!!user && !!user.id) {
           let logins = await auth.authenticator(rule).generate(user);
+          await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
           return response.json({ status_code: 202, rule: rule, status_text: 'User Is Not Exist' });
@@ -101,7 +103,8 @@ class AuthController {
     }
     const { mobile, password } = request.all();
     // let authUser               = await auth.attempt(mobile, password);
-    let authUser = await auth.authenticator(request.header('rule')).attempt(mobile, password);
+    let authUser               = await auth.authenticator(request.header('rule')).attempt(mobile, password);
+    await new Sms().loginSuccess(mobile);
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
   }
 
@@ -280,7 +283,7 @@ class AuthController {
       site_url: 'required',
       social_url: 'required',
       economic_code: 'required',
-      registration_number: 'required',
+      postal_code: 'required',
       business_license: 'required',
       business_license_number: 'required',
       statute: 'required',
@@ -308,7 +311,7 @@ class AuthController {
             site_url,
             social_url,
             economic_code,
-            registration_number,
+            postal_code,
             business_license,
             business_license_number,
             statute,
@@ -325,7 +328,7 @@ class AuthController {
     userStart.site_url                = site_url;
     userStart.social_url              = social_url;
     userStart.economic_code           = economic_code;
-    userStart.registration_number     = registration_number;
+    userStart.postal_code             = postal_code;
     userStart.business_license        = business_license;
     userStart.business_license_number = business_license_number;
     userStart.statute                 = statute;

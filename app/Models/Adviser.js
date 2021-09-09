@@ -5,6 +5,10 @@ const Model = use('Model'),
       Hash  = use('Hash');
 
 class Adviser extends Model {
+  static get table() {
+    return 'users';
+  }
+
   static boot() {
     super.boot();
 
@@ -13,6 +17,7 @@ class Adviser extends Model {
      * it to the database.
      */
     this.addHook('beforeSave', async (userInstance) => {
+      userInstance.advisor = '1';
       if (userInstance.dirty.password) {
         userInstance.password = await Hash.make(userInstance.password);
       }

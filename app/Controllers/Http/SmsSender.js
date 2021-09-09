@@ -1,6 +1,7 @@
 'use strict';
 var request = require('request');
 const Env   = use('Env');
+var moment  = require('moment-jalaali');
 
 class SmsSender {
   async sendSms(data) {
@@ -35,6 +36,19 @@ class SmsSender {
   async sendCodeForgot(code, mobile) {
     return await this.sendTemplate(`${Env.get('APP_NAME')}
 	کد فراموشی رمز عبور شما : ${code}`, mobile);
+  };
+
+  async sendPassword(code, mobile) {
+    return await this.sendTemplate(`${Env.get('APP_NAME')}
+	رمز عبور جدید شما : ${code}`, mobile);
+  };
+
+  async loginSuccess(mobile) {
+    let date = new Date();
+    let hm   = date.getHours() + ':' + date.getMinutes();
+    return await this.sendTemplate(`${Env.get('APP_NAME')}
+ورود موفق به پنل
+${moment().format('jYYYY/jM/jD')} ${hm}`, mobile);
   };
 
 }

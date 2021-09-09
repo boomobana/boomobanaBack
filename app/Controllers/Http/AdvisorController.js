@@ -87,24 +87,24 @@ class AdvisorController {
             count_video,
             count_file_adviser,
             count_file_archive,
-          }                = request.all();
+          }              = request.all();
     const {
             rule,
-          }                = request.headers();
-    let newAdviser         = new Adviser();
-    newAdviser.firstname   = firstname;
-    newAdviser.lastname    = lastname;
-    newAdviser.email       = email;
-    newAdviser.mobile      = mobile;
-    newAdviser.password    = password;
-    newAdviser.role        = type;
-    newAdviser.lat         = 0;
-    newAdviser.lng         = 0;
-    newAdviser.address     = '';
-    newAdviser.active_code = Math.floor(Math.random() * 100000);
-    newAdviser.avatar      = fileUrl;
-    newAdviser.male        = male;
-    let savedData          = await newAdviser.save();
+          }              = request.headers();
+    let newAdviser       = new Adviser();
+    newAdviser.firstname = firstname;
+    newAdviser.lastname  = lastname;
+    newAdviser.email     = email;
+    newAdviser.mobile    = mobile;
+    newAdviser.password  = password;
+    newAdviser.role      = type;
+    newAdviser.lat       = 0;
+    newAdviser.lng       = 0;
+    newAdviser.address   = '';
+    // newAdviser.active_code = Math.floor(Math.random() * 100000);
+    newAdviser.avatar    = fileUrl;
+    newAdviser.male      = male;
+    let savedData        = await newAdviser.save();
 
     let newRealAdviserRealEstate                = new AdviserRealEstate();
     newRealAdviserRealEstate.real_estate_id     = auth.user.id;
@@ -119,7 +119,50 @@ class AdvisorController {
     newRealAdviserRealEstate.count_file_archive = count_file_archive;
     newRealAdviserRealEstate.status             = 0;
     await newRealAdviserRealEstate.save();
-    return response.json({ status_code: 200 });
+    return response.json({ status_code: 200, id: newRealAdviserRealEstate.id });
+  }
+
+  async address({ request, response, auth }) {
+    const rulesHeaders      = {
+      rule: 'required',
+    };
+    const validationHeaders = await validate(request.headers(), rulesHeaders);
+    if (validationHeaders.fails()) {
+      return response.json(validationHeaders.messages());
+    }
+    const rules      = {
+      id: 'required',
+      address: 'required',
+      lat: 'required',
+      lng: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+
+    const {
+            address,
+            id,
+            lat,
+            lng,
+          }            = request.all();
+    let { adviser_id } = await AdviserRealEstate.query().where('id', id).last();
+    let newAdviser     = await Adviser.query().where('id', adviser_id).last();
+    newAdviser.lat     = String(lat);
+    newAdviser.lng     = String(lng);
+    newAdviser.address = address;
+    if (request.body.kartMeli && request.body.kartMeli !== '/eMEWqh8ab5-HCrjp7roTyaQFOhbtfcg-2SmSU9qP9D.png')
+      newAdviser.kart_meli = request.body.kartMeli;
+    if (request.body.resome && request.body.resome !== '/eMEWqh8ab5-HCrjp7roTyaQFOhbtfcg-2SmSU9qP9D.png')
+      newAdviser.resome = request.body.resome;
+    if (request.body.taeahodat && request.body.taeahodat !== '/eMEWqh8ab5-HCrjp7roTyaQFOhbtfcg-2SmSU9qP9D.png')
+      newAdviser.taeahodat = request.body.taeahodat;
+    if (request.body.gharardad && request.body.gharardad !== '/eMEWqh8ab5-HCrjp7roTyaQFOhbtfcg-2SmSU9qP9D.png')
+      newAdviser.gharardad = request.body.gharardad;
+    let savedData = await newAdviser.save();
+
+    return response.json({ status_code: 200, id: newAdviser.id });
   }
 
   /**

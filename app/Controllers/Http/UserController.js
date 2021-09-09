@@ -80,25 +80,39 @@ class UserController {
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
-  async changePassword({ auth, request, response }) {
-    const rules      = {
-      password: 'required',
-    };
-    const validation = await validate(request.all(), rules);
-    if (validation.fails()) {
-      return response.json(validation.messages());
-    }
-    const {
-            password,
-          } = request.all();
+  // async changePassword({ auth, request, response }) {
+  //   const rules      = {
+  //     password: 'required',
+  //   };
+  //   const validation = await validate(request.all(), rules);
+  //   if (validation.fails()) {
+  //     return response.json(validation.messages());
+  //   }
+  //   const {
+  //           password,
+  //         } = request.all();
+  //
+  //   let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
+  //   if (!userIsExist)
+  //     return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+  //
+  //   // userIsExist.password = await Hash.make(password);
+  //   userIsExist.password = password;
+  //   userIsExist.save();
+  //   response.json({ status_code: 200, status_text: 'Successfully Done' });
+  // }
 
-    let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
+  async ChangePassword({ auth, request, response }) {
+    const { rule }  = request.headers();
+    let userIsExist = await RealEstate.query().where('mobile', auth.authenticator(rule).user.mobile).last();
     if (!userIsExist)
       return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
 
     // userIsExist.password = await Hash.make(password);
-    userIsExist.password = password;
+    let passsword        = String(Math.floor(Math.random() * (999999 - 111111) + 111111));
+    userIsExist.password = passsword;
     userIsExist.save();
+    var sms = await new Sms().sendPassword(passsword, userIsExist.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }

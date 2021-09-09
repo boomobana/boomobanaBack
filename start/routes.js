@@ -44,7 +44,7 @@ Route.group(() => {
   Route.post('/me', 'AuthController.me');
   Route.post('/change/profile', 'UserController.changeProfile');
   Route.post('/change/avatar', 'UserController.changeAvatar');
-  Route.post('/change/password', 'UserController.changePassword');
+  // Route.post('/change/password', 'UserController.changePassword');
   Route.post('/residence/fetch/my/last', 'ResidenceController.FetchMy');
 
   Route.post('/melk/add', 'ResidenceController.addMelk');
@@ -73,6 +73,7 @@ Route.group(() => {
   Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
 
   Route.post('/advisor/add', 'AdvisorController.create');
+  Route.post('/advisor/address', 'AdvisorController.address');
   Route.post('/advisor/fetch', 'AdvisorController.index');
   Route.post('/advisor/find', 'AdvisorController.find');
 
@@ -105,6 +106,8 @@ Route.group(() => {
   Route.post('/event/add', 'RealEstateEventController.create');
   Route.post('/event/remove', 'RealEstateEventController.remove');
   Route.post('/event/find', 'RealEstateEventController.find');
+  Route.post('/is/vip/account', 'PackageBuyController.isVip');
+  Route.post('/change/password/user/sms', 'UserController.ChangePassword');
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
