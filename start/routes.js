@@ -108,8 +108,12 @@ Route.group(() => {
   Route.post('/event/find', 'RealEstateEventController.find');
   Route.post('/is/vip/account', 'PackageBuyController.isVip');
   Route.post('/change/password/user/sms', 'UserController.ChangePassword');
+  Route.post('/home/page/fetch','UserController.homeFetch')
+
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
+
+
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
   Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
 

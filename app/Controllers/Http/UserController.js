@@ -1,12 +1,18 @@
 'use strict';
 
-const UserCode      = use('App/Models/UserCode');
-const User          = use('App/Models/User');
-const RealEstate    = use('App/Models/RealEstate');
-const PasswordReset = use('App/Models/PasswordReset');
-const Sms           = use('App/Controllers/Http/SmsSender');
-const { validate }  = use('Validator');
-const Hash          = use('Hash');
+const Adviser            = use('App/Models/Adviser');
+const Transaction        = use('App/Models/Transaction');
+const RealEstateCustomer = use('App/Models/RealEstateCustomer');
+const Ticket             = use('App/Models/Ticket');
+const RealEstateEvent    = use('App/Models/RealEstateEvent');
+const Residence          = use('App/Models/Residence');
+const UserCode           = use('App/Models/UserCode');
+const User               = use('App/Models/User');
+const RealEstate         = use('App/Models/RealEstate');
+const PasswordReset      = use('App/Models/PasswordReset');
+const Sms                = use('App/Controllers/Http/SmsSender');
+const { validate }       = use('Validator');
+const Hash               = use('Hash');
 
 class UserController {
   async findUser({ auth, request, response }) {
@@ -114,6 +120,26 @@ class UserController {
     userIsExist.save();
     var sms = await new Sms().sendPassword(passsword, userIsExist.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async homeFetch({ auth, request, response }) {
+    const { rule }          = request.headers();
+    const { id }            = auth.authenticator(rule).user;
+    const files             = await Residence.query().where('user_id', id).count('*');
+    const filesCount        = files[0][Object.keys(files[0])];
+    const advisor           = await Adviser.query().where('id', id).count('*');
+    const advisorCount      = advisor[0][Object.keys(advisor[0])];
+    const event             = await RealEstateEvent.query().where('real_estate_id', id).count('*');
+    const eventCount        = event[0][Object.keys(event[0])];
+    const TicketF           = await Ticket.query().where('user_id', id).count('*');
+    const TicketFCount      = TicketF[0][Object.keys(TicketF[0])];
+    const CustomerF         = await RealEstateCustomer.query().where('real_estate_id', id).count('*');
+    const CustomerFCount    = CustomerF[0][Object.keys(CustomerF[0])];
+    const Transaction2      = await Transaction.query().where('user_id', id).count('*');
+    const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
+    const json              = { filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count };
+    console.log(json);
+    return response.json(json);
   }
 }
 
