@@ -90,7 +90,9 @@ class ResidenceController {
       userIsExist.where('all_area', request.body.all_area);
     }
     if (typeof request.body.floor_area === 'string' && request.body.floor_area !== null && request.body.floor_area !== '') {
-      userIsExist.where('floor_area', request.body.floor_area);
+      if (typeof request.body.floor_area2 === 'string' && request.body.floor_area2 !== null && request.body.floor_area2 !== '') {
+        userIsExist.whereBetween('floor_area', [request.body.floor_area, request.body.floor_area2]);
+      }
     }
     if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '') {
       if (typeof request.body.month_discount2 === 'string' && request.body.month_discount2 !== null && request.body.month_discount2 !== '') {
