@@ -24,6 +24,11 @@ class PackageBuyController {
     return response.json(await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).with('package').with('transaction').orderBy('id', 'desc').fetch());
   }
 
+  async fetchMy({ request, response, auth }) {
+    const { rule } = request.headers();
+    return response.json(await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).with('package').with('transaction').orderBy('id', 'desc').last());
+  }
+
   /**
    * Render a form to be used for creating a new packagebuy.
    * GET packagebuys/create
@@ -34,8 +39,17 @@ class PackageBuyController {
    * @param {View} ctx.view
    */
   async isVip({ request, response, auth }) {
-    //todo check this user has vip panel?
-    return response.json({ status_code: 200 });
+    const { rule }  = request.headers();
+    let package_buy = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
+    if (!!package_buy && package_buy.after_time) {
+      if (package_buy.after_time > new Date().getTime()) {
+        return response.json({ status_code: 200 });
+      } else {
+        return response.json({ status_code: 201 });
+      }
+    } else {
+      return response.json({ status_code: 201 });
+    }
   }
 
   /**

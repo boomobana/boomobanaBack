@@ -108,7 +108,8 @@ Route.group(() => {
   Route.post('/event/find', 'RealEstateEventController.find');
   Route.post('/is/vip/account', 'PackageBuyController.isVip');
   Route.post('/change/password/user/sms', 'UserController.ChangePassword');
-  Route.post('/home/page/fetch','UserController.homeFetch')
+  Route.post('/home/page/fetch', 'UserController.homeFetch');
+  Route.post('/my/package', 'PackageBuyController.fetchMy');
 
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {

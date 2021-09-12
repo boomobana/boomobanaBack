@@ -4,15 +4,17 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 const ResidenceFile = use('App/Models/ResidenceFile');
+const PackageBuy    = use('App/Models/PackageBuy');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const { validate }  = require('@adonisjs/validator/src/Validator');
+const { auth }      = require('mysql/lib/protocol/Auth');
 
 /**
  * Resourceful controller for interacting with residencefiles
  */
 class ResidenceFileController {
-  async addPicture({ request, response }) {
+  async addPicture({ request, auth, response }) {
     const rules      = {
       residence_id: 'required',
       url: 'required',
@@ -22,14 +24,27 @@ class ResidenceFileController {
     if (validation.fails()) {
       return response.json(validation.messages());
     }
-    let { url, residence_id, type } = request.all();
-
-    let res          = new ResidenceFile();
-    res.url          = url;
-    res.residence_id = residence_id;
-    res.type         = type;
-    res.save();
-    response.json({ status_code: 200, status_text: 'Successfully Done' });
+    let {
+          url,
+          residence_id,
+          type,
+        }    = request.all();
+    let {
+          rule,
+        }    = request.headers();
+    let pack = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
+    if (!!pack && pack.after_time > new Date().getTime() && pack.after_count_video > 0) {
+      pack.after_count_video -= 1;
+      await pack.save();
+      let res          = new ResidenceFile();
+      res.url          = url;
+      res.residence_id = residence_id;
+      res.type         = type;
+      res.save();
+      return response.json({ status_code: 200, status_text: 'Successfully Done' });
+    } else {
+      return response.json({ status_code: 202, status_text: 'Unsuccessfully' });
+    }
   }
 
   async fetchFile({ request, response }) {

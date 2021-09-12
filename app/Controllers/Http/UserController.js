@@ -135,7 +135,7 @@ class UserController {
     const TicketFCount      = TicketF[0][Object.keys(TicketF[0])];
     const CustomerF         = await RealEstateCustomer.query().where('real_estate_id', id).count('*');
     const CustomerFCount    = CustomerF[0][Object.keys(CustomerF[0])];
-    const Transaction2      = await Transaction.query().where('user_id', id).count('*');
+    const Transaction2      = await Transaction.query().where('status', 2).where('user_id', id).count('*');
     const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
     const json              = { filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count };
     console.log(json);

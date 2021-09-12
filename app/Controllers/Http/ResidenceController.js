@@ -4,6 +4,7 @@ const { validate } = require('@adonisjs/validator/src/Validator');
 const Residence    = use('App/Models/Residence');
 const FavoriteAd   = use('App/Models/FavoriteAd');
 const ViewAd       = use('App/Models/ViewAd');
+const PackageBuy   = use('App/Models/PackageBuy');
 const { sleep }    = require('../Helper');
 
 class ResidenceController {
@@ -169,6 +170,9 @@ class ResidenceController {
     if (validation.fails()) {
       return response.json(validation.messages());
     }
+    const {
+            rule,
+          } = request.headers();
     let {
           title,
           description,
@@ -189,6 +193,13 @@ class ResidenceController {
     let res = new Residence();
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();
+    } else {
+      let pack = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
+      if (!!pack && pack.after_time < new Date().getTime() && pack.after_count_file < 1) {
+        return response.json({ status_code: 204 });
+      }
+      pack.after_count_file -= 1;
+      await pack.save();
     }
     res.title          = title;
     res.description    = description;

@@ -24,7 +24,7 @@ class SettingAdsRealEstateController {
     const rules      = {
       get: 'required',
       title: 'required',
-      rto_1: 'required',
+      // rto_1: 'required',
       rto_2: 'required',
       rto_3: 'required',
       max_area: 'required',
@@ -42,7 +42,7 @@ class SettingAdsRealEstateController {
     let {
           get,
           title,
-          rto_1,
+          // rto_1,
           rto_2,
           rto_3,
           max_area,
@@ -63,7 +63,7 @@ class SettingAdsRealEstateController {
     newSetting.real_estate_id = auth.authenticator(rule).user.id;
     newSetting.get            = get;
     newSetting.title          = title;
-    newSetting.rto_1          = rto_1;
+    // newSetting.rto_1          = rto_1;
     newSetting.rto_2          = rto_2;
     newSetting.rto_3          = rto_3;
     newSetting.max_area       = max_area;
