@@ -21,7 +21,9 @@ class FestivalController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    return response.json(await Festival.query().where('enable', '=', 1).last());
+    // let data = await Festival.query().where('enable', '=', 1).last();
+    // console.log(data);
+    return response.json({ status_code: 404 });
   }
 
   /**
