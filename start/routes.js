@@ -125,6 +125,19 @@ Route.group(() => {
   Route.post('/residence/find', 'ResidenceController.Find');
 }).prefix('api/realEstate');
 Route.group(() => {
+  Route.post('/get/festivals', 'FestivalController.index');
+
+  Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
+  Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
+
+  Route.post('/polici/fetch', 'PoliciController.index');
+  Route.post('/festivals', 'FestivalController.index');
+  Route.post('/region', 'RegionController.index');
+  Route.post('/province', 'ProvinceController.index');
+  Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
+  Route.post('/residence/find', 'ResidenceController.Find');
+}).prefix('api/user');
+Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
@@ -166,7 +179,6 @@ Route.group(() => {
   Route.post('/advisor/find', 'AdvisorController.find');
 
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
-  Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
   Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
 
   Route.post('/ticket/list', 'TicketController.index');
@@ -198,18 +210,7 @@ Route.group(() => {
   Route.post('/change/password/user/sms', 'UserController.ChangePassword');
   Route.post('/home/page/fetch', 'UserController.homeFetch');
   Route.post('/my/package', 'PackageBuyController.fetchMy');
-
+  Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
+  Route.post('/auth/residence/fetch/last', 'ResidenceController.Fetch');
+  Route.post('/auth/residence/find', 'ResidenceController.Find');
 }).prefix('api/user').middleware(['auth:user']);
-Route.group(() => {
-  Route.post('/get/festivals', 'FestivalController.index');
-
-  Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
-  Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
-
-  Route.post('/polici/fetch', 'PoliciController.index');
-  Route.post('/festivals', 'FestivalController.index');
-  Route.post('/region', 'RegionController.index');
-  Route.post('/province', 'ProvinceController.index');
-  Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
-  Route.post('/residence/find', 'ResidenceController.Find');
-}).prefix('api/user');
