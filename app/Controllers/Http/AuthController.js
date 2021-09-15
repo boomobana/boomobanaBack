@@ -345,13 +345,9 @@ class AuthController {
       mobile: 'required',
       firstname: 'required',
       lastname: 'required',
-      firstname_en: 'required',
-      lastname_en: 'required',
       national_id: 'required',
       male: 'required',
       avatar: 'required',
-      kartMeli: 'required',
-      about: 'required',
       birthday: 'required',
     };
     const validation       = await validate(request.all(), rules);
@@ -367,36 +363,74 @@ class AuthController {
     }
     const {
             rule,
-          }                = request.headers();
+          } = request.headers();
+    console.log(rule);
     var userStart;
     const {
             mobile,
             firstname,
             lastname,
-            firstname_en,
-            lastname_en,
             national_id,
             male,
             avatar,
-            kartMeli,
-            about,
             birthday,
-          }                = request.all();
-    userStart              = await RealEstate.query().where('mobile', mobile).last();
-    userStart.firstname    = firstname;
-    userStart.lastname     = lastname;
-    userStart.firstname_en = firstname_en;
-    userStart.lastname_en  = lastname_en;
-    userStart.national_id  = national_id;
-    userStart.male         = male;
-    userStart.mobile       = mobile;
-    userStart.avatar       = avatar;
-    userStart.kartMeli     = kartMeli;
-    userStart.about        = about;
-    userStart.birthday     = birthday;
-    userStart.pageSignup   = 2;
+          } = request.all();
+
+    if (rule === 'realEstate') {
+      const rules2      = {
+        firstname_en: 'required',
+        lastname_en: 'required',
+        kartMeli: 'required',
+        about: 'required',
+      };
+      const validation2 = await validate(request.all(), rules2);
+      if (validation2.fails()) {
+        return response.json(validation.messages());
+      }
+      const {
+              firstname_en,
+              lastname_en,
+              kartMeli,
+              about,
+            }                = request.all();
+      userStart              = await RealEstate.query().where('mobile', mobile).last();
+      userStart.firstname_en = firstname_en;
+      userStart.lastname_en  = lastname_en;
+      userStart.kartMeli     = kartMeli;
+      userStart.about        = about;
+    } else if (rule === 'user') {
+      const rules2      = {
+        kart_meli: 'required',
+        address: 'required',
+      };
+      const validation2 = await validate(request.all(), rules2);
+      if (validation2.fails()) {
+        return response.json(validation.messages());
+      }
+      const {
+              kart_meli,
+              address,
+            }             = request.all();
+      userStart           = await User.query().where('mobile', mobile).last();
+      userStart.kart_meli = kart_meli;
+      userStart.address   = address;
+    }
+    userStart.firstname   = firstname;
+    userStart.lastname    = lastname;
+    userStart.national_id = national_id;
+    userStart.male        = male;
+    userStart.mobile      = mobile;
+    userStart.avatar      = avatar;
+    userStart.birthday    = birthday;
+    userStart.pageSignup  = 2;
+
     await userStart.save();
-    let us     = await RealEstate.query().where('id', userStart.id).last();
+    let us;
+    if (rule === 'realEstate') {
+      us = await RealEstate.query().where('id', userStart.id).last();
+    } else if (rule === 'user') {
+      us = await User.query().where('mobile', mobile).last();
+    }
     let logins = await auth.authenticator(rule).generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }

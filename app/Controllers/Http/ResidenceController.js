@@ -146,6 +146,8 @@ class ResidenceController {
     const rules      = {
       title: 'required',
       description: 'required',
+      province_id: 'required',
+      region_id: 'required',
       type: 'required',
     };
     const validation = await validate(request.all(), rules);
@@ -155,6 +157,8 @@ class ResidenceController {
     let {
           title,
           description,
+          province_id,
+          region_id,
           type,
         }   = request.all();
     let {
@@ -166,9 +170,11 @@ class ResidenceController {
     }
     res.title       = title;
     res.description = description;
+    res.province_id = province_id;
+    res.region_id   = region_id;
     res.type        = type;
     res.user_id     = auth.authenticator(rule).user.id;
-    res.save();
+    await res.save();
     await sleep(1000);
     let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.authenticator(rule).user.id).last();
     response.json({ status_code: 200, status_text: 'Successfully Done', id: residence.id });
