@@ -23,7 +23,6 @@ class ProvinceController {
     try {
       return response.json(await Province.all());
     } catch (e) {
-      console.log(e);
     }
   }
 

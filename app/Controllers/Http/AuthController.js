@@ -364,7 +364,6 @@ class AuthController {
     const {
             rule,
           } = request.headers();
-    console.log(rule);
     var userStart;
     const {
             mobile,

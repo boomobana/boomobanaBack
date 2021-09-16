@@ -69,6 +69,7 @@ Route.group(() => {
   Route.post('/residence/change/date', 'ResidenceController.changeDate');
   Route.post('/residence/price/max/man', 'ResidenceController.changePriceMaxMan');
   Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
+  Route.post('/residence/level/change', 'ResidenceController.levelChange');
 
   Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
 
@@ -125,19 +126,6 @@ Route.group(() => {
   Route.post('/residence/find', 'ResidenceController.Find');
 }).prefix('api/realEstate');
 Route.group(() => {
-  Route.post('/get/festivals', 'FestivalController.index');
-
-  Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
-  Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
-
-  Route.post('/polici/fetch', 'PoliciController.index');
-  Route.post('/festivals', 'FestivalController.index');
-  Route.post('/region', 'RegionController.index');
-  Route.post('/province', 'ProvinceController.index');
-  Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
-  Route.post('/residence/find', 'ResidenceController.Find');
-}).prefix('api/user');
-Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON' };
   });
@@ -170,6 +158,7 @@ Route.group(() => {
   Route.post('/residence/change/date', 'ResidenceController.changeDate');
   Route.post('/residence/price/max/man', 'ResidenceController.changePriceMaxMan');
   Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
+  Route.post('/residence/level/change', 'ResidenceController.levelChange');
 
   Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
 
@@ -213,4 +202,20 @@ Route.group(() => {
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
   Route.post('/auth/residence/fetch/last', 'ResidenceController.Fetch');
   Route.post('/auth/residence/find', 'ResidenceController.Find');
+
+  Route.post('/request/save/fetch', 'SaveRequestController.index');
+  Route.post('/request/save/add', 'SaveRequestController.create');
 }).prefix('api/user').middleware(['auth:user']);
+Route.group(() => {
+  Route.post('/get/festivals', 'FestivalController.index');
+
+  Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
+  Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
+
+  Route.post('/polici/fetch', 'PoliciController.index');
+  Route.post('/festivals', 'FestivalController.index');
+  Route.post('/region', 'RegionController.index');
+  Route.post('/province', 'ProvinceController.index');
+  Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
+  Route.post('/residence/find', 'ResidenceController.Find');
+}).prefix('api/user');

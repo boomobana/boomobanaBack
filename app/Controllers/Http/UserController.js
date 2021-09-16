@@ -7,6 +7,7 @@ const Ticket             = use('App/Models/Ticket');
 const RealEstateEvent    = use('App/Models/RealEstateEvent');
 const Residence          = use('App/Models/Residence');
 const UserCode           = use('App/Models/UserCode');
+const FavoriteAd         = use('App/Models/FavoriteAd');
 const User               = use('App/Models/User');
 const RealEstate         = use('App/Models/RealEstate');
 const PasswordReset      = use('App/Models/PasswordReset');
@@ -137,7 +138,17 @@ class UserController {
     const CustomerFCount    = CustomerF[0][Object.keys(CustomerF[0])];
     const Transaction2      = await Transaction.query().where('status', 2).where('user_id', id).count('*');
     const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
-    const json              = { filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count };
+    const Favorite2         = await FavoriteAd.query().where('user_id', id).count('*');
+    const Favorite2Count    = Favorite2[0][Object.keys(Favorite2[0])];
+    const json              = {
+      filesCount,
+      advisorCount,
+      eventCount,
+      TicketFCount,
+      CustomerFCount,
+      Transaction2Count,
+      Favorite2Count,
+    };
     console.log(json);
     return response.json(json);
   }

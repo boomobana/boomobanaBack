@@ -4,6 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 const ResidenceFile = use('App/Models/ResidenceFile');
+const Residence     = use('App/Models/Residence');
 const PackageBuy    = use('App/Models/PackageBuy');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
@@ -28,22 +29,37 @@ class ResidenceFileController {
           url,
           residence_id,
           type,
-        }    = request.all();
+        } = request.all();
     let {
           rule,
-        }    = request.headers();
-    let pack = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
-    if (!!pack && pack.after_time > new Date().getTime() && pack.after_count_video > 0) {
-      pack.after_count_video -= 1;
-      await pack.save();
+        } = request.headers();
+    if (rule === 'realEstate') {
+      let pack = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
+      if (!!pack && pack.after_time > new Date().getTime() && pack.after_count_video > 0) {
+        pack.after_count_video -= 1;
+        await pack.save();
+        let res          = new ResidenceFile();
+        res.url          = url;
+        res.residence_id = residence_id;
+        res.type         = type;
+        res.save();
+        let rq    = await Residence.query().where('id', residence_id).last();
+        rq.levels = 2;
+        await rq.save();
+        return response.json({ status_code: 200, status_text: 'Successfully Done' });
+      } else {
+        return response.json({ status_code: 202, status_text: 'Unsuccessfully' });
+      }
+    } else {
       let res          = new ResidenceFile();
       res.url          = url;
       res.residence_id = residence_id;
       res.type         = type;
       res.save();
+      let rq    = await Residence.query().where('id', residence_id).last();
+      rq.levels = 2;
+      await rq.save();
       return response.json({ status_code: 200, status_text: 'Successfully Done' });
-    } else {
-      return response.json({ status_code: 202, status_text: 'Unsuccessfully' });
     }
   }
 

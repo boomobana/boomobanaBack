@@ -22,7 +22,6 @@ class FestivalController {
    */
   async index({ request, response, view }) {
     // let data = await Festival.query().where('enable', '=', 1).last();
-    // console.log(data);
     return response.json({ status_code: 404 });
   }
 

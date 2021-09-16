@@ -43,7 +43,6 @@ class ResidenceController {
         }
       }
     } catch (e) {
-      console.log(e);
     }
 
     return response.json(await userIsExist.fetch());
@@ -82,7 +81,7 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.authenticator(rule).user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+    let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.authenticator(rule).user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
 
     if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
       userIsExist.where('type', request.body.typeSearch);
@@ -112,8 +111,8 @@ class ResidenceController {
         userIsExist.whereBetween('month_discount', [request.body.month_discount, request.body.month_discount2]);
       }
     }
-    if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
-      console.log(request.body);
+    // if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
+    console.log(request.body);
     return response.json(await userIsExist.fetch());
   }
 
@@ -289,8 +288,6 @@ class ResidenceController {
       count_bathroom: 'required',
       floor_area: 'required',
       all_area: 'required',
-      province_id: 'required',
-      region_id: 'required',
       postal_code: 'required',
       real_address: 'required',
       lat: 'required',
@@ -305,8 +302,6 @@ class ResidenceController {
           count_bathroom,
           floor_area,
           all_area,
-          province_id,
-          region_id,
           postal_code,
           real_address,
           lat,
@@ -319,8 +314,6 @@ class ResidenceController {
     res.count_bathroom = count_bathroom;
     res.floor_area     = floor_area;
     res.all_area       = all_area;
-    res.province_id    = province_id;
-    res.region_id      = region_id;
     res.postal_code    = postal_code;
     res.real_address   = real_address;
     res.lat            = lat;
@@ -416,6 +409,27 @@ class ResidenceController {
     res.sign_rules_site  = sign_rules_site;
     res.cancel_policy_id = cancel_policy_id;
     res.save();
+    let rq    = await Residence.query().where('id', residence_id).last();
+    rq.levels = 4;
+    await rq.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async levelChange({ request, response }) {
+    const rules      = {
+      residence_id: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          residence_id,
+        } = request.all();
+
+    let rq    = await Residence.query().where('id', residence_id).last();
+    rq.levels = 3;
+    await rq.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 

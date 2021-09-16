@@ -53,7 +53,7 @@ class Residence extends Model {
       //
       // }
     });
-    return this.hasOne('App/Models/SeasonConnect', 'id', 'residence_id').where('sd_id', id).select('id').select('sd_id').select('residence_id').select('price').select('description').with('Season');
+    return this.hasMany('App/Models/SeasonConnect', 'id', 'residence_id').where('sd_id', id).select('id').select('sd_id').select('residence_id').select('price').select('description').with('Season');
   }
 
   Room() {

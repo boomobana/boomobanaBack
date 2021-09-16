@@ -12,7 +12,6 @@ class AuthCheckCustom {
    */
   async handle({ request }, next) {
     // call next to advance the request
-    console.log(request.headers());
     await next();
   }
 }
