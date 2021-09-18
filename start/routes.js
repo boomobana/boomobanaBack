@@ -57,7 +57,6 @@ Route.group(() => {
   Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
   Route.post('/residence/file/fetch', 'ResidenceFileController.fetchFile');
 
-  Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
   Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
 
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
@@ -124,6 +123,7 @@ Route.group(() => {
   Route.post('/province', 'ProvinceController.index');
   Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
   Route.post('/residence/find', 'ResidenceController.Find');
+  Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
 }).prefix('api/realEstate');
 Route.group(() => {
   Route.get('/', () => {
@@ -146,7 +146,6 @@ Route.group(() => {
   Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
   Route.post('/residence/file/fetch', 'ResidenceFileController.fetchFile');
 
-  Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
   Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
 
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
@@ -208,6 +207,7 @@ Route.group(() => {
 }).prefix('api/user').middleware(['auth:user']);
 Route.group(() => {
   Route.post('/get/festivals', 'FestivalController.index');
+  Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
 
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
   Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');

@@ -1,18 +1,79 @@
 'use strict';
 
-const { validate } = require('@adonisjs/validator/src/Validator');
-const Residence    = use('App/Models/Residence');
-const FavoriteAd   = use('App/Models/FavoriteAd');
-const ViewAd       = use('App/Models/ViewAd');
-const PackageBuy   = use('App/Models/PackageBuy');
-const { sleep }    = require('../Helper');
+const { validate }           = require('@adonisjs/validator/src/Validator');
+const Residence              = use('App/Models/Residence');
+const FavoriteAd             = use('App/Models/FavoriteAd');
+const ResidenceFile          = use('App/Models/ResidenceFile');
+const ResidenceOptionConnect = use('App/Models/ResidenceOptionConnect');
+const ViewAd                 = use('App/Models/ViewAd');
+const PackageBuy             = use('App/Models/PackageBuy');
+const { sleep }              = require('../Helper');
 
 class ResidenceController {
   async Fetch({ auth, request, response }) {
     let {
           rule,
         }           = request.headers();
+    let {
+          options,
+        }           = request.all();
+    let arrayOp     = [];
     let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+    if (options.length != 0) {
+      for (let i = 0; i < options.length; i++) {
+        const item     = options[i];
+        let getOptions = await ResidenceOptionConnect.query().where('residence_option_id', item.id).fetch();
+        for (let j = 0; j < getOptions.rows.length; j++) {
+          const opt = getOptions.rows[j];
+          if (arrayOp.filter(e => e != opt.residence_id).length == 0) {
+            arrayOp.push(opt.residence_id);
+          }
+        }
+      }
+      userIsExist.whereIn('id', arrayOp);
+    }
+    let pictureArray = [];
+    if (request.body.photo) {
+      let getFiles = await ResidenceFile.query().where('type', '1').groupBy('residence_id').fetch();
+      for (let i = 0; i < getFiles.rows.length; i++) {
+        const item = getFiles.rows[i];
+        pictureArray.push(item.residence_id);
+      }
+      userIsExist.whereIn('id', pictureArray);
+    }
+    pictureArray = [];
+    if (request.body.video) {
+      let getFiles = await ResidenceFile.query().where('type', '2').groupBy('residence_id').fetch();
+      for (let i = 0; i < getFiles.rows.length; i++) {
+        const item = getFiles.rows[i];
+        pictureArray.push(item.residence_id);
+      }
+      userIsExist.whereIn('id', pictureArray);
+    }
+    if (request.body.province != 0) {
+      userIsExist.where('province_id', request.body.province);
+    }
+    if (request.body.capacity != 0) {
+      userIsExist.where('capacity_standard', request.body.capacity);
+    }
+    pictureArray = [];
+    if (request.body.toor) {
+      let getFiles = await ResidenceFile.query().where('type', '4').groupBy('residence_id').fetch();
+      for (let i = 0; i < getFiles.rows.length; i++) {
+        const item = getFiles.rows[i];
+        pictureArray.push(item.residence_id);
+      }
+      userIsExist.whereIn('id', pictureArray);
+    }
+    pictureArray = [];
+    if (request.body.panorama) {
+      let getFiles = await ResidenceFile.query().where('type', '3').groupBy('residence_id').fetch();
+      for (let i = 0; i < getFiles.rows.length; i++) {
+        const item = getFiles.rows[i];
+        pictureArray.push(item.residence_id);
+      }
+      userIsExist.whereIn('id', pictureArray);
+    }
     if (typeof request.body.type === 'string') {
       if (request.body.type == 'residence') {
         userIsExist.where('type', '1');
@@ -28,22 +89,22 @@ class ResidenceController {
         userIsExist.orWhere('title', request.body.text);
       }
     }
-    try {
-      if (typeof request.body.save === 'boolean') {
-        if (request.body.save === true) {
-          if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.authenticator(rule).user.id).last()) {
-            let va     = new ViewAd();
-            va.text    = request.body.text;
-            va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
-            va.user_id = auth.authenticator(rule).user.id;
-            va.ad_id   = 0;
-            va.type    = 1;
-            va.save();
-          }
-        }
-      }
-    } catch (e) {
-    }
+    // try {
+    //   if (typeof request.body.save === 'boolean') {
+    //     if (request.body.save === true) {
+    //       if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.authenticator(rule).user.id).last()) {
+    //         let va     = new ViewAd();
+    //         va.text    = request.body.text;
+    //         va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
+    //         va.user_id = auth.authenticator(rule).user.id;
+    //         va.ad_id   = 0;
+    //         va.type    = 1;
+    //         va.save();
+    //       }
+    //     }
+    //   }
+    // } catch (e) {
+    // }
 
     return response.json(await userIsExist.fetch());
   }
