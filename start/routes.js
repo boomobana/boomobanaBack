@@ -207,6 +207,7 @@ Route.group(() => {
 }).prefix('api/user').middleware(['auth:user']);
 Route.group(() => {
   Route.post('/get/festivals', 'FestivalController.index');
+  Route.post('/realestate/fetch', 'RealEstateController.fetchOnly');
   Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
 
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');

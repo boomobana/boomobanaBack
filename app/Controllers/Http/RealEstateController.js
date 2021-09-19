@@ -4,6 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
+const RealEstate = use('App/Models/RealEstate');
 
 /**
  * Resourceful controller for interacting with realestates
@@ -19,6 +20,10 @@ class RealEstateController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
+  }
+
+  async fetchOnly({ request, response, auth }) {
+    return response.json(await RealEstate.query().where('pageSignup', 3).whereNot('name', '-').select(['id', 'name']).fetch());
   }
 
   /**

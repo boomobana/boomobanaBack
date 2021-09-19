@@ -19,6 +19,31 @@ class ResidenceController {
         }           = request.all();
     let arrayOp     = [];
     let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+    if (typeof request.body.type === 'string') {
+      if (request.body.type != 'nothing') {
+        if (request.body.type == 'residence') {
+          userIsExist.where('type', '1');
+          if (typeof request.body.text == 'string') {
+            userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+          }
+        } else if (request.body.type == 'amlak') {
+          if (request.body.type2 != 0) {
+            userIsExist.where('type', request.body.type2);
+          } else {
+            userIsExist.whereIn('type', [2, 3]);
+          }
+          if (typeof request.body.text == 'string') {
+            userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+          }
+        } else {
+          userIsExist.orWhere('title', request.body.text);
+        }
+      } else {
+        if (typeof request.body.text == 'string') {
+          userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+        }
+      }
+    }
     if (options.length != 0) {
       for (let i = 0; i < options.length; i++) {
         const item     = options[i];
@@ -56,6 +81,18 @@ class ResidenceController {
     if (request.body.capacity != 0) {
       userIsExist.where('capacity_standard', request.body.capacity);
     }
+    if (request.body.typeResidence != 0) {
+      userIsExist.where('rto_2', request.body.typeResidence);
+    }
+    if (request.body.typeResidence != 0) {
+      userIsExist.where('count_bathroom', request.body.room);
+    }
+    if (request.body.price1 != 0 && request.body.price2 != 0) {
+      userIsExist.whereBetween('month_discount', [String(request.body.price1), String(request.body.price2)]);
+    }
+    if (request.body.sen1 != 0 && request.body.sen2 != 0) {
+      userIsExist.whereBetween('all_area', [String(request.body.sen1), String(request.body.sen2)]);
+    }
     pictureArray = [];
     if (request.body.toor) {
       let getFiles = await ResidenceFile.query().where('type', '4').groupBy('residence_id').fetch();
@@ -73,21 +110,6 @@ class ResidenceController {
         pictureArray.push(item.residence_id);
       }
       userIsExist.whereIn('id', pictureArray);
-    }
-    if (typeof request.body.type === 'string') {
-      if (request.body.type == 'residence') {
-        userIsExist.where('type', '1');
-        if (typeof request.body.text == 'string') {
-          userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
-        }
-      } else if (request.body.type == 'amlak') {
-        userIsExist.where('type', '2');
-        if (typeof request.body.text == 'string') {
-          userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
-        }
-      } else {
-        userIsExist.orWhere('title', request.body.text);
-      }
     }
     // try {
     //   if (typeof request.body.save === 'boolean') {

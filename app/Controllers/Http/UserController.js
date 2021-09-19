@@ -149,7 +149,6 @@ class UserController {
       Transaction2Count,
       Favorite2Count,
     };
-    console.log(json);
     return response.json(json);
   }
 }
