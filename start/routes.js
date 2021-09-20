@@ -204,6 +204,9 @@ Route.group(() => {
 
   Route.post('/request/save/fetch', 'SaveRequestController.index');
   Route.post('/request/save/add', 'SaveRequestController.create');
+
+  Route.post('/reserve/fetch', 'ReserveController.index');
+  Route.post('/reserve/add', 'ReserveController.create');
 }).prefix('api/user').middleware(['auth:user']);
 Route.group(() => {
   Route.post('/get/festivals', 'FestivalController.index');
