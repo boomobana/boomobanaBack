@@ -1,6 +1,7 @@
 # Node modules
 node_modules
-
+cert/certificate.pem
+cert/private.pem
 # Adonis directory for storing tmp files
 tmp
 

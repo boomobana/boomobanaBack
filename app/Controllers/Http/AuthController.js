@@ -273,21 +273,13 @@ class AuthController {
     };
     const validationHeader = await validate(request.headers(), rulesHeader);
     const mobileRule       = {
-      name: 'required',
-      name_en: 'required',
       mobile: 'required',
       tell: 'required',
-      logo: 'required',
-      sos: 'required',
-      email: 'required',
-      site_url: 'required',
-      social_url: 'required',
       economic_code: 'required',
       postal_code: 'required',
       business_license: 'required',
       business_license_number: 'required',
       statute: 'required',
-      address: 'required',
     };
     const mobileValidation = await validate(request.all(), mobileRule);
     if (mobileValidation.fails()) {
@@ -301,41 +293,129 @@ class AuthController {
     var userStart;
 
     const {
-            name,
             mobile,
-            name_en,
-            tell,
-            sos,
-            logo,
-            email,
-            site_url,
-            social_url,
-            economic_code,
-            postal_code,
-            business_license,
-            business_license_number,
-            statute,
-            address,
-          }                           = request.all();
-    userStart                         = await RealEstate.query().where('mobile', mobile).last();
-    userStart.name                    = name;
-    userStart.name_en                 = name_en;
-    userStart.mobile                  = mobile;
-    userStart.tell                    = tell;
-    userStart.sos                     = sos;
-    userStart.logo                    = logo;
-    userStart.email                   = email;
-    userStart.site_url                = site_url;
-    userStart.social_url              = social_url;
-    userStart.economic_code           = economic_code;
-    userStart.postal_code             = postal_code;
-    userStart.business_license        = business_license;
-    userStart.business_license_number = business_license_number;
-    userStart.statute                 = statute;
-    userStart.address                 = address;
-    userStart.pageSignup              = 3;
+
+          } = request.all();
+    if (rule === 'realEstate') {
+      const realEstateRule       = {
+        name: 'required',
+        name_en: 'required',
+        sos: 'required',
+        logo: 'required',
+        email: 'required',
+        site_url: 'required',
+        social_url: 'required',
+        tell: 'required',
+        economic_code: 'required',
+        postal_code: 'required',
+        business_license: 'required',
+        business_license_number: 'required',
+        statute: 'required',
+        address: 'required',
+      };
+      const realEstateValidation = await validate(request.all(), realEstateRule);
+      if (realEstateValidation.fails()) {
+        return response.json(realEstateValidation.messages());
+      }
+      const {
+              name,
+              name_en,
+              sos,
+              logo,
+              email,
+              site_url,
+              social_url,
+              tell,
+              economic_code,
+              postal_code,
+              business_license,
+              business_license_number,
+              statute,
+              address,
+            }                           = request.all();
+      userStart                         = await RealEstate.query().where('mobile', mobile).last();
+      userStart.name                    = name;
+      userStart.name_en                 = name_en;
+      userStart.sos                     = sos;
+      userStart.logo                    = logo;
+      userStart.email                   = email;
+      userStart.site_url                = site_url;
+      userStart.social_url              = social_url;
+      userStart.address                 = address;
+      userStart.tell                    = tell;
+      userStart.economic_code           = economic_code;
+      userStart.postal_code             = postal_code;
+      userStart.business_license        = business_license;
+      userStart.business_license_number = business_license_number;
+      userStart.statute                 = statute;
+      userStart.address                 = address;
+    } else if (rule === 'user') {
+      const userDefRule       = {
+        type: 'required',
+        card_number: 'required',
+        shaba_number: 'required',
+        account_owner_name: 'required',
+        bank_name: 'required',
+      };
+      const userDefValidation = await validate(request.all(), userDefRule);
+      if (userDefValidation.fails()) {
+        return response.json(userDefValidation.messages());
+      }
+      const {
+              type,
+              card_number,
+              shaba_number,
+              account_owner_name,
+              bank_name,
+            }                      = request.all();
+      userStart                    = await User.query().where('mobile', mobile).last();
+      userStart.type               = type;
+      userStart.card_number        = card_number;
+      userStart.shaba_number       = shaba_number;
+      userStart.account_owner_name = account_owner_name;
+      userStart.bank_name          = bank_name;
+      if (type == 2) {
+        const userType2Rule       = {
+          tell: 'required',
+          economic_code: 'required',
+          postal_code: 'required',
+          business_license: 'required',
+          business_license_number: 'required',
+          statute: 'required',
+          address: 'required',
+        };
+        const userType2Validation = await validate(request.all(), userType2Rule);
+        if (userType2Validation.fails()) {
+          return response.json(userType2Validation.messages());
+        }
+        const {
+                tell,
+                economic_code,
+                postal_code,
+                business_license,
+                business_license_number,
+                statute,
+                address,
+              }                           = request.all();
+        userStart.tell                    = tell;
+        userStart.economic_code           = economic_code;
+        userStart.postal_code             = postal_code;
+        userStart.business_license        = business_license;
+        userStart.business_license_number = business_license_number;
+        userStart.statute                 = statute;
+        userStart.address                 = address;
+      }
+    }
+
+    userStart.pageSignup = 3;
     await userStart.save();
-    let us     = await RealEstate.query().where('id', userStart.id).last();
+    let us;
+    if (rule === 'realEstate') {
+      us = await RealEstate.query().where('mobile', mobile).last();
+    } else if (rule === 'user') {
+      us = await User.query().where('mobile', mobile).last();
+    }
+
     let logins = await auth.authenticator(rule).generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
