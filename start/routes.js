@@ -1,17 +1,17 @@
 'use strict';
 
 /*
-|--------------------------------------------------------------------------
-| Routes
-|--------------------------------------------------------------------------
-|
-| Http routes are entry points to your web application. You can create
-| routes for different URLs and bind Controller actions to them.
-|
-| A complete guide on routing is available here.
-| http://adonisjs.com/docs/4.1/routing
-|
-*/
+ |--------------------------------------------------------------------------
+ | Routes
+ |--------------------------------------------------------------------------
+ |
+ | Http routes are entry points to your web application. You can create
+ | routes for different URLs and bind Controller actions to them.
+ |
+ | A complete guide on routing is available here.
+ | http://adonisjs.com/docs/4.1/routing
+ |
+ */
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route');
@@ -60,7 +60,6 @@ Route.group(() => {
   Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
 
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
-  Route.post('/residence/type/option/connect/fetch', 'ResidenceTypeOptionController.index');
 
   Route.post('/residence/room/add', 'RoomController.addRoom');
 
@@ -113,6 +112,7 @@ Route.group(() => {
 
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
+  Route.post('/residence/type/option/connect/fetch', 'ResidenceTypeOptionController.index');
 
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
   Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
@@ -149,7 +149,6 @@ Route.group(() => {
   Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
 
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
-  Route.post('/residence/type/option/connect/fetch', 'ResidenceTypeOptionController.index');
 
   Route.post('/residence/room/add', 'RoomController.addRoom');
 
@@ -212,6 +211,7 @@ Route.group(() => {
   Route.post('/get/festivals', 'FestivalController.index');
   Route.post('/realestate/fetch', 'RealEstateController.fetchOnly');
   Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
+  Route.post('/residence/type/option/connect/fetch', 'ResidenceTypeOptionController.index');
 
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
   Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
