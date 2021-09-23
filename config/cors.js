@@ -22,6 +22,7 @@ module.exports = {
     'http://192.168.1.42:45585/',
     'https://amlak.boomobana.com',
     'https://home.boomobana.com',
+    'https://boomobana.com',
   ],
 
   /*
