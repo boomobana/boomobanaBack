@@ -160,6 +160,10 @@ class RealEstateCustomerController {
    */
   async destroy({ params, request, response }) {
   }
+
+  async customerFetchAdmin({ params, request, response }) {
+    return response.json(await RealEstateCustomer.query().paginate());
+  }
 }
 
 module.exports = RealEstateCustomerController;

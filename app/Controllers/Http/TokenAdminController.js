@@ -4,15 +4,14 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-const RealEstate = use('App/Models/RealEstate');
 
 /**
- * Resourceful controller for interacting with realestates
+ * Resourceful controller for interacting with tokenadmins
  */
-class RealEstateController {
+class TokenAdminController {
   /**
-   * Show a list of all realestates.
-   * GET realestates
+   * Show a list of all tokenadmins.
+   * GET tokenadmins
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -22,17 +21,9 @@ class RealEstateController {
   async index({ request, response, view }) {
   }
 
-  async fetchOnly({ request, response, auth }) {
-    return response.json(await RealEstate.query().where('pageSignup', 3).whereNot('name', '-').select([
-      'id',
-      'name',
-      'avatar',
-    ]).fetch());
-  }
-
   /**
-   * Render a form to be used for creating a new realestate.
-   * GET realestates/create
+   * Render a form to be used for creating a new tokenadmin.
+   * GET tokenadmins/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -43,8 +34,8 @@ class RealEstateController {
   }
 
   /**
-   * Create/save a new realestate.
-   * POST realestates
+   * Create/save a new tokenadmin.
+   * POST tokenadmins
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -54,8 +45,8 @@ class RealEstateController {
   }
 
   /**
-   * Display a single realestate.
-   * GET realestates/:id
+   * Display a single tokenadmin.
+   * GET tokenadmins/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -66,8 +57,8 @@ class RealEstateController {
   }
 
   /**
-   * Render a form to update an existing realestate.
-   * GET realestates/:id/edit
+   * Render a form to update an existing tokenadmin.
+   * GET tokenadmins/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -78,8 +69,8 @@ class RealEstateController {
   }
 
   /**
-   * Update realestate details.
-   * PUT or PATCH realestates/:id
+   * Update tokenadmin details.
+   * PUT or PATCH tokenadmins/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -88,21 +79,16 @@ class RealEstateController {
   async update({ params, request, response }) {
   }
 
-  async realEstateFetchAdmin({ params, request, response }) {
-    return response.json(await RealEstate.query().paginate());
-  }
-
-  async realEstateActiveAdmin({ params, request, response }) {
-    const {
-            user_id,
-            status,
-          } = request.all();
-    console.log(request.all());
-    let user    = await RealEstate.query().where('id', user_id).last();
-    user.active = status;
-    await user.save();
-    return response.json({ status_code: 200, status_text: 'Successfully Done' });
+  /**
+   * Delete a tokenadmin with id.
+   * DELETE tokenadmins/:id
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   */
+  async destroy({ params, request, response }) {
   }
 }
 
-module.exports = RealEstateController;
+module.exports = TokenAdminController;

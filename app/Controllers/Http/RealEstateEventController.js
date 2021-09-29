@@ -117,15 +117,8 @@ class RealEstateEventController {
   async update({ params, request, response }) {
   }
 
-  /**
-   * Delete a realestateevent with id.
-   * DELETE realestateevents/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy({ params, request, response }) {
+  async eventFetchAdmin({ params, request, response }) {
+    return response.json(await RealEstateEvent.query().paginate());
   }
 }
 

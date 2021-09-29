@@ -107,6 +107,10 @@ class PackageController {
    */
   async destroy({ params, request, response }) {
   }
+
+  async packageFetchAdmin({ params, request, response }) {
+    return response.json(await Package.query().paginate());
+  }
 }
 
 module.exports = PackageController;

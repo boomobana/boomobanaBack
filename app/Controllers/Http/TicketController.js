@@ -159,6 +159,10 @@ class TicketController {
 
     return response.json({ status_code: 200, status_text: 'successfully done' });
   }
+
+  async ticketFetchAdmin({ params, request, response }) {
+    return response.json(await Ticket.query().with('user').paginate());
+  }
 }
 
 module.exports = TicketController;

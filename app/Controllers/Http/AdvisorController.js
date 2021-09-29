@@ -221,6 +221,10 @@ class AdvisorController {
    */
   async destroy({ params, request, response }) {
   }
+
+  async fetchAdvisorAdmin({ params, request, response }) {
+    return response.json(await Adviser.query().where('advisor', 1).paginate());
+  }
 }
 
 module.exports = AdvisorController;

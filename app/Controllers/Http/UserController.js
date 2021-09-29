@@ -151,6 +151,40 @@ class UserController {
     };
     return response.json(json);
   }
+
+  async homeFetchCountingAdmin({ auth, request, response }) {
+    const files             = await Residence.query().count('*');
+    const filesCount        = files[0][Object.keys(files[0])];
+    const advisor           = await Adviser.query().count('*');
+    const advisorCount      = advisor[0][Object.keys(advisor[0])];
+    const event             = await RealEstateEvent.query().count('*');
+    const eventCount        = event[0][Object.keys(event[0])];
+    const TicketF           = await Ticket.query().count('*');
+    const TicketFCount      = TicketF[0][Object.keys(TicketF[0])];
+    const CustomerF         = await RealEstateCustomer.query().count('*');
+    const CustomerFCount    = CustomerF[0][Object.keys(CustomerF[0])];
+    const Transaction2      = await Transaction.query().count('*');
+    const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
+    const Favorite2         = await FavoriteAd.query().count('*');
+    const Favorite2Count    = Favorite2[0][Object.keys(Favorite2[0])];
+    const RealEstateC       = await RealEstate.query().count('*');
+    const RealEstateCount   = RealEstateC[0][Object.keys(RealEstateC[0])];
+    const json              = {
+      filesCount,
+      advisorCount,
+      eventCount,
+      TicketFCount,
+      CustomerFCount,
+      Transaction2Count,
+      Favorite2Count,
+      RealEstateCount,
+    };
+    return response.json(json);
+  }
+
+  async userFetchAdmin({ auth, request, response }) {
+    return response.json(await User.query().paginate());
+  }
 }
 
 module.exports = UserController;

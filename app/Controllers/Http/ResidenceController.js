@@ -525,6 +525,10 @@ class ResidenceController {
     const { rule } = request.headers();
     return response.json(await ViewAd.query().where('user_id', auth.authenticator(rule).user.id).where('type', '2').with('Residence').fetch());
   }
+
+  async fileFetchAdmin({ auth, request, response }) {
+    return response.json(await Residence.query().paginate());
+  }
 }
 
 module.exports = ResidenceController;

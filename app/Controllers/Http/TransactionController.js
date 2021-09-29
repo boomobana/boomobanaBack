@@ -209,6 +209,10 @@ class TransactionController {
    */
   async destroy({ params, request, response }) {
   }
+
+  async transactionFetchAdmin({ response }) {
+    return response.json(await Transaction.query().paginate());
+  }
 }
 
 module.exports = TransactionController;
