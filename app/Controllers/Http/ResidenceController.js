@@ -527,7 +527,11 @@ class ResidenceController {
   }
 
   async fileFetchAdmin({ auth, request, response }) {
-    return response.json(await Residence.query().paginate());
+    return response.json(await Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').paginate());
+  }
+
+  async fileFindAdmin({ auth, request, response }) {
+    return response.json(await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last());
   }
 }
 

@@ -14,11 +14,11 @@
  */
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
-const Route = use('Route');
-
+const Route                = use('Route');
+const { nameOfManagement } = require('../config/app');
 Route.group(() => {
   Route.get('/', () => {
-    return { greeting: 'Hello world in JSON' };
+    return { greeting: 'Hello world in JSON ' + nameOfManagement };
   });
   Route.post('/package', 'PackageController.index');
   Route.post('/login/with/mobile', 'AuthController.wihMobile');
@@ -231,14 +231,17 @@ Route.group(() => {
   Route.post('/me', 'AuthController.me');
   Route.post('/home/fetch/counting', 'UserController.homeFetchCountingAdmin');
   Route.post('/user/fetch', 'UserController.userFetchAdmin');
+  Route.post('/user/active', 'UserController.userActiveAdmin');
   Route.post('/file/fetch', 'ResidenceController.fileFetchAdmin');
+  Route.post('/file/find', 'ResidenceController.fileFindAdmin');
   Route.post('/customer/fetch', 'RealEstateCustomerController.customerFetchAdmin');
   Route.post('/advisor/fetch', 'AdvisorController.fetchAdvisorAdmin');
   Route.post('/agency/fetch', 'RealEstateController.realEstateFetchAdmin');
   Route.post('/agency/active', 'RealEstateController.realEstateActiveAdmin');
   Route.post('/event/fetch', 'RealEstateEventController.eventFetchAdmin');
   Route.post('/ticket/fetch', 'TicketController.ticketFetchAdmin');
+  Route.post('/ticket/admin/answer', 'TicketController.ticketAnswerAdmin');
+  Route.post('/ticket/admin/remove', 'TicketController.ticketRemoveAdmin');
   Route.post('/package/fetch', 'PackageController.packageFetchAdmin');
   Route.post('/transaction/fetch', 'TransactionController.transactionFetchAdmin');
 }).prefix('api/admin').middleware(['auth:admin']);
-// 09384341413

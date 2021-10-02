@@ -160,8 +160,27 @@ class TicketController {
     return response.json({ status_code: 200, status_text: 'successfully done' });
   }
 
+  async ticketRemoveAdmin({ request, response, auth }) {
+    let { id } = request.all();
+    await Ticket.query().where('id', id).delete();
+    return response.json({ status_code: 200 });
+  }
+
   async ticketFetchAdmin({ params, request, response }) {
     return response.json(await Ticket.query().with('user').paginate());
+  }
+
+  async ticketAnswerAdmin({ params, request, response }) {
+    const {
+            id,
+            answer,
+          } = request.all();
+    console.log(request.all());
+    let ticket          = await Ticket.query().where('id', id).last();
+    ticket.admin_answer = answer;
+    console.log(ticket);
+    await ticket.save();
+    return response.json({ status_code: 200 });
   }
 }
 

@@ -185,6 +185,14 @@ class UserController {
   async userFetchAdmin({ auth, request, response }) {
     return response.json(await User.query().paginate());
   }
+
+  async userActiveAdmin({ auth, request, response }) {
+    const { id } = request.all();
+    let user     = await User.query().where('id', id).last();
+    user.active  = user.active == 1 ? 0 : 1;
+    await user.save();
+    return response.json({ status_code: 200 });
+  }
 }
 
 module.exports = UserController;
