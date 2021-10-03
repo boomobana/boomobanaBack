@@ -17,7 +17,7 @@ const Hash               = use('Hash');
 
 class UserController {
   async findUser({ auth, request, response }) {
-    return response.json(await User.query().where('slug', request.body.slug).with('residence').last());
+    return response.json(await User.query().where('id', request.body.slug).with('residence').last());
   }
 
   async changeProfile({ auth, request, response }) {

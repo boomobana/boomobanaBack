@@ -22,6 +22,10 @@ class RealEstate extends Model {
   tokens() {
     return this.hasMany('App/Models/TokenRealEstate');
   }
+
+  residence() {
+    return this.hasMany('App/Models/Residence', 'id', 'user_id').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');
+  }
 }
 
 module.exports = RealEstate;

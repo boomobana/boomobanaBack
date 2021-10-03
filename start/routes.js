@@ -34,6 +34,10 @@ Route.group(() => {
 }).middleware('guest');
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
 Route.post('/find/user/details', 'UserController.findUser');
+Route.post('/find/realestate/details', 'RealEstateController.findOnly');
+Route.post('/api/user/find/realestate/details', 'RealEstateController.findOnly');
+
+Route.post('api/user/find/user/details', 'UserController.findUser');
 Route.post('/upload', 'UploadFileController.Upload');
 
 Route.group(() => {

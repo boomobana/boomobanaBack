@@ -23,11 +23,34 @@ class RealEstateController {
   }
 
   async fetchOnly({ request, response, auth }) {
-    return response.json(await RealEstate.query().where('pageSignup', 3).whereNot('name', '-').select([
+    let data = RealEstate.query().where('pageSignup', 3).whereNot('name', '-').select([
       'id',
       'name',
       'avatar',
-    ]).fetch());
+      'lastname',
+      'firstname',
+    ]);
+    if (request.body.textSearch != '' && request.body.textSearch !== null)
+      data.where('name', 'like', '%' + request.body.textSearch + '%')
+        .orWhere('name_en', 'like', '%' + request.body.textSearch + '%')
+        .orWhere('lastname', 'like', '%' + request.body.textSearch + '%')
+        .orWhere('firstname', 'like', '%' + request.body.textSearch + '%')
+        .orWhere('lastname_en', 'like', '%' + request.body.textSearch + '%')
+        .orWhere('firstname_en', 'like', '%' + request.body.textSearch + '%');
+    return response.json(await data.fetch());
+  }
+
+  async findOnly({ request, response, auth }) {
+    const { slug } = request.all();
+
+    let data = RealEstate.query().where('id', slug).whereNot('name', '-').select([
+      'id',
+      'name',
+      'avatar',
+      'lastname',
+      'firstname',
+    ]).with('residence');
+    return response.json(await data.last());
   }
 
   /**

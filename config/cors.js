@@ -19,7 +19,6 @@ module.exports = {
   origin: [
     'http://localhost:4200',
     'http://192.168.1.42:4200',
-    'http://192.168.1.42:45585/',
     'https://amlak.boomobana.com',
     'https://home.boomobana.com',
     'https://boomobana.com',
