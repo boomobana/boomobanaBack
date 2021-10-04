@@ -18,7 +18,7 @@ class ResidenceController {
           options,
         }           = request.all();
     let arrayOp     = [];
-    let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
+    let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0);
     if (typeof request.body.type === 'string') {
       if (request.body.type != 'nothing') {
         if (request.body.type == 'residence') {
@@ -266,6 +266,7 @@ class ResidenceController {
     const rules      = {
       title: 'required',
       description: 'required',
+      archive: 'required',
       lat: 'required',
       lng: 'required',
       all_area: 'required',
@@ -301,8 +302,10 @@ class ResidenceController {
           month_discount,
           floor_area,
           all_area,
+          archive,
           count_bathroom,
         }   = request.all();
+    console.log(archive);
     let res = new Residence();
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();
@@ -320,6 +323,7 @@ class ResidenceController {
     res.description    = description;
     res.real_address   = real_address;
     res.type           = type;
+    res.archive        = archive;
     res.lat            = lat;
     res.lng            = lng;
     res.province_id    = province_id;
@@ -532,6 +536,35 @@ class ResidenceController {
 
   async fileFindAdmin({ auth, request, response }) {
     return response.json(await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last());
+  }
+
+  async upgradeLevel({ auth, request, response }) {
+    const {
+            residence_id,
+            different,
+            instantaneous,
+            Special,
+            occasion,
+          } = request.all();
+    let res = await Residence.query().where('id', residence_id).last();
+    if (different === true)
+      res.different = 1;
+    else
+      res.different = 0;
+    if (instantaneous === true)
+      res.instantaneous = 1;
+    else
+      res.instantaneous = 0;
+    if (Special === true)
+      res.Special = 1;
+    else
+      res.Special = 0;
+    if (occasion === true)
+      res.occasion = 1;
+    else
+      res.occasion = 0;
+    res.save();
+    return response.json({ status_code: 200 });
   }
 }
 
