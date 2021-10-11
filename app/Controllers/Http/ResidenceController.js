@@ -278,7 +278,8 @@ class ResidenceController {
       real_address: 'required',
       month_discount: 'required',
       floor_area: 'required',
-      count_bathroom: 'required',
+      width_area: 'required',
+      height_area: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -304,6 +305,8 @@ class ResidenceController {
           all_area,
           archive,
           count_bathroom,
+          width_area,
+          height_area,
         }   = request.all();
     console.log(archive);
     let res = new Residence();
@@ -334,6 +337,8 @@ class ResidenceController {
     res.rto_3          = RTO3;
     res.month_discount = month_discount;
     res.floor_area     = floor_area;
+    res.width_area     = width_area;
+    res.height_area    = height_area;
     res.count_bathroom = count_bathroom;
     res.user_id        = auth.authenticator(rule).user.id;
     await res.save();

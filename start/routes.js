@@ -114,6 +114,7 @@ Route.group(() => {
   Route.post('/change/password/user/sms', 'UserController.ChangePassword');
   Route.post('/home/page/fetch', 'UserController.homeFetch');
   Route.post('/my/package', 'PackageBuyController.fetchMy');
+  Route.post('/residence/upgrade/payment', 'ResidenceController.upgradeLevel');
 
 }).prefix('api/realEstate').middleware(['auth:realEstate']);
 Route.group(() => {
