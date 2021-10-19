@@ -4,7 +4,7 @@
 const Env = use('Env');
 
 module.exports = {
-  'nameOfManagement': 'mostafa eftekhari',
+  'nameOfManagement': 'mahdidoraj',
   /*
    |--------------------------------------------------------------------------
    | Application Name

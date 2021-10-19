@@ -57,10 +57,10 @@ class SettingAdsRealEstateController {
           rule,
         }          = request.headers();
     let newSetting = new SettingAdsRealEstate();
-    if (!!await SettingAdsRealEstate.query().where('real_estate_id', auth.authenticator(rule).user.id).last()) {
+    if (!!await SettingAdsRealEstate.query().where('real_estate_id', auth.user.id).last()) {
       newSetting = await SettingAdsRealEstate.query().where('real_estate_id', auth.user.id).last();
     }
-    newSetting.real_estate_id = auth.authenticator(rule).user.id;
+    newSetting.real_estate_id = auth.user.id;
     newSetting.get            = get;
     newSetting.title          = title;
     // newSetting.rto_1          = rto_1;

@@ -21,12 +21,12 @@ class PackageBuyController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).with('package').with('transaction').orderBy('id', 'desc').fetch());
+    return response.json(await PackageBuy.query().where('user_id', auth.user.id).with('package').with('transaction').orderBy('id', 'desc').fetch());
   }
 
   async fetchMy({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).with('package').with('transaction').orderBy('id', 'desc').last());
+    return response.json(await PackageBuy.query().where('user_id', auth.user.id).with('package').with('transaction').orderBy('id', 'desc').last());
   }
 
   /**
@@ -40,8 +40,8 @@ class PackageBuyController {
    */
   async isVip({ request, response, auth }) {
     const { rule }  = request.headers();
-    let package_buy = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
-    if (!!package_buy && package_buy.after_time) {
+    let package_buy = await PackageBuy.query().where('user_id', auth.user.id).last();
+    if (!!package_buy && !!package_buy.after_time && package_buy.after_time != 0) {
       if (package_buy.after_time > new Date().getTime()) {
         return response.json({ status_code: 200 });
       } else {

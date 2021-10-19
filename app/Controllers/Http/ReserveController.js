@@ -21,7 +21,7 @@ class ReserveController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await Reserved.query().with('Residence').where('user_id', auth.authenticator(rule).user.id).fetch());
+    return response.json(await Reserved.query().with('Residence').where('user_id', auth.user.id).fetch());
   }
 
   /**
@@ -42,7 +42,7 @@ class ReserveController {
             count_user,
           }                 = request.all();
     const ReserveS          = new Reserved();
-    ReserveS.user_id        = auth.authenticator(rule).user.id;
+    ReserveS.user_id        = auth.user.id;
     ReserveS.residence_id   = residence_id;
     ReserveS.start_time     = start_time;
     ReserveS.end_time       = end_time;

@@ -37,7 +37,7 @@ class SettingAdsRealEstateOptionController {
           rule,
         }                    = request.headers();
     let newSetting           = new SettingAdsRealEstateOption();
-    newSetting.real_esate_id = auth.authenticator(rule).user.id;
+    newSetting.real_esate_id = auth.user.id;
     newSetting.option_id     = option_id;
     newSetting.setting_id    = setting_id;
     await newSetting.save();

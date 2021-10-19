@@ -22,7 +22,7 @@ class RealEstateCustomerController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await RealEstateCustomer.query().where('real_estate_id', auth.authenticator(rule).user.id).fetch());
+    return response.json(await RealEstateCustomer.query().where('real_estate_id', auth.user.id).fetch());
   }
 
   /**
@@ -66,7 +66,7 @@ class RealEstateCustomerController {
             province_id,
           }        = request.all();
     const { rule } = request.headers();
-    const user     = auth.authenticator(rule).user;
+    const user     = auth.user;
     let newCust    = new RealEstateCustomer();
 
     newCust.real_estate_id = user.id;

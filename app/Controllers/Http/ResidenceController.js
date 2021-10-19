@@ -78,13 +78,16 @@ class ResidenceController {
     if (request.body.province != 0) {
       userIsExist.where('province_id', request.body.province);
     }
+    if (request.body.region != 0) {
+      userIsExist.where('region_id', request.body.region);
+    }
     if (request.body.capacity != 0) {
       userIsExist.where('capacity_standard', request.body.capacity);
     }
-    if (request.body.typeResidence != 0) {
+    if (request.body.typeResidence != 1) {
       userIsExist.where('rto_2', request.body.typeResidence);
     }
-    if (request.body.typeResidence != 0) {
+    if (request.body.room != 0) {
       userIsExist.where('count_bathroom', request.body.room);
     }
     if (request.body.price1 != 0 && request.body.price2 != 0) {
@@ -114,11 +117,11 @@ class ResidenceController {
     // try {
     //   if (typeof request.body.save === 'boolean') {
     //     if (request.body.save === true) {
-    //       if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.authenticator(rule).user.id).last()) {
+    //       if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.user.id).last()) {
     //         let va     = new ViewAd();
     //         va.text    = request.body.text;
     //         va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
-    //         va.user_id = auth.authenticator(rule).user.id;
+    //         va.user_id = auth.user.id;
     //         va.ad_id   = 0;
     //         va.type    = 1;
     //         va.save();
@@ -135,7 +138,7 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = FavoriteAd.query().where('user_id', auth.authenticator(rule).user.id).orderBy('id', 'desc').with('Residence');
+    let userIsExist = FavoriteAd.query().where('user_id', auth.user.id).orderBy('id', 'desc').with('Residence');
 
     return response.json(await userIsExist.fetch());
   }
@@ -144,7 +147,7 @@ class ResidenceController {
     let {
           rule,
         }  = request.headers();
-    let ad = await FavoriteAd.query().where('user_id', auth.authenticator(rule).user.id).where('ad_id', request.body.residence_id).last();
+    let ad = await FavoriteAd.query().where('user_id', auth.user.id).where('ad_id', request.body.residence_id).last();
     if (ad) {
       console.log('here', ad.id);
       let rem = await FavoriteAd.find(ad.id);
@@ -153,7 +156,7 @@ class ResidenceController {
       console.log(rem);
     } else {
       let newFa     = new FavoriteAd();
-      newFa.user_id = auth.authenticator(rule).user.id;
+      newFa.user_id = auth.user.id;
       newFa.ad_id   = request.body.residence_id;
       newFa.save();
     }
@@ -164,7 +167,7 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.authenticator(rule).user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
+    let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
 
     if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
       userIsExist.where('type', request.body.typeSearch);
@@ -207,10 +210,10 @@ class ResidenceController {
     try {
       if (typeof request.body.save === 'boolean') {
         if (request.body.save === true) {
-          if (!await ViewAd.query().where('ad_id', request.body.residence_id).where('user_id', auth.authenticator(rule).user.id).last()) {
+          if (!await ViewAd.query().where('ad_id', request.body.residence_id).where('user_id', auth.user.id).last()) {
             let va     = new ViewAd();
             va.ad_id   = request.body.residence_id;
-            va.user_id = auth.authenticator(rule).user.id;
+            va.user_id = auth.user.id;
             va.type    = 2;
             va.text    = '*';
             va.url     = '*';
@@ -255,10 +258,10 @@ class ResidenceController {
     res.province_id = province_id;
     res.region_id   = region_id;
     res.type        = type;
-    res.user_id     = auth.authenticator(rule).user.id;
+    res.user_id     = auth.user.id;
     await res.save();
     await sleep(1000);
-    let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.authenticator(rule).user.id).last();
+    let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.user.id).last();
     response.json({ status_code: 200, status_text: 'Successfully Done', id: residence.id });
   }
 
@@ -280,6 +283,10 @@ class ResidenceController {
       floor_area: 'required',
       width_area: 'required',
       height_area: 'required',
+      meter_price: 'required',
+      // room_count: 'required',
+      floor_count: 'required',
+      floor_unit_count: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -307,6 +314,10 @@ class ResidenceController {
           count_bathroom,
           width_area,
           height_area,
+          meter_price,
+          // room_count,
+          floor_count,
+          floor_unit_count,
         }   = request.all();
     console.log(archive);
     let res = new Residence();
@@ -314,7 +325,7 @@ class ResidenceController {
       res = await Residence.query().where('id', request.body.residence_id).last();
     } else {
       if (rule === 'realEstate') {
-        let pack = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
+        let pack = await PackageBuy.query().where('user_id', auth.user.id).last();
         if (!!pack && pack.after_time < new Date().getTime() && pack.after_count_file < 1) {
           return response.json({ status_code: 204 });
         }
@@ -322,28 +333,32 @@ class ResidenceController {
         await pack.save();
       }
     }
-    res.title          = title;
-    res.description    = description;
-    res.real_address   = real_address;
-    res.type           = type;
-    res.archive        = archive;
-    res.lat            = lat;
-    res.lng            = lng;
-    res.province_id    = province_id;
-    res.region_id      = region_id;
-    res.all_area       = all_area;
-    res.rto_1          = RTO1;
-    res.rto_2          = RTO2;
-    res.rto_3          = RTO3;
-    res.month_discount = month_discount;
-    res.floor_area     = floor_area;
-    res.width_area     = width_area;
-    res.height_area    = height_area;
-    res.count_bathroom = count_bathroom;
-    res.user_id        = auth.authenticator(rule).user.id;
+    res.title            = title;
+    res.description      = description;
+    res.real_address     = real_address;
+    res.type             = type;
+    res.archive          = archive;
+    res.lat              = lat;
+    res.lng              = lng;
+    res.province_id      = province_id;
+    res.region_id        = region_id;
+    res.all_area         = all_area;
+    res.rto_1            = RTO1;
+    res.rto_2            = RTO2;
+    res.rto_3            = RTO3;
+    res.month_discount   = month_discount;
+    res.floor_area       = floor_area;
+    res.width_area       = width_area;
+    res.height_area      = height_area;
+    res.meter_price      = meter_price;
+    // res.room_count       = room_count;
+    res.floor_count      = floor_count;
+    res.floor_unit_count = floor_unit_count;
+    res.count_bathroom   = count_bathroom;
+    res.user_id          = auth.user.id;
     await res.save();
     await sleep(1000);
-    let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.authenticator(rule).user.id).last();
+    let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.user.id).last();
     response.json({ status_code: 200, status_text: 'Successfully Done', id: residence.id });
   }
 
@@ -527,12 +542,12 @@ class ResidenceController {
 
   async searchSaveText({ auth, request, response }) {
     const { rule } = request.headers();
-    return response.json(await ViewAd.query().where('user_id', auth.authenticator(rule).user.id).where('type', '1').fetch());
+    return response.json(await ViewAd.query().where('user_id', auth.user.id).where('type', '1').fetch());
   }
 
   async searchSavePost({ auth, request, response }) {
     const { rule } = request.headers();
-    return response.json(await ViewAd.query().where('user_id', auth.authenticator(rule).user.id).where('type', '2').with('Residence').fetch());
+    return response.json(await ViewAd.query().where('user_id', auth.user.id).where('type', '2').with('Residence').fetch());
   }
 
   async fileFetchAdmin({ auth, request, response }) {

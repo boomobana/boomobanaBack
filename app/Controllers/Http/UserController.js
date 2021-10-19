@@ -111,7 +111,7 @@ class UserController {
 
   async ChangePassword({ auth, request, response }) {
     const { rule }  = request.headers();
-    let userIsExist = await RealEstate.query().where('mobile', auth.authenticator(rule).user.mobile).last();
+    let userIsExist = await RealEstate.query().where('mobile', auth.user.mobile).last();
     if (!userIsExist)
       return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
 
@@ -124,19 +124,19 @@ class UserController {
   }
 
   async homeFetch({ auth, request, response }) {
-    const { rule }          = request.headers();
-    const { id }            = auth.authenticator(rule).user;
-    const files             = await Residence.query().where('user_id', id).count('*');
-    const filesCount        = files[0][Object.keys(files[0])];
-    const advisor           = await Adviser.query().where('id', id).count('*');
-    const advisorCount      = advisor[0][Object.keys(advisor[0])];
-    const event             = await RealEstateEvent.query().where('real_estate_id', id).count('*');
-    const eventCount        = event[0][Object.keys(event[0])];
-    const TicketF           = await Ticket.query().where('user_id', id).count('*');
-    const TicketFCount      = TicketF[0][Object.keys(TicketF[0])];
-    const CustomerF         = await RealEstateCustomer.query().where('real_estate_id', id).count('*');
-    const CustomerFCount    = CustomerF[0][Object.keys(CustomerF[0])];
-    const Transaction2      = await Transaction.query().where('status', 2).where('user_id', id).count('*');
+    const { rule }       = request.headers();
+    const { id }         = auth.user;
+    const files          = await Residence.query().where('user_id', id).count('*');
+    const filesCount     = files[0][Object.keys(files[0])];
+    const advisor        = await Adviser.query().where('id', id).count('*');
+    const advisorCount   = advisor[0][Object.keys(advisor[0])];
+    const event          = await RealEstateEvent.query().where('real_estate_id', id).count('*');
+    const eventCount     = event[0][Object.keys(event[0])];
+    const TicketF        = await Ticket.query().where('user_id', id).count('*');
+    const TicketFCount   = TicketF[0][Object.keys(TicketF[0])];
+    const CustomerF      = await RealEstateCustomer.query().where('real_estate_id', id).count('*');
+    const CustomerFCount = CustomerF[0][Object.keys(CustomerF[0])];
+    const Transaction2   = await Transaction.query().where('status', 2).where('user_id', id).count('*');
     const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
     const Favorite2         = await FavoriteAd.query().where('user_id', id).count('*');
     const Favorite2Count    = Favorite2[0][Object.keys(Favorite2[0])];

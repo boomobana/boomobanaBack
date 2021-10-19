@@ -5,6 +5,10 @@ const Model = use('Model');
 const Hash  = use('Hash');
 
 class RealEstate extends Model {
+  static get table() {
+    return 'users';
+  }
+
   static boot() {
     super.boot();
 
@@ -20,7 +24,7 @@ class RealEstate extends Model {
   }
 
   tokens() {
-    return this.hasMany('App/Models/TokenRealEstate');
+    return this.hasMany('App/Models/Token');
   }
 
   residence() {

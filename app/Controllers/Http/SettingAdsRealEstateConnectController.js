@@ -23,7 +23,7 @@ class SettingAdsRealEstateConnectController {
     let {
           rule,
         }        = request.headers();
-    let getPosts = SettingAdsRealEstateConnect.query().orderBy('id', 'desc').where('real_estate_id', auth.authenticator(rule).user.id).with('residence');
+    let getPosts = SettingAdsRealEstateConnect.query().orderBy('id', 'desc').where('real_estate_id', auth.user.id).with('residence');
     return response.json(await getPosts.fetch());
   }
 

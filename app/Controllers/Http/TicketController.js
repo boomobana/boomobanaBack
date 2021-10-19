@@ -62,7 +62,7 @@ class TicketController {
             rule,
           }                = request.headers();
     let newTicket          = new Ticket();
-    newTicket.user_id = auth.authenticator(rule).user.id;
+    newTicket.user_id = auth.user.id;
     //added table type user for this line below
     newTicket.user_type    = 1;
     newTicket.title        = title;

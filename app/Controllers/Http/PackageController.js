@@ -39,7 +39,7 @@ class PackageController {
     let { title, price, discount } = await Package.query().where('id', id).last();
     let slug                       = Math.floor(Math.random() * 100000000000);
     let newBuy                     = new Transaction();
-    newBuy.user_id                 = auth.authenticator(rule).user.id;
+    newBuy.user_id                 = auth.user.id;
     newBuy.slug                    = slug;
     newBuy.gateway                 = 'zarinpal';
     newBuy.type_of_transaction     = 'package';

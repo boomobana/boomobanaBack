@@ -34,7 +34,7 @@ class ResidenceFileController {
           rule,
         } = request.headers();
     if (rule === 'realEstate') {
-      let pack = await PackageBuy.query().where('user_id', auth.authenticator(rule).user.id).last();
+      let pack = await PackageBuy.query().where('user_id', auth.user.id).last();
       if (!!pack && pack.after_time > new Date().getTime() && pack.after_count_video > 0) {
         pack.after_count_video -= 1;
         await pack.save();

@@ -21,7 +21,7 @@ class RealEstateEventController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await RealEstateEvent.query().where('real_estate_id', auth.authenticator(rule).user.id).fetch());
+    return response.json(await RealEstateEvent.query().where('real_estate_id', auth.user.id).fetch());
 
   }
 
@@ -50,7 +50,7 @@ class RealEstateEventController {
             description,
           }        = request.all();
     const { rule } = request.headers();
-    const user     = auth.authenticator(rule).user;
+    const user     = auth.user;
     let newCust    = new RealEstateEvent();
 
     newCust.real_estate_id = user.id;

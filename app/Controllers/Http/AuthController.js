@@ -65,7 +65,7 @@ class AuthController {
       if (rule === 'realEstate') {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
-          let logins = await auth.authenticator(rule).generate(realEstate);
+          let logins = await auth.generate(realEstate);
           await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
@@ -74,7 +74,7 @@ class AuthController {
       } else if (rule === 'user') {
         let user = await User.query().where('mobile', mobile).first();
         if (!!user && !!user.id) {
-          let logins = await auth.authenticator(rule).generate(user);
+          let logins = await auth.generate(user);
           await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
@@ -103,7 +103,7 @@ class AuthController {
     }
     const { mobile, password } = request.all();
     // let authUser               = await auth.attempt(mobile, password);
-    let authUser               = await auth.authenticator(request.header('rule')).attempt(mobile, password);
+    let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
   }
@@ -117,8 +117,8 @@ class AuthController {
       if (headerValidation.fails()) {
         return response.json(headerValidation.messages());
       }
-      if (await auth.authenticator(request.header('rule')).check())
-        response.json(auth.authenticator(request.header('rule')).user);
+      if (await auth.check())
+        response.json(auth.user);
     } catch (error) {
       response.send('You are not logged in');
     }
@@ -154,7 +154,7 @@ class AuthController {
           } = request.headers();
     if (rule === 'realEstate') {
       const rules      = {
-        mobile: 'required|unique:real_estates,mobile',
+        mobile: 'required|unique:users,mobile',
         firstname: 'required',
         lastname: 'required',
         password: 'required',
@@ -241,7 +241,7 @@ class AuthController {
       await userStart.save();
     } else if (rule === 'realEstate') {
       const mobileRule       = {
-        mobile: 'unique:real_estates,mobile',
+        mobile: 'unique:users,mobile',
       };
       const mobileValidation = await validate(request.all(), mobileRule);
       if (mobileValidation.fails()) {
@@ -257,13 +257,8 @@ class AuthController {
     } else {
       return response.json({ status_code: 404, status_text: 'not found' });
     }
-    let us;
-    if (rule === 'user')
-      us = await User.query().where('id', userStart.id).last();
-    else if (rule === 'realEstate')
-      us = await RealEstate.query().where('id', userStart.id).last();
-
-    let logins = await auth.authenticator(rule).generate(us);
+    let us     = await User.query().where('id', userStart.id).last();
+    let logins = await auth.attempt(mobile, password);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
 
@@ -312,6 +307,9 @@ class AuthController {
         business_license_number: 'required',
         statute: 'required',
         address: 'required',
+        about_azhans: 'required',
+        lat: 'required',
+        lng: 'required',
       };
       const realEstateValidation = await validate(request.all(), realEstateRule);
       if (realEstateValidation.fails()) {
@@ -332,6 +330,9 @@ class AuthController {
               business_license_number,
               statute,
               address,
+              about_azhans,
+              lat,
+              lng,
             }                           = request.all();
       userStart                         = await RealEstate.query().where('mobile', mobile).last();
       userStart.name                    = name;
@@ -349,6 +350,9 @@ class AuthController {
       userStart.business_license_number = business_license_number;
       userStart.statute                 = statute;
       userStart.address                 = address;
+      userStart.bio                     = about_azhans;
+      userStart.lat                     = lat;
+      userStart.lng                     = lng;
     } else if (rule === 'user') {
       const userDefRule       = {
         type: 'required',
@@ -416,7 +420,7 @@ class AuthController {
       us = await User.query().where('mobile', mobile).last();
     }
 
-    let logins = await auth.authenticator(rule).generate(us);
+    let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
 
@@ -510,7 +514,7 @@ class AuthController {
     } else if (rule === 'user') {
       us = await User.query().where('mobile', mobile).last();
     }
-    let logins = await auth.authenticator(rule).generate(us);
+    let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
 
@@ -558,7 +562,7 @@ class AuthController {
       user.save();
     } else if (rule === 'realEstate') {
       const rules      = {
-        mobile: 'required|unique:real_estates,mobile',
+        mobile: 'required|unique:users,mobile',
         code: 'required',
       };
       const validation = await validate(request.all(), rules);

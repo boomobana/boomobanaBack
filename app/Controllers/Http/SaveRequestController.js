@@ -21,7 +21,7 @@ class SaveRequestController {
    * @param {View} ctx.view
    */
   async index({ request, response, auth }) {
-    return response.json(await SaveRequest.query().where('user_id', auth.authenticator(request.header('rule')).fetch()));
+    return response.json(await SaveRequest.query().where('user_id', auth.fetch()));
   }
 
   /**
@@ -57,7 +57,7 @@ class SaveRequestController {
             mobile,
           }                      = request.all();
     const { rule }               = request.headers();
-    const user                   = auth.authenticator(rule).user;
+    const user                   = auth.user;
     let newReq                   = new SaveRequest();
     newReq.slug                  = Math.floor(Math.random() * (999999999999 - 111111111111) + 111111111111);
     newReq.user_id               = user.id;
