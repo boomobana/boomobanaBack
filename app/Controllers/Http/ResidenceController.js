@@ -13,10 +13,11 @@ class ResidenceController {
   async Fetch({ auth, request, response }) {
     let {
           rule,
-        }           = request.headers();
+        } = request.headers();
     let {
           options,
-        }           = request.all();
+        } = request.all();
+    console.log(request.all());
     let arrayOp     = [];
     let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0);
     if (typeof request.body.type === 'string') {
@@ -25,6 +26,9 @@ class ResidenceController {
           userIsExist.where('type', '1');
           if (typeof request.body.text == 'string') {
             userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+          }
+          if (request.body.typeResidence != 0) {
+            userIsExist.where('rto_2', request.body.typeResidence);
           }
         } else if (request.body.type == 'amlak') {
           if (request.body.type2 != 0) {
@@ -84,9 +88,6 @@ class ResidenceController {
     if (request.body.capacity != 0) {
       userIsExist.where('capacity_standard', request.body.capacity);
     }
-    if (request.body.typeResidence != 1) {
-      userIsExist.where('rto_2', request.body.typeResidence);
-    }
     if (request.body.room != 0) {
       userIsExist.where('count_bathroom', request.body.room);
     }
@@ -114,22 +115,22 @@ class ResidenceController {
       }
       userIsExist.whereIn('id', pictureArray);
     }
-    // try {
-    //   if (typeof request.body.save === 'boolean') {
-    //     if (request.body.save === true) {
-    //       if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.user.id).last()) {
-    //         let va     = new ViewAd();
-    //         va.text    = request.body.text;
-    //         va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
-    //         va.user_id = auth.user.id;
-    //         va.ad_id   = 0;
-    //         va.type    = 1;
-    //         va.save();
-    //       }
-    //     }
-    //   }
-    // } catch (e) {
-    // }
+    try {
+      if (typeof request.body.save === 'boolean') {
+        if (request.body.save === true) {
+          if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.user.id).last()) {
+            let va     = new ViewAd();
+            va.text    = request.body.text;
+            va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
+            va.user_id = auth.user.id;
+            va.ad_id   = 0;
+            va.type    = 1;
+            va.save();
+          }
+        }
+      }
+    } catch (e) {
+    }
 
     return response.json(await userIsExist.fetch());
   }
@@ -283,7 +284,6 @@ class ResidenceController {
       floor_area: 'required',
       width_area: 'required',
       height_area: 'required',
-      meter_price: 'required',
       // room_count: 'required',
       floor_count: 'required',
       floor_unit_count: 'required',
@@ -314,7 +314,6 @@ class ResidenceController {
           count_bathroom,
           width_area,
           height_area,
-          meter_price,
           // room_count,
           floor_count,
           floor_unit_count,
@@ -333,24 +332,25 @@ class ResidenceController {
         await pack.save();
       }
     }
-    res.title            = title;
-    res.description      = description;
-    res.real_address     = real_address;
-    res.type             = type;
-    res.archive          = archive;
-    res.lat              = lat;
-    res.lng              = lng;
-    res.province_id      = province_id;
-    res.region_id        = region_id;
-    res.all_area         = all_area;
-    res.rto_1            = RTO1;
-    res.rto_2            = RTO2;
-    res.rto_3            = RTO3;
-    res.month_discount   = month_discount;
-    res.floor_area       = floor_area;
-    res.width_area       = width_area;
-    res.height_area      = height_area;
-    res.meter_price      = meter_price;
+    res.title          = title;
+    res.description    = description;
+    res.real_address   = real_address;
+    res.type           = type;
+    res.archive        = archive;
+    res.lat            = lat;
+    res.lng            = lng;
+    res.province_id    = province_id;
+    res.region_id      = region_id;
+    res.all_area       = all_area;
+    res.rto_1          = RTO1;
+    res.rto_2          = RTO2;
+    res.rto_3          = RTO3;
+    res.month_discount = month_discount;
+    res.floor_area     = floor_area;
+    res.width_area     = width_area;
+    res.height_area    = height_area;
+    if (type === '3')
+      res.meter_price = request.body.meter_price;
     // res.room_count       = room_count;
     res.floor_count      = floor_count;
     res.floor_unit_count = floor_unit_count;

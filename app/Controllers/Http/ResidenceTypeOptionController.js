@@ -49,7 +49,25 @@ class ResidenceTypeOptionController {
     res.rto_1 = rto_1;
     res.rto_2 = rto_2;
     res.rto_3 = rto_3;
-    res.save();
+    await res.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async changeStatus({ request, response }) {
+    const rules      = {
+      residence_id: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          residence_id,
+        } = request.all();
+
+    let res    = await Residence.query().where('id', residence_id).last();
+    res.status = 1;
+    await res.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }

@@ -64,9 +64,9 @@ class RealEstateController {
         data.where('type', 2);
       } else if (request.body.side === 'buysell') {
         data.where('type', 3);
-      } else if (request.body.side === 'residence') {
-        data.where('type', 1);
-      } else if (request.body.side === 'residence') {
+      } /*else if (request.body.side === 'residence') {
+       data.where('type', 1);
+       }*/ else if (request.body.side === 'residence') {
         data.where('type', 1).whereNotIn('rto_2', [5, 42]);
       } else if (request.body.side === 'residencevila') {
         data.where('type', 1).where('rto_2', 5);

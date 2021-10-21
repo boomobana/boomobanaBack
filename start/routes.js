@@ -64,6 +64,7 @@ Route.group(() => {
   Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
 
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
+  Route.post('/residence/change/status', 'ResidenceTypeOptionController.changeStatus');
 
   Route.post('/residence/room/add', 'RoomController.addRoom');
 
