@@ -46,9 +46,9 @@ class SmsSender {
   async loginSuccess(mobile) {
     let date = new Date();
     let hm   = date.getHours() + ':' + date.getMinutes();
-    return await this.sendTemplate(`${Env.get('APP_NAME')}
-ورود موفق به پنل
-${moment().format('jYYYY/jM/jD')} ${hm}`, mobile);
+    /*return await this.sendTemplate(`${Env.get('APP_NAME')}
+     ورود موفق به پنل
+     ${moment().format('jYYYY/jM/jD')} ${hm}`, mobile);*/
   };
 
 }

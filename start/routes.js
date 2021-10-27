@@ -125,7 +125,8 @@ Route.group(() => {
 
   Route.post('/reserve/fetch', 'ReserveController.index');
   Route.post('/reserve/add', 'ReserveController.create');
-}).prefix('api/user').middleware(['auth:user']);
+
+}).prefix('api/user').middleware(['auth']);
 Route.group(() => {
   Route.post('/get/festivals', 'FestivalController.index');
   Route.post('/realestate/fetch', 'RealEstateController.fetchOnly');
@@ -146,12 +147,11 @@ Route.group(() => {
 }).prefix('api/user');
 
 Route.group(() => {
-  Route.get('/', () => {
-    return { greeting: 'Hello world in JSON' };
-  });
   Route.post('/me', 'AuthController.me');
   Route.post('/home/fetch/counting', 'UserController.homeFetchCountingAdmin');
   Route.post('/user/fetch', 'UserController.userFetchAdmin');
+  Route.post('/user/find', 'UserController.userFindAdmin');
+  Route.post('/user/create', 'UserController.userCreateAdmin');
   Route.post('/user/active', 'UserController.userActiveAdmin');
   Route.post('/file/fetch', 'ResidenceController.fileFetchAdmin');
   Route.post('/file/find', 'ResidenceController.fileFindAdmin');
@@ -165,4 +165,4 @@ Route.group(() => {
   Route.post('/ticket/admin/remove', 'TicketController.ticketRemoveAdmin');
   Route.post('/package/fetch', 'PackageController.packageFetchAdmin');
   Route.post('/transaction/fetch', 'TransactionController.transactionFetchAdmin');
-}).prefix('api/admin').middleware(['auth:admin']);
+}).prefix('api/user').middleware(['auth', 'userRule']);

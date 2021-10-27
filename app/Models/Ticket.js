@@ -13,7 +13,7 @@ class Ticket extends Model {
   }
 
   realEstate() {
-    return this.hasOne('App/Models/RealEstate', 'user_id', 'id');
+    return this.hasOne('App/Models/User', 'user_id', 'id');
   }
 }
 

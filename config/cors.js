@@ -20,6 +20,8 @@ module.exports = {
     'http://localhost:4200',
     'http://192.168.1.42:4200',
     'http://192.168.1.42:4201',
+    'http://192.168.1.42:4202',
+    'https://admin.boomobana.com',
     'https://amlak.boomobana.com',
     'https://home.boomobana.com',
     'https://boomobana.com',

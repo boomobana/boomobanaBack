@@ -22,15 +22,7 @@ class UserController {
 
   async changeProfile({ auth, request, response }) {
     const {
-            lastname,
-            firstname,
-            birthday,
-            male,
-            national_id,
-            avatar,
-            email,
-            region,
-            city,
+            lastname, firstname, birthday, male, national_id, avatar, email, region, city,
           }        = request.all();
     const { rule } = request.headers();
     let userIsExist;
@@ -39,22 +31,15 @@ class UserController {
     } else if (rule === 'realEstate') {
       userIsExist = await RealEstate.query().where('mobile', auth.user.mobile).last();
     }
-    if (!userIsExist)
-      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+    if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
 
     // userIsExist.password = await Hash.make(password);
-    if (request.hasBody('lastname'))
-      userIsExist.lastname = lastname;
-    if (request.hasBody('firstname'))
-      userIsExist.firstname = firstname;
-    if (request.hasBody('birthday'))
-      userIsExist.birthday = birthday;
-    if (request.hasBody('male'))
-      userIsExist.male = male;
-    if (request.hasBody('national_id'))
-      userIsExist.national_id = national_id;
-    if (request.hasBody('avatar'))
-      userIsExist.avatar = avatar;
+    if (request.hasBody('lastname')) userIsExist.lastname = lastname;
+    if (request.hasBody('firstname')) userIsExist.firstname = firstname;
+    if (request.hasBody('birthday')) userIsExist.birthday = birthday;
+    if (request.hasBody('male')) userIsExist.male = male;
+    if (request.hasBody('national_id')) userIsExist.national_id = national_id;
+    if (request.hasBody('avatar')) userIsExist.avatar = avatar;
     if (request.hasBody('email')) {
       const rules      = {
         mobile: 'required',
@@ -65,10 +50,8 @@ class UserController {
       }
       userIsExist.email = email;
     }
-    if (request.hasBody('region'))
-      userIsExist.region = region;
-    if (request.hasBody('city'))
-      userIsExist.city = city;
+    if (request.hasBody('region')) userIsExist.region = region;
+    if (request.hasBody('city')) userIsExist.city = city;
     userIsExist.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
@@ -79,8 +62,7 @@ class UserController {
           } = request.all();
 
     let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
-    if (!userIsExist)
-      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+    if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
     console.log(userIsExist);
     userIsExist.avatar = avatar;
     userIsExist.save();
@@ -112,8 +94,7 @@ class UserController {
   async ChangePassword({ auth, request, response }) {
     const { rule }  = request.headers();
     let userIsExist = await RealEstate.query().where('mobile', auth.user.mobile).last();
-    if (!userIsExist)
-      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+    if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
 
     // userIsExist.password = await Hash.make(password);
     let passsword        = String(Math.floor(Math.random() * (999999 - 111111) + 111111));
@@ -124,30 +105,24 @@ class UserController {
   }
 
   async homeFetch({ auth, request, response }) {
-    const { rule }       = request.headers();
-    const { id }         = auth.user;
-    const files          = await Residence.query().where('user_id', id).count('*');
-    const filesCount     = files[0][Object.keys(files[0])];
-    const advisor        = await Adviser.query().where('id', id).count('*');
-    const advisorCount   = advisor[0][Object.keys(advisor[0])];
-    const event          = await RealEstateEvent.query().where('real_estate_id', id).count('*');
-    const eventCount     = event[0][Object.keys(event[0])];
-    const TicketF        = await Ticket.query().where('user_id', id).count('*');
-    const TicketFCount   = TicketF[0][Object.keys(TicketF[0])];
-    const CustomerF      = await RealEstateCustomer.query().where('real_estate_id', id).count('*');
-    const CustomerFCount = CustomerF[0][Object.keys(CustomerF[0])];
-    const Transaction2   = await Transaction.query().where('status', 2).where('user_id', id).count('*');
+    const { rule }          = request.headers();
+    const { id }            = auth.user;
+    const files             = await Residence.query().where('user_id', id).count('*');
+    const filesCount        = files[0][Object.keys(files[0])];
+    const advisor           = await Adviser.query().where('id', id).count('*');
+    const advisorCount      = advisor[0][Object.keys(advisor[0])];
+    const event             = await RealEstateEvent.query().where('real_estate_id', id).count('*');
+    const eventCount        = event[0][Object.keys(event[0])];
+    const TicketF           = await Ticket.query().where('user_id', id).count('*');
+    const TicketFCount      = TicketF[0][Object.keys(TicketF[0])];
+    const CustomerF         = await RealEstateCustomer.query().where('real_estate_id', id).count('*');
+    const CustomerFCount    = CustomerF[0][Object.keys(CustomerF[0])];
+    const Transaction2      = await Transaction.query().where('status', 2).where('user_id', id).count('*');
     const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
     const Favorite2         = await FavoriteAd.query().where('user_id', id).count('*');
     const Favorite2Count    = Favorite2[0][Object.keys(Favorite2[0])];
     const json              = {
-      filesCount,
-      advisorCount,
-      eventCount,
-      TicketFCount,
-      CustomerFCount,
-      Transaction2Count,
-      Favorite2Count,
+      filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count, Favorite2Count,
     };
     return response.json(json);
   }
@@ -170,20 +145,24 @@ class UserController {
     const RealEstateC       = await RealEstate.query().count('*');
     const RealEstateCount   = RealEstateC[0][Object.keys(RealEstateC[0])];
     const json              = {
-      filesCount,
-      advisorCount,
-      eventCount,
-      TicketFCount,
-      CustomerFCount,
-      Transaction2Count,
-      Favorite2Count,
-      RealEstateCount,
+      filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count, Favorite2Count, RealEstateCount,
     };
     return response.json(json);
   }
 
   async userFetchAdmin({ auth, request, response }) {
-    return response.json(await User.query().paginate());
+    const { page } = request.qs;
+    const limit    = 10;
+    let user       = User.query().orderBy('id', 'DESC');
+    if (!!request.body.is_realestate && request.body.is_realestate == 1) {
+      user.where('name', '!=', '-').where('name_en', '!=', '-').where('is_realestate', 1);
+    }
+    return response.json(await user.paginate(page, limit));
+  }
+
+  async userFindAdmin({ auth, request, response }) {
+    const { id } = request.all();
+    return response.json(await User.query().where('id', id).last());
   }
 
   async userActiveAdmin({ auth, request, response }) {
@@ -191,6 +170,103 @@ class UserController {
     let user     = await User.query().where('id', id).last();
     user.active  = user.active == 1 ? 0 : 1;
     await user.save();
+    return response.json({ status_code: 200 });
+  }
+
+  async userCreateAdmin({ auth, request, response }) {
+    const {
+            is_user,
+            is_bloger,
+            is_realestate,
+            is_advisor,
+            lastname,
+            firstname,
+            firstname_en,
+            lastname_en,
+            mobile,
+            tell,
+            postal_code,
+            sos,
+            national_id,
+            birthday,
+            male,
+            email,
+            about,
+            address,
+            kartMeli,
+            avatar,
+            lat,
+            lng,
+          }    = request.all();
+    var u      = new User();
+    u.password = 'Mah998877';
+    //TODO: // send sms to user and now it password
+    console.log(request.body.id);
+    if (request.body.id != '') {
+      u = await User.query().where('id', request.body.id).last();
+    }
+
+    u.pageSignup    = 1;
+    u.active        = 1;
+    u.is_user       = is_user;
+    u.is_bloger     = is_bloger;
+    u.is_realestate = is_realestate;
+    u.is_advisor    = is_advisor;
+    u.lastname      = lastname;
+    u.firstname     = firstname;
+    u.firstname_en  = firstname_en;
+    u.lastname_en   = lastname_en;
+    u.mobile        = mobile;
+    u.tell          = tell;
+    u.postal_code   = postal_code;
+    u.sos           = sos;
+    u.national_id   = national_id;
+    u.birthday      = birthday;
+    u.male          = male;
+    u.email         = email;
+    u.address       = address;
+    u.about         = about;
+    u.kart_meli     = kartMeli;
+    u.lat           = lat;
+    u.lng           = lng;
+    u.avatar        = avatar;
+    if (is_bloger == 1) {
+      u.site_url     = request.body.site_url;
+      u.social_url   = request.body.social_url;
+      u.username     = request.body.username;
+      u.usernameshow = request.body.usernameshow;
+    }
+    if (is_advisor == 1) {
+      u.parent_realestate_id = request.body.parent_realestate_id;
+    }
+    if (is_user == 1) {
+      u.type               = request.body.type;
+      u.bank_name          = request.body.bank_name;
+      u.card_number        = request.body.card_number;
+      u.shaba_number       = request.body.shaba_number;
+      u.account_owner_name = request.body.account_owner_name;
+      if (u.type == 2) {
+        u.economic_code           = request.body.economic_code;
+        u.statute                 = request.body.statute;
+        u.business_license        = request.body.business_license;
+        u.business_license_number = request.body.business_license_number;
+      }
+    }
+    if (is_realestate == 1) {
+      u.logo                    = request.body.logo;
+      u.name                    = request.body.name;
+      u.name_en                 = request.body.name_en;
+      u.site_url                = request.body.site_url;
+      u.social_url              = request.body.social_url;
+      u.economic_code           = request.body.economic_code;
+      u.postal_code             = request.body.postal_code;
+      u.business_license        = request.body.business_license;
+      u.business_license_number = request.body.business_license_number;
+      u.statute                 = request.body.statute;
+      u.bio                     = request.body.bio;
+    }
+    await u.save();
+
     return response.json({ status_code: 200 });
   }
 }

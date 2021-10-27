@@ -102,7 +102,30 @@ class AuthController {
       return response.json(headerValidation.messages());
     }
     const { mobile, password } = request.all();
+    const { rule }             = request.headers();
     // let authUser               = await auth.attempt(mobile, password);
+    let userA                  = User.query().where('mobile', mobile);
+    if (rule === 'realEstate') {
+      let userEx = await userA.where('is_realestate', 1).last();
+      if (!userEx) {
+        return response.status(403).json({ status_code: 403, status_text: 'User Permission Denied' });
+      }
+    } else if (rule === 'admin') {
+      let userEx = await userA.where('is_admin', 1).last();
+      if (!userEx) {
+        return response.status(403).json({ status_code: 403, status_text: 'User Permission Denied' });
+      }
+    } else if (rule === 'user') {
+      let userEx = await userA.where('is_user', 1).last();
+      if (!userEx) {
+        return response.status(403).json({ status_code: 403, status_text: 'User Permission Denied' });
+      }
+    } else if (rule === 'advisor') {
+      let userEx = await userA.where('is_advisor', 1).last();
+      if (!userEx) {
+        return response.status(403).json({ status_code: 403, status_text: 'User Permission Denied' });
+      }
+    }
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });

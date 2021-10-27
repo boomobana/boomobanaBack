@@ -13,11 +13,10 @@ class ResidenceController {
   async Fetch({ auth, request, response }) {
     let {
           rule,
-        } = request.headers();
+        }           = request.headers();
     let {
           options,
-        } = request.all();
-    console.log(request.all());
+        }           = request.all();
     let arrayOp     = [];
     let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0);
     if (typeof request.body.type === 'string') {
@@ -150,11 +149,8 @@ class ResidenceController {
         }  = request.headers();
     let ad = await FavoriteAd.query().where('user_id', auth.user.id).where('ad_id', request.body.residence_id).last();
     if (ad) {
-      console.log('here', ad.id);
       let rem = await FavoriteAd.find(ad.id);
       rem.delete();
-      // rem.;
-      console.log(rem);
     } else {
       let newFa     = new FavoriteAd();
       newFa.user_id = auth.user.id;
@@ -199,7 +195,6 @@ class ResidenceController {
       }
     }
     // if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
-    console.log(request.body);
     return response.json(await userIsExist.fetch());
   }
 
@@ -551,7 +546,10 @@ class ResidenceController {
   }
 
   async fileFetchAdmin({ auth, request, response }) {
-    return response.json(await Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').paginate());
+    const { page } = request.qs;
+    const limit    = 10;
+    let Res        = Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').orderBy('id', 'desc');
+    return response.json(await Res.paginate(page, limit));
   }
 
   async fileFindAdmin({ auth, request, response }) {
