@@ -22,11 +22,14 @@ class ResidenceOptionConnectController {
     if (validation.fails()) {
       return response.json(validation.messages());
     }
+    console.log('run here');
     let {
           residence_id,
           residence_option_id,
+          checked,
         } = request.all();
     try {
+      await ResidenceOptionConnect.query().where('residence_id', residence_id).delete();
       let resOC                 = new ResidenceOptionConnect();
       resOC.residence_id        = residence_id;
       resOC.residence_option_id = residence_option_id;

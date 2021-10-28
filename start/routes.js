@@ -155,7 +155,10 @@ Route.group(() => {
   Route.post('/user/active', 'UserController.userActiveAdmin');
   Route.post('/file/fetch', 'ResidenceController.fileFetchAdmin');
   Route.post('/file/find', 'ResidenceController.fileFindAdmin');
+  Route.post('/file/active', 'ResidenceController.fileActiveAdmin');
   Route.post('/customer/fetch', 'RealEstateCustomerController.customerFetchAdmin');
+  Route.post('/costumer/find', 'RealEstateCustomerController.customerFindAdmin');
+  Route.post('/costumer/add', 'RealEstateCustomerController.customerAddAdmin');
   Route.post('/advisor/fetch', 'AdvisorController.fetchAdvisorAdmin');
   Route.post('/agency/fetch', 'RealEstateController.realEstateFetchAdmin');
   Route.post('/agency/active', 'RealEstateController.realEstateActiveAdmin');
@@ -165,4 +168,15 @@ Route.group(() => {
   Route.post('/ticket/admin/remove', 'TicketController.ticketRemoveAdmin');
   Route.post('/package/fetch', 'PackageController.packageFetchAdmin');
   Route.post('/transaction/fetch', 'TransactionController.transactionFetchAdmin');
-}).prefix('api/user').middleware(['auth', 'userRule']);
+
+  Route.post('/melk/add', 'ResidenceController.addMelkAdmin');
+  Route.post('/file/file/fetch', 'ResidenceFileController.fetchFile');
+
+  // todo make this line for admin
+  Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
+  Route.post('/residence/location', 'ResidenceController.changeLocation');
+  Route.post('/residence/change/status', 'ResidenceTypeOptionController.changeStatus');
+  Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
+  Route.post('/residence/file/add', 'ResidenceFileController.addPicture');
+  Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
+}).prefix('api/admin').middleware(['auth', 'userRule']);

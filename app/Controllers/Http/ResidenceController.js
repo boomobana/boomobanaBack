@@ -549,11 +549,145 @@ class ResidenceController {
     const { page } = request.qs;
     const limit    = 10;
     let Res        = Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').orderBy('id', 'desc');
+    if (typeof request.body.user_id === 'string' && request.body.user_id !== null && request.body.user_id !== '') {
+      Res.where('user_id', request.body.user_id);
+    }
+    if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
+      Res.where('type', request.body.typeSearch);
+    }
+    if (typeof request.body.provinceId === 'string' && request.body.provinceId !== null && request.body.provinceId !== '') {
+      Res.where('province_id', request.body.provinceId);
+    }
+    if (typeof request.body.rto_2 === 'string' && request.body.rto_2 !== null && request.body.rto_2 !== '') {
+      Res.where('rto_2', request.body.rto_2);
+    }
+    if (typeof request.body.rto_3 === 'string' && request.body.rto_3 !== null && request.body.rto_3 !== '') {
+      Res.where('rto_3', request.body.rto_3);
+    }
+    if (typeof request.body.count_bathroom === 'string' && request.body.count_bathroom !== null && request.body.count_bathroom !== '') {
+      Res.where('count_bathroom', request.body.count_bathroom);
+    }
+    if (typeof request.body.all_area === 'string' && request.body.all_area !== null && request.body.all_area !== '') {
+      Res.where('all_area', request.body.all_area);
+    }
+    if (typeof request.body.floor_area === 'string' && request.body.floor_area !== null && request.body.floor_area !== '') {
+      if (typeof request.body.floor_area2 === 'string' && request.body.floor_area2 !== null && request.body.floor_area2 !== '') {
+        Res.whereBetween('floor_area', [request.body.floor_area, request.body.floor_area2]);
+      }
+    }
+    if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '') {
+      if (typeof request.body.month_discount2 === 'string' && request.body.month_discount2 !== null && request.body.month_discount2 !== '') {
+        Res.whereBetween('month_discount', [request.body.month_discount, request.body.month_discount2]);
+      }
+    }
     return response.json(await Res.paginate(page, limit));
   }
 
   async fileFindAdmin({ auth, request, response }) {
     return response.json(await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last());
+  }
+
+  async fileActiveAdmin({ auth, request, response }) {
+    let res    = await Residence.query().where('id', request.body.id).last();
+    res.status = request.body.status;
+    await res.save();
+    return response.json({ status_code: 200 });
+  }
+
+  async addMelkAdmin({ auth, request, response }) {
+    const rules      = {
+      title: 'required',
+      description: 'required',
+      archive: 'required',
+      lat: 'required',
+      lng: 'required',
+      all_area: 'required',
+      province_id: 'required',
+      region_id: 'required',
+      RTO1: 'required',
+      RTO2: 'required',
+      RTO3: 'required',
+      real_address: 'required',
+      month_discount: 'required',
+      floor_area: 'required',
+      width_area: 'required',
+      height_area: 'required',
+      // room_count: 'required',
+      floor_count: 'required',
+      floor_unit_count: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    const {
+            rule,
+          } = request.headers();
+    let {
+          title,
+          description,
+          real_address,
+          type,
+          lat,
+          lng,
+          province_id,
+          region_id,
+          RTO1,
+          RTO2,
+          RTO3,
+          month_discount,
+          floor_area,
+          all_area,
+          archive,
+          count_bathroom,
+          width_area,
+          height_area,
+          // room_count,
+          floor_count,
+          floor_unit_count,
+        }   = request.all();
+    console.log(archive);
+    let res = new Residence();
+    if (request.body.residence_id != 0) {
+      res = await Residence.query().where('id', request.body.residence_id).last();
+    } else {
+      /*if (rule === 'realEstate') {
+       let pack = await PackageBuy.query().where('user_id', auth.user.id).last();
+       if (!!pack && pack.after_time < new Date().getTime() && pack.after_count_file < 1) {
+       return response.json({ status_code: 204 });
+       }
+       pack.after_count_file -= 1;
+       await pack.save();
+       }*/
+    }
+    res.title          = title;
+    res.description    = description;
+    res.real_address   = real_address;
+    res.type           = type;
+    res.archive        = archive;
+    res.lat            = lat;
+    res.lng            = lng;
+    res.province_id    = province_id;
+    res.region_id      = region_id;
+    res.all_area       = all_area;
+    res.rto_1          = RTO1;
+    res.rto_2          = RTO2;
+    res.rto_3          = RTO3;
+    res.month_discount = month_discount;
+    res.floor_area     = floor_area;
+    res.width_area     = width_area;
+    res.height_area    = height_area;
+    if (type === '3')
+      res.meter_price = request.body.meter_price;
+    // res.room_count       = room_count;
+    res.floor_count      = floor_count;
+    res.floor_unit_count = floor_unit_count;
+    res.count_bathroom   = count_bathroom;
+    // res.user_id          = auth.user.id;
+    await res.save();
+    await sleep(1000);
+    // let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.user.id).last();
+    response.json({ status_code: 200, status_text: 'Successfully Done', id: res.id });
   }
 
   async upgradeLevel({ auth, request, response }) {

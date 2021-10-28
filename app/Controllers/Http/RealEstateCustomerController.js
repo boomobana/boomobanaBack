@@ -162,7 +162,52 @@ class RealEstateCustomerController {
   }
 
   async customerFetchAdmin({ params, request, response }) {
-    return response.json(await RealEstateCustomer.query().paginate());
+    const { page } = request.qs;
+    const limit    = 10;
+    let RECustomer = RealEstateCustomer.query().orderBy('id', 'desc').with('user').with('region').with('province');
+    return response.json(await RECustomer.paginate(page, limit));
+  }
+
+  async customerFindAdmin({ params, request, response }) {
+    let RECustomer = RealEstateCustomer.query().where('id', request.body.id);
+    return response.json(await RECustomer.last());
+  }
+
+  async customerAddAdmin({ params, request, response }) {
+    const {
+            firstname,
+            lastname,
+            mobile,
+            tell,
+            email,
+            province_id,
+            region_id,
+            options,
+            type_customer,
+            type,
+            description,
+            real_estate_id,
+          } = request.all();
+    console.log(firstname);
+    let re = new RealEstateCustomer();
+    if (!!request.body.id && request.body.id != '') {
+      re = await RealEstateCustomer.query().where('id', request.body.id).last();
+    }
+    re.firstname      = firstname;
+    re.lastname       = lastname;
+    re.mobile         = mobile;
+    re.tell           = tell;
+    re.email          = email;
+    re.province_id    = province_id;
+    re.region_id      = region_id;
+    re.options        = options;
+    re.type_customer  = type_customer;
+    re.type           = type;
+    re.description    = description;
+    re.real_estate_id = real_estate_id;
+    await re.save();
+
+    return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }
 
