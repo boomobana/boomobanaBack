@@ -9,6 +9,8 @@ const Residence          = use('App/Models/Residence');
 const UserCode           = use('App/Models/UserCode');
 const FavoriteAd         = use('App/Models/FavoriteAd');
 const User               = use('App/Models/User');
+const Region             = use('App/Models/Region');
+const Province           = use('App/Models/Province');
 const RealEstate         = use('App/Models/RealEstate');
 const PasswordReset      = use('App/Models/PasswordReset');
 const Sms                = use('App/Controllers/Http/SmsSender');
@@ -67,6 +69,27 @@ class UserController {
     userIsExist.avatar = avatar;
     userIsExist.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async fetchPostssearch({ auth, request, response }) {
+    const {
+            text,
+          } = request.all();
+    if (text == '' || text == null) {
+      let province2 = await Province.query().fetch();
+      return response.json({ type: 'region', 'region': [], 'province': province2 });
+    }
+    let region2   = await Region.query().where('title', 'like', '%' + text + '%').fetch();
+    let province2 = await Province.query().where('title', 'like', '%' + text + '%').fetch();
+    if (region2.rows.length > 0) {
+      return response.json({ type: 'region', 'region': region2, 'province': province2 });
+    } else if (province2.rows.length > 0) {
+      return response.json({ type: 'region', 'region': region2, 'province': province2 });
+    } else {
+      let residence2 = await Residence.query().where('title', 'like', '%' + text + '%').orWhere('description', 'like', '%' + text + '%').orWhere('real_address', 'like', '%' + text + '%').fetch();
+      return response.json({ type: 'all', 'residence': residence2.rows });
+    }
+    return response.json({ status_code: 200 });
   }
 
   // async changePassword({ auth, request, response }) {

@@ -126,8 +126,9 @@ Route.group(() => {
   Route.post('/reserve/fetch', 'ReserveController.index');
   Route.post('/reserve/add', 'ReserveController.create');
 
-}).prefix('api/user').middleware(['auth']);
+}).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
+  Route.post('/fetchPosts/search', 'UserController.fetchPostssearch');
   Route.post('/get/festivals', 'FestivalController.index');
   Route.post('/realestate/fetch', 'RealEstateController.fetchOnly');
   Route.post('/search/new/fetch', 'RealEstateController.searchNew');

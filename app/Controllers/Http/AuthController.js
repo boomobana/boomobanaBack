@@ -65,7 +65,6 @@ class AuthController {
       if (rule === 'realEstate') {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
-          let logins = await auth.generate(realEstate);
           await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
@@ -256,11 +255,13 @@ class AuthController {
       if (mobileValidation.fails()) {
         return response.json(mobileValidation.messages());
       }
-      userStart           = new User();
-      userStart.firstname = firstname;
-      userStart.lastname  = lastname;
-      userStart.mobile    = mobile;
-      userStart.password  = password;
+      userStart            = new User();
+      userStart.firstname  = firstname;
+      userStart.lastname   = lastname;
+      userStart.mobile     = mobile;
+      userStart.password   = password;
+      userStart.pageSignup = 1;
+      userStart.is_user    = 1;
       await userStart.save();
     } else if (rule === 'realEstate') {
       const mobileRule       = {
@@ -270,12 +271,13 @@ class AuthController {
       if (mobileValidation.fails()) {
         return response.json(mobileValidation.messages());
       }
-      userStart            = new RealEstate();
-      userStart.firstname  = firstname;
-      userStart.lastname   = lastname;
-      userStart.mobile     = mobile;
-      userStart.pageSignup = 1;
-      userStart.password   = password;
+      userStart               = new RealEstate();
+      userStart.firstname     = firstname;
+      userStart.lastname      = lastname;
+      userStart.mobile        = mobile;
+      userStart.pageSignup    = 1;
+      userStart.is_realestate = 1;
+      userStart.password      = password;
       await userStart.save();
     } else {
       return response.json({ status_code: 404, status_text: 'not found' });
