@@ -18,16 +18,20 @@ class ResidenceController {
           options,
         }           = request.all();
     let arrayOp     = [];
-    let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0);
+    let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0).where('status', 2);
     if (typeof request.body.type === 'string') {
       if (request.body.type != 'nothing') {
         if (request.body.type == 'residence') {
           userIsExist.where('type', '1');
-          if (typeof request.body.text == 'string') {
-            userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+          if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
+            userIsExist.orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
           }
           if (request.body.typeResidence != 0) {
-            userIsExist.where('rto_2', request.body.typeResidence);
+            if (request.body.typeResidence == 1) {
+              userIsExist.whereNotIn('rto_2', ['5', '42']);
+            } else {
+              userIsExist.where('rto_2', request.body.typeResidence);
+            }
           }
         } else if (request.body.type == 'amlak') {
           if (request.body.type2 != 0) {
@@ -35,15 +39,15 @@ class ResidenceController {
           } else {
             userIsExist.whereIn('type', [2, 3]);
           }
-          if (typeof request.body.text == 'string') {
-            userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+          if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
+            userIsExist.orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
           }
         } else {
           userIsExist.orWhere('title', request.body.text);
         }
       } else {
-        if (typeof request.body.text == 'string') {
-          userIsExist.where('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
+        if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
+          userIsExist.orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
         }
       }
     }
@@ -93,6 +97,9 @@ class ResidenceController {
     if (request.body.price1 != 0 && request.body.price2 != 0) {
       userIsExist.whereBetween('month_discount', [String(request.body.price1), String(request.body.price2)]);
     }
+    if (request.body.meter1 != 0 && request.body.meter2 != 0) {
+      userIsExist.whereBetween('floor_area', [String(request.body.meter1), String(request.body.meter2)]);
+    }
     if (request.body.sen1 != 0 && request.body.sen2 != 0) {
       userIsExist.whereBetween('all_area', [String(request.body.sen1), String(request.body.sen2)]);
     }
@@ -117,14 +124,16 @@ class ResidenceController {
     try {
       if (typeof request.body.save === 'boolean') {
         if (request.body.save === true) {
-          if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.user.id).last()) {
-            let va     = new ViewAd();
-            va.text    = request.body.text;
-            va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
-            va.user_id = auth.user.id;
-            va.ad_id   = 0;
-            va.type    = 1;
-            va.save();
+          if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
+            if (!await ViewAd.query().where('text', request.body.text).where('user_id', auth.user.id).last()) {
+              let va     = new ViewAd();
+              va.text    = request.body.text;
+              va.url     = 'type=' + request.body.type + '&text=' + request.body.text;
+              va.user_id = auth.user.id;
+              va.ad_id   = 0;
+              va.type    = 1;
+              va.save();
+            }
           }
         }
       }
