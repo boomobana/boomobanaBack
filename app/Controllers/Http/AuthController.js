@@ -65,6 +65,7 @@ class AuthController {
       if (rule === 'realEstate') {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
+          let logins = await auth.generate(realEstate);
           await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
@@ -489,6 +490,12 @@ class AuthController {
         firstname_en: 'required',
         lastname_en: 'required',
         kartMeli: 'required',
+        javazKasb: 'required',
+        account_owner_name: 'required',
+        fathername: 'required',
+        bank_name: 'required',
+        shaba_number: 'required',
+        card_number: 'required',
         about: 'required',
       };
       const validation2 = await validate(request.all(), rules2);
@@ -498,6 +505,12 @@ class AuthController {
       const {
               firstname_en,
               lastname_en,
+              javazKasb,
+              account_owner_name,
+              fathername,
+              bank_name,
+              shaba_number,
+              card_number,
               kartMeli,
               about,
             }                = request.all();
@@ -506,6 +519,13 @@ class AuthController {
       userStart.lastname_en  = lastname_en;
       userStart.kartMeli     = kartMeli;
       userStart.about        = about;
+
+      userStart.javazKasb          = javazKasb;
+      userStart.account_owner_name = account_owner_name;
+      userStart.fathername         = fathername;
+      userStart.bank_name          = bank_name;
+      userStart.shaba_number       = shaba_number;
+      userStart.card_number        = card_number;
     } else if (rule === 'user') {
       const rules2      = {
         kart_meli: 'required',
