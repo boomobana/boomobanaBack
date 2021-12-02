@@ -4,6 +4,7 @@ const UserCode      = use('App/Models/UserCode'),
       RealEstate    = use('App/Models/RealEstate'),
       PasswordReset = use('App/Models/PasswordReset'),
       Sms           = use('App/Controllers/Http/SmsSender'),
+      Mail          = use('App/Controllers/Http/MailSender'),
       { validate }  = use('Validator'),
       Hash          = use('Hash');
 
@@ -128,6 +129,7 @@ class AuthController {
     }
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
+    await new Mail().send2Step('Salam');
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
   }
 

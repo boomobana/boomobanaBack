@@ -92,37 +92,48 @@ class UserController {
     return response.json({ status_code: 200 });
   }
 
-  // async changePassword({ auth, request, response }) {
-  //   const rules      = {
-  //     password: 'required',
-  //   };
-  //   const validation = await validate(request.all(), rules);
-  //   if (validation.fails()) {
-  //     return response.json(validation.messages());
-  //   }
-  //   const {
-  //           password,
-  //         } = request.all();
-  //
-  //   let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
-  //   if (!userIsExist)
-  //     return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
-  //
-  //   // userIsExist.password = await Hash.make(password);
-  //   userIsExist.password = password;
-  //   userIsExist.save();
-  //   response.json({ status_code: 200, status_text: 'Successfully Done' });
-  // }
+  async changePassword({ auth, request, response }) {
+    const rules      = {
+      password: 'required',
+      token: 'required|min:6|max:6',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    const {
+            password,
+            token,
+          } = request.all();
 
-  async ChangePassword({ auth, request, response }) {
+    let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
+    if (!userIsExist)
+      return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
+    let passwordResetFild = await PasswordReset.query().where('mobile', auth.user.mobile).last();
+    if (!passwordResetFild)
+      return response.json({ status_code: 401, status_text: 'درخواستی برای شما یافت نشد' });
+    if (passwordResetFild.token !== token)
+      return response.json({ status_code: 401, status_text: 'کد ارسالی اشتباه است' });
+    if (passwordResetFild.used === 1)
+      return response.json({ status_code: 401, status_text: 'این کد قبلا استفاده شده است' });
+    // userIsExist.password = await Hash.make(password);
+    userIsExist.password = password;
+    userIsExist.save();
+    passwordResetFild.used = 1;
+    passwordResetFild.save();
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async changePasswordBefore({ auth, request, response }) {
     const { rule }  = request.headers();
     let userIsExist = await RealEstate.query().where('mobile', auth.user.mobile).last();
     if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
-
+    let passwordReset    = new PasswordReset();
     // userIsExist.password = await Hash.make(password);
     let passsword        = String(Math.floor(Math.random() * (999999 - 111111) + 111111));
-    userIsExist.password = passsword;
-    userIsExist.save();
+    passwordReset.token  = passsword;
+    passwordReset.mobile = auth.user.mobile;
+    passwordReset.save();
     var sms = await new Sms().sendPassword(passsword, userIsExist.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }

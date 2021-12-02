@@ -9,11 +9,11 @@ class Ticket extends Model {
   }
 
   user() {
-    return this.hasOne('App/Models/User', 'user_id', 'id');
+    return this.hasOne('App/Models/User', 'user_id', 'id').select(['id', 'firstname', 'lastname']);
   }
 
-  realEstate() {
-    return this.hasOne('App/Models/User', 'user_id', 'id');
+  pm() {
+    return this.hasMany('App/Models/TicketPm', 'id', 'ticket_id').orderBy('id', 'desc').with('user').with('files');
   }
 }
 

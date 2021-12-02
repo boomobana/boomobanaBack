@@ -34,21 +34,78 @@ class SmsSender {
   };
 
   async sendCodeForgot(code, mobile) {
-    return await this.sendTemplate(`${Env.get('APP_NAME')}
-	کد فراموشی رمز عبور شما : ${code}`, mobile);
+    return await this.sendTemplate(`کد بازیابی رمز عبور شما در ${Env.get('APP_NAME')}
+    ${code}`, mobile);
+  };
+
+  async send2Auth(code, mobile) {
+    return await this.sendTemplate(`رمز عبور دو مرحله ایی شما در ${Env.get('APP_NAME')}
+رمز عبور : ${code}`, mobile);
+  };
+
+  async afterSignup(code, mobile) {
+    return await this.sendTemplate(`به بوم و بنا خوش آمدید ${code} عزیز`, mobile);
+  };
+
+  async registerResidence(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی آگهی شما در سامانه ثبت شد منتظر تایید باشید`, mobile);
+  };
+
+  async acceptResidence(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی آگهی شما در سامانه ${Env.get('APP_NAME')} منتشر شد
+این آگهی پس از 45 روز به طور خودکار حذف می شود.`, mobile);
+  };
+
+  async deniedResidence(code, mobile) {
+    return await this.sendTemplate(`کاربرگرامی آگهی شما رد شد.
+لطفا برای کسب اطلاعات بیشتر به صفحه زیر مراجعه فرمایید
+https://boomobana.com/rules`, mobile);
+  };
+
+  async editResidence(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی تغییرات شما بر روی آگهی اعمال شد.`, mobile);
+  };
+
+  async addMelk(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی آگهی شما در سامانه ثبت شد بعد از بررسی با شما تماس گرفته می شود.`, mobile);
+  };
+
+  async activeUser(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی پنل شما با موفقیت فعال شد`, mobile);
+  };
+
+  async buyPackage(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی بسته شما با موفقیت فعال شد`, mobile);
+  };
+
+  async halfPackage(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی شما بیش از 85 درصد از بسته خود را مصرف کرده اید و تنها 15 درصد از حجم بسته شما باقی مانده
+لطفا برای اطلاع از وضعیف بسته ها به پنل خود مراجعه کنید`, mobile);
+  };
+
+  async endPackage(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی شما بسته شما به اتمام رسید برای فعال سازی و اطلاع از وضعیت بسته ها به لینک زیر مراجعه بفرمایید`, mobile);
+  };
+
+  async sendTicket(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی تیکت شما در سامانه ثبت شد`, mobile);
   };
 
   async sendPassword(code, mobile) {
     return await this.sendTemplate(`${Env.get('APP_NAME')}
-	رمز عبور جدید شما : ${code}`, mobile);
+	کد تغییر رمز عبور عبور : ${code}`, mobile);
+  };
+
+  async reciveTicket(code, mobile) {
+    return await this.sendTemplate(`تیکت جدیدی برای شما ارسال شده لطفا بررسی کنید`, mobile);
+  };
+
+  async answerTicket(code, mobile) {
+    return await this.sendTemplate(`کاربر گرامی پاسخ شما از سوی مدیریت ارسال شد`, mobile);
   };
 
   async loginSuccess(mobile) {
-    let date = new Date();
-    let hm   = date.getHours() + ':' + date.getMinutes();
-    /*return await this.sendTemplate(`${Env.get('APP_NAME')}
-     ورود موفق به پنل
-     ${moment().format('jYYYY/jM/jD')} ${hm}`, mobile);*/
+    return await this.sendTemplate(`به ${Env.get('APP_NAME')} خوش آمدید`, mobile);
   };
 
 }

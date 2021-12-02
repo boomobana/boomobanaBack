@@ -48,7 +48,8 @@ Route.group(() => {
   Route.post('/me', 'AuthController.me');
   Route.post('/change/profile', 'UserController.changeProfile');
   Route.post('/change/avatar', 'UserController.changeAvatar');
-  // Route.post('/change/password', 'UserController.changePassword');
+  Route.post('/change/password/send/sms', 'UserController.changePasswordBefore');
+  Route.post('/change/password', 'UserController.changePassword');
   Route.post('/residence/fetch/my/last', 'ResidenceController.FetchMy');
 
   Route.post('/melk/add', 'ResidenceController.addMelk');
@@ -89,6 +90,8 @@ Route.group(() => {
   Route.post('/panel/search/save/residence', 'ResidenceController.searchSavePost');
 
   Route.post('/ticket/list', 'TicketController.index');
+  Route.post('/ticket/find', 'TicketController.find');
+  Route.post('/ticket/add/pm', 'TicketController.store');
   Route.post('/ticket/add', 'TicketController.create');
   Route.post('/ticket/delete', 'TicketController.destroy');
 
@@ -114,7 +117,6 @@ Route.group(() => {
   Route.post('/event/remove', 'RealEstateEventController.remove');
   Route.post('/event/find', 'RealEstateEventController.find');
   Route.post('/is/vip/account', 'PackageBuyController.isVip');
-  Route.post('/change/password/user/sms', 'UserController.ChangePassword');
   Route.post('/home/page/fetch', 'UserController.homeFetch');
   Route.post('/my/package', 'PackageBuyController.fetchMy');
   Route.post('/auth/residence/fetch/last', 'ResidenceController.Fetch');
@@ -125,6 +127,10 @@ Route.group(() => {
 
   Route.post('/reserve/fetch', 'ReserveController.index');
   Route.post('/reserve/add', 'ReserveController.create');
+
+  Route.post('/creators/list', 'CreatorController.index');
+  Route.post('/creators/add', 'CreatorController.create');
+  Route.post('/creators/remove', 'CreatorController.deletes');
 
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {

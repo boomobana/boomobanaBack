@@ -22,7 +22,7 @@ class UserRule {
     } else if (rule === 'advisor' && !!auth.user && auth.user.is_advisor == 1) {
       await next();
     } else {
-      return response.status(420).json({ ...auth.user, status_code: 420, status_text: 'Access Is Denied' });
+      return response.status(420).json({ status_code: 420, status_text: 'Access Is Denied' });
     }
   }
 }

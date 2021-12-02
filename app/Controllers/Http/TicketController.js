@@ -5,6 +5,7 @@
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Ticket       = use('App/Models/Ticket'),
+      TicketPm     = use('App/Models/TicketPm'),
       { validate } = use('Validator');
 
 /**
@@ -25,7 +26,12 @@ class TicketController {
             rule,
           } = request.headers();
     // check the user_type By User Type Table
-    return response.json(await Ticket.query().where('user_id', auth.user.id).where('user_type', 1).with(['realEstate']).orderBy('id', 'desc').fetch());
+    return response.json(await Ticket.query().where('user_id', auth.user.id).where('user_type', 1).with(['user']).with(['pm']).orderBy('id', 'desc').fetch());
+  }
+
+  async find({ request, response, auth }) {
+    // check the user_type By User Type Table
+    return response.json(await Ticket.query().where('id', request.body.id).where('user_type', 1).with(['user']).with(['pm']).orderBy('id', 'desc').last());
   }
 
   /**
@@ -81,7 +87,29 @@ class TicketController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, response }) {
+  async store({ request, response, auth }) {
+    const rules      = {
+      ticket_id: 'required',
+      user_type: 'required',
+      pm: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+
+    let {
+          ticket_id,
+          user_type,
+          pm,
+        }               = request.all();
+    let newTicket       = new TicketPm();
+    newTicket.ticket_id = ticket_id;
+    newTicket.user_id   = auth.user.id;
+    newTicket.user_type = user_type;
+    newTicket.pm        = pm;
+    newTicket.save();
+    return response.json({ status_code: 200 });
   }
 
   /**
