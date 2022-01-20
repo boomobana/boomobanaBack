@@ -31,7 +31,7 @@ class MailSender {
       let title    = `کد ورود دو مرحله ایی به سامانه بوم و بنا`,
           body     = `کد شما برای ورود ${code} می باشد`,
           htmlBody = `<p>کد شما برای ورود ${code} می باشد</p>`;
-      return calback(await this.sendMail(to, title, body, htmlBody));
+      return callback(await this.sendMail(to, title, body, htmlBody));
     });
   }
 }

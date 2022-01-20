@@ -129,7 +129,7 @@ class AuthController {
     }
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
-    await new Mail().send2Step('Salam');
+    // await new Mail().send2Step('Salam',auth.user.email);
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
   }
 
@@ -496,6 +496,7 @@ class AuthController {
         account_owner_name: 'required',
         fathername: 'required',
         bank_name: 'required',
+        shomare_hesab: 'required',
         shaba_number: 'required',
         card_number: 'required',
         about: 'required',
@@ -511,6 +512,7 @@ class AuthController {
               account_owner_name,
               fathername,
               bank_name,
+              shomare_hesab,
               shaba_number,
               card_number,
               kartMeli,
@@ -526,6 +528,7 @@ class AuthController {
       userStart.account_owner_name = account_owner_name;
       userStart.fathername         = fathername;
       userStart.bank_name          = bank_name;
+      userStart.shaba_number       = shomare_hesab;
       userStart.shaba_number       = shaba_number;
       userStart.card_number        = card_number;
     } else if (rule === 'user') {

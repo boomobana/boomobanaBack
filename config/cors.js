@@ -17,7 +17,12 @@ module.exports = {
   |
   */
   origin: [
+    'http://192.168.1.42:8887',
+    'http://localhost:8200',
+    'http://localhost:8100',
     'http://localhost:4200',
+    'http://localhost:4201',
+    'http://localhost:4202',
     'http://192.168.1.42:4200',
     'http://192.168.1.42:4201',
     'http://192.168.1.42:4202',

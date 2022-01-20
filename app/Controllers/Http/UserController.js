@@ -196,7 +196,15 @@ class UserController {
 
   async userFindAdmin({ auth, request, response }) {
     const { id } = request.all();
-    return response.json(await User.query().where('id', id).last());
+    return response.json(await User.query().where('id', id)
+      .with('residence')
+      .with('transaction')
+      .with('Ticket')
+      .with('Event')
+      .with('Customers')
+      .with('Creators')
+      .with('packageBuy')
+      .with('favorite').last());
   }
 
   async userActiveAdmin({ auth, request, response }) {
