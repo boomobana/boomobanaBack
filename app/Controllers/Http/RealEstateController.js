@@ -24,13 +24,7 @@ class RealEstateController {
   }
 
   async fetchOnly({ request, response, auth }) {
-    let data = RealEstate.query().where('pageSignup', 3).whereNot('name', '-').select([
-      'id',
-      'name',
-      'avatar',
-      'lastname',
-      'firstname',
-    ]);
+    let data = RealEstate.query().where('pageSignup', '3').whereNot('name', '-');
     if (request.body.textSearch != '' && request.body.textSearch !== null)
       data.where('name', 'like', '%' + request.body.textSearch + '%')
         .orWhere('name_en', 'like', '%' + request.body.textSearch + '%')
@@ -38,7 +32,13 @@ class RealEstateController {
         .orWhere('firstname', 'like', '%' + request.body.textSearch + '%')
         .orWhere('lastname_en', 'like', '%' + request.body.textSearch + '%')
         .orWhere('firstname_en', 'like', '%' + request.body.textSearch + '%');
-    return response.json(await data.fetch());
+    return response.json(await data.select([
+      'id',
+      'name',
+      'avatar',
+      'lastname',
+      'firstname',
+    ]).fetch());
   }
 
   async searchNew({ request, response, auth }) {
