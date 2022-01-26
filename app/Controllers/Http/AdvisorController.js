@@ -87,11 +87,14 @@ class AdvisorController {
             count_video,
             count_file_adviser,
             count_file_archive,
-          }              = request.all();
+          }        = request.all();
     const {
             rule,
-          }              = request.headers();
-    let newAdviser       = new Adviser();
+          }        = request.headers();
+    let newAdviser = new Adviser();
+    if (typeof request.body.id != undefined && request.body.id != null) {
+      newAdviser = await Adviser.query().where('id', request.body.id).last();
+    }
     newAdviser.firstname = firstname;
     newAdviser.lastname  = lastname;
     newAdviser.email     = email;
@@ -106,7 +109,13 @@ class AdvisorController {
     newAdviser.male      = male;
     let savedData        = await newAdviser.save();
 
-    let newRealAdviserRealEstate                = new AdviserRealEstate();
+    let newRealAdviserRealEstate = new AdviserRealEstate();
+    if (typeof request.body.id != undefined && request.body.id != null) {
+      newRealAdviserRealEstate = await AdviserRealEstate.query()
+        .where('adviser_id', newAdviser.id)
+        .where('real_estate_id', auth.user.id)
+        .last();
+    }
     newRealAdviserRealEstate.real_estate_id     = auth.user.id;
     newRealAdviserRealEstate.adviser_id         = newAdviser.id;
     newRealAdviserRealEstate.count_file_rent    = count_file_rent;
@@ -147,8 +156,7 @@ class AdvisorController {
             lat,
             lng,
           }            = request.all();
-    let { adviser_id } = await AdviserRealEstate.query().where('id', id).last();
-    let newAdviser     = await Adviser.query().where('id', adviser_id).last();
+    let newAdviser     = await Adviser.query().where('id', id).last();
     newAdviser.lat     = String(lat);
     newAdviser.lng     = String(lng);
     newAdviser.address = address;

@@ -129,6 +129,7 @@ Route.group(() => {
   Route.post('/reserve/add', 'ReserveController.create');
 
   Route.post('/creators/list', 'CreatorController.index');
+  Route.post('/creators/find', 'CreatorController.show');
   Route.post('/creators/add', 'CreatorController.create');
   Route.post('/creators/remove', 'CreatorController.deletes');
 

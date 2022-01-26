@@ -37,6 +37,14 @@ class CreatorController {
       firstname: 'required',
       lastname: 'required',
       mobile: 'required',
+      tell: 'required',
+      scope: 'required',
+      email: 'required',
+      lat: 'required',
+      lng: 'required',
+      address: 'required',
+      mizan_daraei: 'required',
+      description: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -46,15 +54,31 @@ class CreatorController {
           firstname,
           lastname,
           mobile,
+          tell,
+          scope,
+          email,
+          lat,
+          lng,
+          address,
+          mizan_daraei,
+          description,
         }        = request.all();
     let newS     = new Creators();
     newS.user_id = auth.user.id;
-    // if (request.body.id != '') {
-    //   newS = await Creators.query().where('id', request.body.residence_id).last();
-    // }
-    newS.firstname = firstname;
-    newS.lastname  = lastname;
-    newS.mobile    = mobile;
+    if (typeof request.body.id != undefined && request.body.id != null) {
+      newS = await Creators.query().where('id', request.body.id).last();
+    }
+    newS.firstname    = firstname;
+    newS.lastname     = lastname;
+    newS.mobile       = mobile;
+    newS.tell         = tell;
+    newS.scope        = scope;
+    newS.email        = email;
+    newS.lat          = lat;
+    newS.lng          = lng;
+    newS.address      = address;
+    newS.mizan_daraei = mizan_daraei;
+    newS.description  = description;
     await newS.save();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
@@ -62,7 +86,6 @@ class CreatorController {
   async deletes({ request, response, auth }) {
     await Creators.query().where('id', request.body.id).delete();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
-
   }
 
   /**
@@ -86,6 +109,8 @@ class CreatorController {
    * @param {View} ctx.view
    */
   async show({ params, request, response, view }) {
+    if (request.body.id !== undefined && request.body.id !== null)
+      return response.json(await Creators.query().where('id', request.body.id).last());
   }
 
   /**
