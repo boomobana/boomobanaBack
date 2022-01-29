@@ -17,6 +17,8 @@ class UserRule {
       await next();
     } else if (rule === 'realEstate' && !!auth.user && auth.user.is_realestate == 1) {
       await next();
+    } else if (rule === 'blogger' && !!auth.user && auth.user.is_bloger == 1) {
+      await next();
     } else if (rule === 'user' && !!auth.user && auth.user.is_user == 1) {
       await next();
     } else if (rule === 'advisor' && !!auth.user && auth.user.is_advisor == 1) {
