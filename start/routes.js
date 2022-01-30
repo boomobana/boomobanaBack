@@ -133,8 +133,32 @@ Route.group(() => {
   Route.post('/creators/add', 'CreatorController.create');
   Route.post('/creators/remove', 'CreatorController.deletes');
 
+  // blogger
+  // post
+  Route.post('/post/add', 'BlogPostController.create');
+  Route.post('/post/find', 'BlogPostController.show');
+  Route.post('/post/fetch/my', 'BlogPostController.indexMy');
+  Route.post('/post/remove', 'BlogPostController.deletes');
+  // comments
+  Route.post('/comment/fetch', 'BlogCommentController.index');
+  Route.post('/comment/find', 'BlogCommentController.show');
+  Route.post('/comment/answer', 'BlogCommentController.answer');
+  Route.post('/comment/add', 'BlogCommentController.create');
+  Route.post('/comment/remove', 'BlogCommentController.deletes');
+  Route.post('/comment/change/status', 'BlogCommentController.changeStatus');
+  // accounting
+  Route.post('/blogger/accounting', 'BlogPostController.WalletFetch');
+  // blogger home data
+  Route.post('/blogger/home/data', 'BlogPostController.home');
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
+  // blogger
+  // posts
+  Route.post('/post/fetch', 'BlogPostController.index');
+  // attachment
+  Route.post('/blog/categories', 'BlogCategoryController.index');
+  Route.post('/blog/post/categories', 'BlogCategoryPostController.index');
+  //end blogger
   Route.post('/fetchPosts/search', 'UserController.fetchPostssearch');
   Route.post('/get/festivals', 'FestivalController.index');
   Route.post('/realestate/fetch', 'RealEstateController.fetchOnly');
