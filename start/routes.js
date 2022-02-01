@@ -136,7 +136,6 @@ Route.group(() => {
   // blogger
   // post
   Route.post('/post/add', 'BlogPostController.create');
-  Route.post('/post/find', 'BlogPostController.show');
   Route.post('/post/fetch/my', 'BlogPostController.indexMy');
   Route.post('/post/remove', 'BlogPostController.deletes');
   // comments
@@ -154,6 +153,7 @@ Route.group(() => {
 Route.group(() => {
   // blogger
   // posts
+  Route.post('/post/find', 'BlogPostController.show');
   Route.post('/post/fetch', 'BlogPostController.index');
   // attachment
   Route.post('/blog/categories', 'BlogCategoryController.index');

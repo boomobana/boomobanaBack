@@ -7,6 +7,7 @@
 
 const { validate } = require('@adonisjs/validator/src/Validator');
 const BlogComment  = use('App/Models/BlogComment');
+const BlogPost     = use('App/Models/BlogPost');
 
 /**
  * Resourceful controller for interacting with blogposts
@@ -21,8 +22,12 @@ class BlogPostController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, auth }) {
-    return response.json(await BlogComment.query().where('user_id', auth.user.id).fetch());
+  async index({ request, response }) {
+    return response.json(await BlogPost.query().orderBy('id', 'desc').fetch());
+  }
+
+  async indexMy({ request, response, auth }) {
+    return response.json(await BlogPost.query().where('user_id', auth.user.id).orderBy('id', 'desc').fetch());
   }
 
   /**
@@ -63,7 +68,8 @@ class BlogPostController {
     newP.active    = active;
     newP.price     = price;
     await newP.save();
-    return response.json(await newP);
+    let data = await newP;
+    return response.json({ ...data.$attributes, status_code: 200 });
   }
 
   /**
@@ -87,7 +93,7 @@ class BlogPostController {
    * @param {View} ctx.view
    */
   async show({ request, response }) {
-    return response.json(await BlogPost.query().where('slug', request.body.slug).latest());
+    return response.json(await BlogPost.query().where('slug', request.body.slug).first());
   }
 
   /**
