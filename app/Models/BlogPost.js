@@ -4,6 +4,13 @@
 const Model = use('Model');
 
 class BlogPost extends Model {
+  user() {
+    return this.hasOne('App/Models/User', 'user_id', 'id');
+  }
+
+  comment() {
+    return this.hasMany('App/Models/BlogComment', 'id', 'post_id').with('userI').with('userA');
+  }
 }
 
 module.exports = BlogPost;

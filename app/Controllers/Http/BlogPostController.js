@@ -5,9 +5,10 @@
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const { validate } = require('@adonisjs/validator/src/Validator');
-const BlogComment  = use('App/Models/BlogComment');
-const BlogPost     = use('App/Models/BlogPost');
+const { validate }     = require('@adonisjs/validator/src/Validator'),
+      BlogCategory     = use('App/Models/BlogCategory'),
+      BlogCategoryPost = use('App/Models/BlogCategoryPost'),
+      BlogPost         = use('App/Models/BlogPost');
 
 /**
  * Resourceful controller for interacting with blogposts
@@ -23,11 +24,33 @@ class BlogPostController {
    * @param {View} ctx.view
    */
   async index({ request, response }) {
-    return response.json(await BlogPost.query().orderBy('id', 'desc').fetch());
+    return response.json(await BlogPost.query()
+      .orderBy('id', 'desc')
+      .with('user')
+      .with('comment')
+      .fetch());
   }
 
   async indexMy({ request, response, auth }) {
-    return response.json(await BlogPost.query().where('user_id', auth.user.id).orderBy('id', 'desc').fetch());
+    return response.json(await BlogPost.query()
+      .where('user_id', auth.user.id)
+      .with('user')
+      .with('comment')
+      .orderBy('id', 'desc')
+      .fetch());
+  }
+
+  async categoryFetch({ request, response, auth }) {
+    return response.json(await BlogCategory.query()
+      .orderBy('id', 'desc')
+      .fetch());
+  }
+
+  async categoryPostFetch({ request, response, auth }) {
+    return response.json(await BlogCategoryPost.query()
+      .where('category_id', request.body.category_id)
+      .orderBy('id', 'desc')
+      .fetch());
   }
 
   /**
@@ -93,7 +116,12 @@ class BlogPostController {
    * @param {View} ctx.view
    */
   async show({ request, response }) {
-    return response.json(await BlogPost.query().where('slug', request.body.slug).first());
+    return response.json(await BlogPost
+      .query()
+      .with('user')
+      .with('comment')
+      .where('slug', request.body.slug)
+      .first());
   }
 
   /**

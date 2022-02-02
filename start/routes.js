@@ -153,6 +153,8 @@ Route.group(() => {
 Route.group(() => {
   // blogger
   // posts
+  Route.post('/category/fetch', 'BlogPostController.categoryFetch');
+  Route.post('/category/post/fetch', 'BlogPostController.categoryPostFetch');
   Route.post('/post/find', 'BlogPostController.show');
   Route.post('/post/fetch', 'BlogPostController.index');
   // attachment
