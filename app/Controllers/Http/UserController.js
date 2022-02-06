@@ -186,10 +186,27 @@ class UserController {
 
   async userFetchAdmin({ auth, request, response }) {
     const { page } = request.qs;
-    const limit    = 10;
+    const { type } = request.body;
+    const limit    = 15;
     let user       = User.query().orderBy('id', 'DESC');
-    if (!!request.body.is_realestate && request.body.is_realestate == 1) {
-      user.where('name', '!=', '-').where('name_en', '!=', '-').where('is_realestate', 1);
+    if (type === 'realestate') {
+      user
+        .where('name', '!=', '-')
+        .where('name_en', '!=', '-')
+        .where('is_realestate', 1);
+    } else if (type === 'advisor') {
+      user
+        .where('name', '!=', '-')
+        .where('name_en', '!=', '-')
+        .where('is_advisor', 1);
+    } else if (type === 'blogger') {
+      user
+        .where('is_bloger', 1);
+    } else if (type === 'user') {
+      user
+        .where('is_bloger', 0)
+        .where('is_realestate', 0)
+        .where('is_advisor', 0);
     }
     return response.json(await user.paginate(page, limit));
   }
