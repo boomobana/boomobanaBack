@@ -564,6 +564,9 @@ class ResidenceController {
     if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
       Res.where('type', request.body.typeSearch);
     }
+    if (typeof request.body.status === 'string' && request.body.status !== null && request.body.status !== '') {
+      Res.where('status', request.body.status);
+    }
     if (typeof request.body.provinceId === 'string' && request.body.provinceId !== null && request.body.provinceId !== '') {
       Res.where('province_id', request.body.provinceId);
     }

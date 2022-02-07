@@ -202,11 +202,6 @@ class UserController {
     } else if (type === 'blogger') {
       user
         .where('is_bloger', 1);
-    } else if (type === 'user') {
-      user
-        .where('is_bloger', 0)
-        .where('is_realestate', 0)
-        .where('is_advisor', 0);
     }
     return response.json(await user.paginate(page, limit));
   }
