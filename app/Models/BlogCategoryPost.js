@@ -4,6 +4,9 @@
 const Model = use('Model');
 
 class BlogCategoryPost extends Model {
+  static get table() {
+    return 'blog_post_categories';
+  }
 }
 
 module.exports = BlogCategoryPost;

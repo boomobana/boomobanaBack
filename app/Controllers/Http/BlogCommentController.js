@@ -6,6 +6,7 @@
 
 const { validate } = require('@adonisjs/validator/src/Validator');
 const BlogPost     = use('App/Models/BlogPost');
+const BlogComment  = use('App/Models/BlogComment');
 
 /**
  * Resourceful controller for interacting with blogcomments
@@ -33,7 +34,31 @@ class BlogCommentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create({ request, response, view }) {
+  async create({ request, response, auth }) {
+    const rules      = {
+      star: 'required',
+      post_id: 'required',
+      commentText: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          star,
+          commentText,
+          post_id,
+        }            = request.all();
+    let post         = await BlogPost.query().where('id', post_id).last();
+    let newP         = new BlogComment();
+    newP.star        = star;
+    newP.user_posted = auth.user.id;
+    newP.user_id     = post.user_id;
+    newP.post_id     = post_id;
+    newP.body        = commentText;
+    await newP.save();
+    let data = await newP;
+    return response.json({ ...data.$attributes, status_code: 200 });
   }
 
   /**

@@ -24,11 +24,24 @@ class BlogPostController {
    * @param {View} ctx.view
    */
   async index({ request, response }) {
-    return response.json(await BlogPost.query()
+    const { page } = request.qs;
+    const limit    = 10;
+    let data       = BlogPost.query()
       .orderBy('id', 'desc')
       .with('user')
       .with('comment')
-      .fetch());
+      .where('active', 1);
+    if (request.body.type === 'tag') {
+
+    } else if (request.body.type === 'cat') {
+      let cats    = await BlogCategoryPost.query().where('category_id', request.body.id).fetch();
+      let catsArr = [];
+      for (let cat in cats.rows) {
+        catsArr.push(cats.rows[cat].post_id);
+      }
+      data.whereIn('id', catsArr);
+    }
+    return response.json(await data.paginate(page, limit));
   }
 
   async indexMy({ request, response, auth }) {
