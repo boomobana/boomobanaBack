@@ -21,8 +21,13 @@ class BlogCommentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, view }) {
-    return response.json(await BlogPost.query().where('user_id', auth.user.id).fetch());
+  async index({ request, response, auth }) {
+    const { page } = request.qs;
+    const limit    = 10;
+    return response.json(await BlogComment.query().orderBy('id', 'desc').whereNotIn('active', [
+      0,
+      3,
+    ]).where('user_posted', auth.user.id).with('userA').paginate(page, limit));
   }
 
   /**

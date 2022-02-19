@@ -20,7 +20,10 @@ class CreatorController {
    * @param {View} ctx.view
    */
   async index({ request, response, auth }) {
-    return response.json(await Creators.query().where('user_id', auth.user.id).orderBy('id', 'desc').fetch());
+    return response.json(await Creators.query().where('user_id', auth.user.id).orderBy('id', 'desc')
+      .with('province')
+      .with('region')
+      .fetch());
   }
 
   /**
@@ -43,6 +46,8 @@ class CreatorController {
       lat: 'required',
       lng: 'required',
       address: 'required',
+      region_id: 'required',
+      province_id: 'required',
       mizan_daraei: 'required',
       description: 'required',
     };
@@ -60,6 +65,8 @@ class CreatorController {
           lat,
           lng,
           address,
+          region_id,
+          province_id,
           mizan_daraei,
           description,
         }        = request.all();
@@ -77,6 +84,8 @@ class CreatorController {
     newS.lat          = lat;
     newS.lng          = lng;
     newS.address      = address;
+    newS.region_id    = region_id;
+    newS.province_id  = province_id;
     newS.mizan_daraei = mizan_daraei;
     newS.description  = description;
     await newS.save();

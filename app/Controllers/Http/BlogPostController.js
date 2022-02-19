@@ -34,8 +34,21 @@ class BlogPostController {
     if (request.body.type === 'tag') {
 
     } else if (request.body.type === 'cat') {
-      let cats    = await BlogCategoryPost.query().where('category_id', request.body.id).fetch();
-      let catsArr = [];
+      let catsArr    = [];
+      let subCatsArr = [];
+      let cats;
+      let SubCats;
+      let SubCat     = await BlogCategory.query().where('id', request.body.id).last();
+      if (SubCat.sub_cat == 0) {
+        SubCats = await BlogCategory.query().where('sub_cat', request.body.id).fetch();
+        for (let cat in SubCats.rows) {
+          subCatsArr.push(SubCats.rows[cat].id);
+        }
+      } else {
+        subCatsArr.push(SubCat.id);
+      }
+      console.log(subCatsArr);
+      cats = await BlogCategoryPost.query().whereIn('category_id', subCatsArr).fetch();
       for (let cat in cats.rows) {
         catsArr.push(cats.rows[cat].post_id);
       }

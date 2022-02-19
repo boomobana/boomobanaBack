@@ -9,7 +9,7 @@ class BlogPost extends Model {
   }
 
   comment() {
-    return this.hasMany('App/Models/BlogComment', 'id', 'post_id').with('userI').with('userA');
+    return this.hasMany('App/Models/BlogComment', 'id', 'post_id').with('userI').with('userA').where('active', 1);
   }
 }
 
