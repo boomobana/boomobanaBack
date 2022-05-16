@@ -146,14 +146,11 @@ class AuthController {
       }
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
-    var geo    = geoip.lookup(ip);
+    var geo    = await geoip.lookup(ip);
     console.log(await request.ip(), geo);
     await LoginActivity.create({
-      user_id: (await userA.last()).id,
-      ip: request.ip(),
-      os: userOs,//request.os(),
-      lat: 'ip',
-      lng: 'ip',
+      user_id: (await userA.last()).id, ip: request.ip(), os: userOs.toLowerCase(),//request.os(),
+      lat: 'ip', lng: 'ip',
     });
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
