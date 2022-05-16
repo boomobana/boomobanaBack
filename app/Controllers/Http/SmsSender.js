@@ -14,6 +14,7 @@ class SmsSender {
       }, function (err, httpResponse, body) {
         // console.log(body.body);
         if (err) reject(err);
+        console.log(body);
         return callback(body);
       });
     });

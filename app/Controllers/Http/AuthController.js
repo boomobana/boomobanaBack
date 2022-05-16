@@ -41,6 +41,22 @@ class AuthController {
     return response.json({ status_code: 200, status_text: 'Success Login' });
   }
 
+  async makeLoginActivity(user, userOs, ipA) {
+    console.log(ipA);
+    if (ipA != '127.0.0.1') {
+      var geo = geoip.lookup(ipA);
+      await LoginActivity.create({
+        user_id: user.id,
+        ip: ipA,
+        os: userOs.toLowerCase(),//request.os(),
+        lat: geo.ll[0],
+        lng: geo.ll[1],
+        country: geo.country,
+        city: geo.city,
+      });
+    }
+  }
+
   async wihMobileCode({ auth, request, response }) {
     const rules            = {
       mobile: 'required',
@@ -71,19 +87,11 @@ class AuthController {
         if (!!realEstate && !!realEstate.id) {
           let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
           let ipA    = await request.ip();
-          var geo    = geoip.lookup(ipA);
-          await LoginActivity.create({
-            user_id: realEstate.id,
-            ip: ipA,
-            os: userOs.toLowerCase(),//request.os(),
-            lat: geo.ll[0],
-            lng: geo.ll[1],
-            country: geo.country,
-            city: geo.city,
-          });
-
+          this.makeLoginActivity(realEstate, userOs, ipA);
           let logins = await auth.generate(realEstate);
           await new Sms().loginSuccess(mobile);
+          await new Mail().sendLoginTrue(realEstate.email);
+
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
           return response.json({ status_code: 202, rule: rule, status_text: 'User Is Not Exist' });
@@ -93,18 +101,11 @@ class AuthController {
         if (!!user && !!user.id) {
           let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
           let ipA    = await request.ip();
-          var geo    = geoip.lookup(ipA);
-          await LoginActivity.create({
-            user_id: user.id,
-            ip: ipA,
-            os: userOs.toLowerCase(),//request.os(),
-            lat: geo.ll[0],
-            lng: geo.ll[1],
-            country: geo.country,
-            city: geo.city,
-          });
+          this.makeLoginActivity(user, userOs, ipA);
           let logins = await auth.generate(user);
           await new Sms().loginSuccess(mobile);
+          await new Mail().sendLoginTrue(user.email);
+
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
           return response.json({ status_code: 202, rule: rule, status_text: 'User Is Not Exist' });
@@ -157,19 +158,11 @@ class AuthController {
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
     let ipA    = await request.ip();
-    var geo    = geoip.lookup(ipA);
-    await LoginActivity.create({
-      user_id: (await userA.last()).id,
-      ip: ipA,
-      os: userOs.toLowerCase(),//request.os(),
-      lat: geo.ll[0],
-      lng: geo.ll[1],
-      country: geo.country,
-      city: geo.city,
-    });
+    this.makeLoginActivity((await userA.last()), userOs, ipA);
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
-    // await new Mail().send2Step('Salam',auth.user.email);
+    await new Mail().sendLoginTrue((await userA.last()).email);
+
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
   }
 
@@ -328,16 +321,7 @@ class AuthController {
     let us     = await User.query().where('id', userStart.id).last();
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
     let ipA    = await request.ip();
-    var geo    = geoip.lookup(ipA);
-    await LoginActivity.create({
-      user_id: us.id,
-      ip: ipA,
-      os: userOs.toLowerCase(),//request.os(),
-      lat: geo.ll[0],
-      lng: geo.ll[1],
-      country: geo.country,
-      city: geo.city,
-    });
+    this.makeLoginActivity(us, userOs, ipA);
     let logins = await auth.attempt(mobile, password);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
@@ -520,16 +504,7 @@ class AuthController {
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
     let ipA    = await request.ip();
-    var geo    = geoip.lookup(ipA);
-    await LoginActivity.create({
-      user_id: us.id,
-      ip: ipA,
-      os: userOs.toLowerCase(),//request.os(),
-      lat: geo.ll[0],
-      lng: geo.ll[1],
-      country: geo.country,
-      city: geo.city,
-    });
+    this.makeLoginActivity(us, userOs, ipA);
 
     let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
@@ -649,16 +624,7 @@ class AuthController {
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
     let ipA    = await request.ip();
-    var geo    = geoip.lookup(ipA);
-    await LoginActivity.create({
-      user_id: us.id,
-      ip: ipA,
-      os: userOs.toLowerCase(),//request.os(),
-      lat: geo.ll[0],
-      lng: geo.ll[1],
-      country: geo.country,
-      city: geo.city,
-    });
+    this.makeLoginActivity(us, userOs, ipA);
 
     let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });

@@ -7,9 +7,7 @@ class MailSender {
   async sendMail(to, title, body, htmlbody) {
     return new Promise(async (callback, reject) => {
       let transporter = nodemailer.createTransport({
-        host: Env.get('SMTP_HOST'),
-        port: Env.get('SMTP_PORT'),
-        secure: Env.get('SMTP_SECURE'), // true for 465, false for other ports
+        service: Env.get('SMTP_SERVICE'),
         auth: {
           user: Env.get('SMTP_USERNAME'), // generated ethereal user
           pass: Env.get('SMTP_PASSWORD'), // generated ethereal password
@@ -31,6 +29,15 @@ class MailSender {
       let title    = `کد ورود دو مرحله ایی به سامانه بوم و بنا`,
           body     = `کد شما برای ورود ${code} می باشد`,
           htmlBody = `<p>کد شما برای ورود ${code} می باشد</p>`;
+      return callback(await this.sendMail(to, title, body, htmlBody));
+    });
+  }
+
+  async sendLoginTrue(to) {
+    return new Promise(async (callback, reject) => {
+      let title    = `ورود موفق`,
+          body     = `ما یک ورود موفق را به حساب شما را تایید می کنیم`,
+          htmlBody = `<p>ما یک ورود موفق را به حساب شما را تایید می کنیم</p>`;
       return callback(await this.sendMail(to, title, body, htmlBody));
     });
   }
