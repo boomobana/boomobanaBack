@@ -146,9 +146,8 @@ class AuthController {
       }
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
-    console.dir(await request.ip());
-    var geo = geoip.lookup(ip);
-    console.log(geo);
+    var geo    = geoip.lookup(ip);
+    console.log(await request.ip(), geo);
     await LoginActivity.create({
       user_id: (await userA.last()).id,
       ip: request.ip(),
