@@ -5,6 +5,7 @@
 const { validate } = require('@adonisjs/validator/src/Validator');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Creators     = use('App/Models/Creator');
+const CreatorFile  = use('App/Models/CreatorFile');
 
 /**
  * Resourceful controller for interacting with creators
@@ -24,6 +25,45 @@ class CreatorController {
       .with('province')
       .with('region')
       .fetch());
+  }
+
+  async addFile({ request, response, auth }) {
+    const rules      = {
+      creator_id: 'required',
+      file_url: 'required',
+      file_type: 'required',
+      title: 'required',
+      description: 'required',
+    };
+    const validation = await validate(request.all(), rules);
+    if (validation.fails()) {
+      return response.json(validation.messages());
+    }
+    let {
+          creator_id,
+          file_url,
+          file_type,
+          title,
+          description,
+        }           = request.all();
+    let newS        = new CreatorFile();
+    newS.creator_id = creator_id;
+    if (typeof request.body.id != undefined && request.body.id != null) {
+      newS = await CreatorFile.query().where('id', request.body.id).last();
+    }
+    newS.file_url    = file_url;
+    newS.file_type   = file_type;
+    newS.title       = title;
+    newS.description = description;
+    await newS.save();
+    return response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async listFile({ request, response, auth }) {
+    return response.json(await CreatorFile.query()
+      .where('creator_id', request.input('creator_id'))
+      .fetch(),
+    );
   }
 
   /**

@@ -2,11 +2,14 @@
 const UserCode      = use('App/Models/UserCode'),
       User          = use('App/Models/User'),
       RealEstate    = use('App/Models/RealEstate'),
+      LoginActivity = use('App/Models/LoginActivity'),
       PasswordReset = use('App/Models/PasswordReset'),
       Sms           = use('App/Controllers/Http/SmsSender'),
       Mail          = use('App/Controllers/Http/MailSender'),
       { validate }  = use('Validator'),
-      Hash          = use('Hash');
+      Hash          = use('Hash'),
+      geoip         = require('geoip-lite'),
+      ip            = require('ip');
 
 class AuthController {
   async wihMobile({ auth, request, response }) {
@@ -66,6 +69,14 @@ class AuthController {
       if (rule === 'realEstate') {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
+          await LoginActivity.create({
+            user_id: realEstate.id,
+            ip: 'ip',
+            os: 'ip',
+            lat: 'ip',
+            lng: 'ip',
+          });
+
           let logins = await auth.generate(realEstate);
           await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
@@ -75,6 +86,13 @@ class AuthController {
       } else if (rule === 'user') {
         let user = await User.query().where('mobile', mobile).first();
         if (!!user && !!user.id) {
+          await LoginActivity.create({
+            user_id: user.id,
+            ip: 'ip',
+            os: 'ip',
+            lat: 'ip',
+            lng: 'ip',
+          });
           let logins = await auth.generate(user);
           await new Sms().loginSuccess(mobile);
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
@@ -127,6 +145,17 @@ class AuthController {
         return response.status(403).json({ status_code: 403, status_text: 'User Permission Denied' });
       }
     }
+    let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+    console.dir(await ip.address());
+    var geo = geoip.lookup(ip);
+    console.log(geo);
+    await LoginActivity.create({
+      user_id: (await userA.last()).id,
+      ip: request.ip(),
+      os: userOs,//request.os(),
+      lat: 'ip',
+      lng: 'ip',
+    });
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
     // await new Mail().send2Step('Salam',auth.user.email);
@@ -135,6 +164,10 @@ class AuthController {
 
   async me({ auth, request, response }) {
     try {
+      let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+      let ipA    = await ip.address();
+      var geo    = geoip.lookup(ipA);
+      console.log(geo, ipA, userOs);
       const headerRules      = {
         rule: 'required',
       };
@@ -285,7 +318,14 @@ class AuthController {
     } else {
       return response.json({ status_code: 404, status_text: 'not found' });
     }
-    let us     = await User.query().where('id', userStart.id).last();
+    let us = await User.query().where('id', userStart.id).last();
+    await LoginActivity.create({
+      user_id: us.id,
+      ip: 'ip',
+      os: 'ip',
+      lat: 'ip',
+      lng: 'ip',
+    });
     let logins = await auth.attempt(mobile, password);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }
@@ -337,13 +377,24 @@ class AuthController {
         address: 'required',
         about_azhans: 'required',
         lat: 'required',
-        lng: 'required',
+        lng: 'required', type: 'required',
+        card_number: 'required',
+        shaba_number: 'required',
+        account_owner_name: 'required',
+        shomare_hesab: 'required',
+        bank_name: 'required',
       };
       const realEstateValidation = await validate(request.all(), realEstateRule);
       if (realEstateValidation.fails()) {
         return response.json(realEstateValidation.messages());
       }
       const {
+              type,
+              card_number,
+              shaba_number,
+              shomare_hesab,
+              account_owner_name,
+              bank_name,
               name,
               name_en,
               sos,
@@ -363,6 +414,11 @@ class AuthController {
               lng,
             }                           = request.all();
       userStart                         = await RealEstate.query().where('mobile', mobile).last();
+      userStart.card_number             = card_number;
+      userStart.shaba_number            = shaba_number;
+      userStart.shomare_hesab           = shomare_hesab;
+      userStart.account_owner_name      = account_owner_name;
+      userStart.bank_name               = bank_name;
       userStart.name                    = name;
       userStart.name_en                 = name_en;
       userStart.sos                     = sos;
@@ -385,6 +441,7 @@ class AuthController {
       const userDefRule       = {
         type: 'required',
         card_number: 'required',
+        shomare_hesab: 'required',
         shaba_number: 'required',
         account_owner_name: 'required',
         bank_name: 'required',
@@ -396,6 +453,7 @@ class AuthController {
       const {
               type,
               card_number,
+              shomare_hesab,
               shaba_number,
               account_owner_name,
               bank_name,
@@ -404,6 +462,7 @@ class AuthController {
       userStart.type               = type;
       userStart.card_number        = card_number;
       userStart.shaba_number       = shaba_number;
+      userStart.shomare_hesab      = shomare_hesab;
       userStart.account_owner_name = account_owner_name;
       userStart.bank_name          = bank_name;
       if (type == 2) {
@@ -447,6 +506,13 @@ class AuthController {
     } else if (rule === 'user') {
       us = await User.query().where('mobile', mobile).last();
     }
+    await LoginActivity.create({
+      user_id: us.id,
+      ip: 'ip',
+      os: 'ip',
+      lat: 'ip',
+      lng: 'ip',
+    });
 
     let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
@@ -564,6 +630,14 @@ class AuthController {
     } else if (rule === 'user') {
       us = await User.query().where('mobile', mobile).last();
     }
+    await LoginActivity.create({
+      user_id: us.id,
+      ip: 'ip',
+      os: 'ip',
+      lat: 'ip',
+      lng: 'ip',
+    });
+
     let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
   }

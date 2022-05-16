@@ -32,6 +32,7 @@ Route.group(() => {
   Route.post('/forgot/code', 'AuthController.requestForgetPass');
   Route.post('/forgot/change', 'AuthController.changeForgotPassword');
 }).middleware('guest');
+
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
 Route.post('/find/user/details', 'UserController.findUser');
 Route.post('/find/realestate/details', 'RealEstateController.findOnly');
@@ -131,6 +132,8 @@ Route.group(() => {
   Route.post('/creators/list', 'CreatorController.index');
   Route.post('/creators/find', 'CreatorController.show');
   Route.post('/creators/add', 'CreatorController.create');
+  Route.post('/creators/add/file', 'CreatorController.addFile');
+  Route.post('/creators/list/file', 'CreatorController.listFile');
   Route.post('/creators/remove', 'CreatorController.deletes');
 
   // blogger
