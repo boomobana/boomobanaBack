@@ -69,12 +69,17 @@ class AuthController {
       if (rule === 'realEstate') {
         let realEstate = await RealEstate.query().where('mobile', mobile).first();
         if (!!realEstate && !!realEstate.id) {
+          let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+          let ipA    = await request.ip();
+          var geo    = geoip.lookup(ipA);
           await LoginActivity.create({
-            user_id: realEstate.id,
-            ip: 'ip',
-            os: 'ip',
-            lat: 'ip',
-            lng: 'ip',
+            user_id: (await userA.last()).id,
+            ip: ipA,
+            os: userOs.toLowerCase(),//request.os(),
+            lat: geo.ll[0],
+            lng: geo.ll[1],
+            country: geo.country,
+            city: geo.city,
           });
 
           let logins = await auth.generate(realEstate);
@@ -86,12 +91,17 @@ class AuthController {
       } else if (rule === 'user') {
         let user = await User.query().where('mobile', mobile).first();
         if (!!user && !!user.id) {
+          let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+          let ipA    = await request.ip();
+          var geo    = geoip.lookup(ipA);
           await LoginActivity.create({
-            user_id: user.id,
-            ip: 'ip',
-            os: 'ip',
-            lat: 'ip',
-            lng: 'ip',
+            user_id: (await userA.last()).id,
+            ip: ipA,
+            os: userOs.toLowerCase(),//request.os(),
+            lat: geo.ll[0],
+            lng: geo.ll[1],
+            country: geo.country,
+            city: geo.city,
           });
           let logins = await auth.generate(user);
           await new Sms().loginSuccess(mobile);
@@ -146,11 +156,16 @@ class AuthController {
       }
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
-    var geo    = await geoip.lookup(ip);
-    console.log(await request.ip(), geo);
+    let ipA    = await request.ip();
+    var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: (await userA.last()).id, ip: request.ip(), os: userOs.toLowerCase(),//request.os(),
-      lat: 'ip', lng: 'ip',
+      user_id: (await userA.last()).id,
+      ip: ipA,
+      os: userOs.toLowerCase(),//request.os(),
+      lat: geo.ll[0],
+      lng: geo.ll[1],
+      country: geo.country,
+      city: geo.city,
     });
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
@@ -160,10 +175,6 @@ class AuthController {
 
   async me({ auth, request, response }) {
     try {
-      let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
-      let ipA    = await request.ip();
-      var geo    = geoip.lookup(ipA);
-      console.log(geo.ll, geo.country, geo.city, ipA, userOs);
       const headerRules      = {
         rule: 'required',
       };
@@ -314,13 +325,18 @@ class AuthController {
     } else {
       return response.json({ status_code: 404, status_text: 'not found' });
     }
-    let us = await User.query().where('id', userStart.id).last();
+    let us     = await User.query().where('id', userStart.id).last();
+    let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+    let ipA    = await request.ip();
+    var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: us.id,
-      ip: 'ip',
-      os: 'ip',
-      lat: 'ip',
-      lng: 'ip',
+      user_id: (await userA.last()).id,
+      ip: ipA,
+      os: userOs.toLowerCase(),//request.os(),
+      lat: geo.ll[0],
+      lng: geo.ll[1],
+      country: geo.country,
+      city: geo.city,
     });
     let logins = await auth.attempt(mobile, password);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
@@ -502,12 +518,17 @@ class AuthController {
     } else if (rule === 'user') {
       us = await User.query().where('mobile', mobile).last();
     }
+    let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+    let ipA    = await request.ip();
+    var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: us.id,
-      ip: 'ip',
-      os: 'ip',
-      lat: 'ip',
-      lng: 'ip',
+      user_id: (await userA.last()).id,
+      ip: ipA,
+      os: userOs.toLowerCase(),//request.os(),
+      lat: geo.ll[0],
+      lng: geo.ll[1],
+      country: geo.country,
+      city: geo.city,
     });
 
     let logins = await auth.generate(us);
@@ -626,12 +647,17 @@ class AuthController {
     } else if (rule === 'user') {
       us = await User.query().where('mobile', mobile).last();
     }
+    let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+    let ipA    = await request.ip();
+    var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: us.id,
-      ip: 'ip',
-      os: 'ip',
-      lat: 'ip',
-      lng: 'ip',
+      user_id: (await userA.last()).id,
+      ip: ipA,
+      os: userOs.toLowerCase(),//request.os(),
+      lat: geo.ll[0],
+      lng: geo.ll[1],
+      country: geo.country,
+      city: geo.city,
     });
 
     let logins = await auth.generate(us);
