@@ -11,6 +11,7 @@ const FavoriteAd         = use('App/Models/FavoriteAd');
 const User               = use('App/Models/User');
 const Region             = use('App/Models/Region');
 const Province           = use('App/Models/Province');
+const LoginActivity      = use('App/Models/LoginActivity');
 const RealEstate         = use('App/Models/RealEstate');
 const PasswordReset      = use('App/Models/PasswordReset');
 const Sms                = use('App/Controllers/Http/SmsSender');
@@ -322,6 +323,10 @@ class UserController {
     await u.save();
 
     return response.json({ status_code: 200 });
+  }
+
+  async loginActivityFetch({ auth, request, response }) {
+    return response.json(await LoginActivity.query().where({ user_id: auth.user.id }).fetch());
   }
 }
 

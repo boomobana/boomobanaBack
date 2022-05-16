@@ -52,6 +52,7 @@ Route.group(() => {
   Route.post('/change/password/send/sms', 'UserController.changePasswordBefore');
   Route.post('/change/password', 'UserController.changePassword');
   Route.post('/residence/fetch/my/last', 'ResidenceController.FetchMy');
+  Route.post('/login/activity', 'UserController.loginActivityFetch');
 
   Route.post('/melk/add', 'ResidenceController.addMelk');
 
