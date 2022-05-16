@@ -162,9 +162,8 @@ class AuthController {
     try {
       let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
       let ipA    = await request.ip();
-      console.log(await request.ip(), geo);
-      var geo = geoip.lookup(ipA);
-      console.log(geo, ipA, userOs);
+      var geo    = geoip.lookup(ipA);
+      console.log(geo.ll, geo.country, geo.city, ipA, userOs);
       const headerRules      = {
         rule: 'required',
       };
