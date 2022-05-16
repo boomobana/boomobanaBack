@@ -73,7 +73,7 @@ class AuthController {
           let ipA    = await request.ip();
           var geo    = geoip.lookup(ipA);
           await LoginActivity.create({
-            user_id: (await userA.last()).id,
+            user_id: realEstate.id,
             ip: ipA,
             os: userOs.toLowerCase(),//request.os(),
             lat: geo.ll[0],
@@ -95,7 +95,7 @@ class AuthController {
           let ipA    = await request.ip();
           var geo    = geoip.lookup(ipA);
           await LoginActivity.create({
-            user_id: (await userA.last()).id,
+            user_id: user.id,
             ip: ipA,
             os: userOs.toLowerCase(),//request.os(),
             lat: geo.ll[0],
@@ -330,7 +330,7 @@ class AuthController {
     let ipA    = await request.ip();
     var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: (await userA.last()).id,
+      user_id: us.id,
       ip: ipA,
       os: userOs.toLowerCase(),//request.os(),
       lat: geo.ll[0],
@@ -522,7 +522,7 @@ class AuthController {
     let ipA    = await request.ip();
     var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: (await userA.last()).id,
+      user_id: us.id,
       ip: ipA,
       os: userOs.toLowerCase(),//request.os(),
       lat: geo.ll[0],
@@ -651,7 +651,7 @@ class AuthController {
     let ipA    = await request.ip();
     var geo    = geoip.lookup(ipA);
     await LoginActivity.create({
-      user_id: (await userA.last()).id,
+      user_id: us.id,
       ip: ipA,
       os: userOs.toLowerCase(),//request.os(),
       lat: geo.ll[0],
