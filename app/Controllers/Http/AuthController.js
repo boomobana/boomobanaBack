@@ -146,7 +146,7 @@ class AuthController {
       }
     }
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
-    console.dir(await ip.address());
+    console.dir(await request.ip());
     var geo = geoip.lookup(ip);
     console.log(geo);
     await LoginActivity.create({
