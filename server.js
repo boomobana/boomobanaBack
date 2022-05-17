@@ -31,4 +31,9 @@ new Ignitor(require('@adonisjs/fold'))
   .fireHttpServer((handler) => {
     // return https.createServer(options, handler);
   })
+  .then(() => {
+    const server = use('Server');
+    const Env    = use('Env');
+    use('./start/socket')(server.getInstance());
+  })
   .catch(console.error);
