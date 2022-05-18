@@ -75,7 +75,7 @@ https://boomobana.com/rules`, mobile);
     return await this.sendTemplate(`کاربر گرامی پنل شما با موفقیت فعال شد`, mobile);
   };
 
-  async buyPackage(code, mobile) {
+  async buyPackage(mobile) {
     return await this.sendTemplate(`کاربر گرامی بسته شما با موفقیت فعال شد`, mobile);
   };
 
@@ -88,7 +88,7 @@ https://boomobana.com/rules`, mobile);
     return await this.sendTemplate(`کاربر گرامی شما بسته شما به اتمام رسید برای فعال سازی و اطلاع از وضعیت بسته ها به لینک زیر مراجعه بفرمایید`, mobile);
   };
 
-  async sendTicket(code, mobile) {
+  async sendTicket(mobile) {
     return await this.sendTemplate(`کاربر گرامی تیکت شما در سامانه ثبت شد`, mobile);
   };
 
@@ -97,11 +97,11 @@ https://boomobana.com/rules`, mobile);
 	کد تغییر رمز عبور عبور : ${code}`, mobile);
   };
 
-  async reciveTicket(code, mobile) {
+  async reciveTicket(mobile) {
     return await this.sendTemplate(`تیکت جدیدی برای شما ارسال شده لطفا بررسی کنید`, mobile);
   };
 
-  async answerTicket(code, mobile) {
+  async answerTicket(mobile) {
     return await this.sendTemplate(`کاربر گرامی پاسخ شما از سوی مدیریت ارسال شد`, mobile);
   };
 

@@ -7,10 +7,14 @@
 const Transaction      = use('App/Models/Transaction');
 const PackageBuy       = use('App/Models/PackageBuy');
 const Package          = use('App/Models/Package');
+const User             = use('App/Models/User');
+const Ticket           = use('App/Models/Ticket');
+const TicketPm         = use('App/Models/TicketPm');
 const ZarinpalCheckout = require('zarinpal-checkout');
 const { rule }         = require('@adonisjs/validator/src/Validator');
 const zarinpal         = ZarinpalCheckout.create('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', true);
 const Env              = use('Env');
+const Sms              = use('App/Controllers/Http/SmsSender');
 
 /**
  * Resourceful controller for interacting with transactions
@@ -158,6 +162,26 @@ class TransactionController {
         newPackage.time                  = beforetime;
         newPackage.after_time            = time;
         await newPackage.save();
+        let user               = await User.query().where('id', transaction.user_id).last(),
+            sms                = await new Sms().buyPackage(user.mobile),
+            title              = 'وضعیت خرید بسته',
+            description        = 'خرید بسته با موفقیت انجام شد',
+            newTicket          = new Ticket();
+        newTicket.user_id      = user.id;
+        //added table type user for this line below
+        newTicket.user_type    = 1;
+        newTicket.title        = title;
+        newTicket.description  = description;
+        newTicket.admin_answer = '';
+        newTicket.status       = 1;
+        let data               = await newTicket.save();
+
+        let newTicketPm       = new TicketPm();
+        newTicketPm.ticket_id = newTicket.id;
+        newTicketPm.user_id   = user.id;
+        newTicketPm.user_type = 1;
+        newTicketPm.pm        = description;
+        await newTicketPm.save();
       }
       console.log(`Verified! Ref ID: ${resp.RefID}`);
       return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);

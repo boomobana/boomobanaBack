@@ -202,7 +202,9 @@ Route.group(() => {
   Route.post('/agency/active', 'RealEstateController.realEstateActiveAdmin');
   Route.post('/event/fetch', 'RealEstateEventController.eventFetchAdmin');
   Route.post('/ticket/fetch', 'TicketController.ticketFetchAdmin');
-  Route.post('/ticket/admin/answer', 'TicketController.ticketAnswerAdmin');
+  Route.post('/ticket/find', 'TicketController.find');
+  Route.post('/ticket/add/pm', 'TicketController.store');
+  Route.post('/ticket/add', 'TicketController.create');
   Route.post('/ticket/admin/remove', 'TicketController.ticketRemoveAdmin');
   Route.post('/package/fetch', 'PackageController.packageFetchAdmin');
   Route.post('/transaction/fetch', 'TransactionController.transactionFetchAdmin');
@@ -217,4 +219,6 @@ Route.group(() => {
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
   Route.post('/residence/file/add', 'ResidenceFileController.addPicture');
   Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
+
+  Route.post('/chat/list', 'ChatController.index');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

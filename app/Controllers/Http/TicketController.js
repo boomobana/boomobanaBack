@@ -6,6 +6,8 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Ticket       = use('App/Models/Ticket'),
       TicketPm     = use('App/Models/TicketPm'),
+      User         = use('App/Models/User'),
+      Sms          = use('App/Controllers/Http/SmsSender'),
       { validate } = use('Validator');
 
 /**
@@ -63,12 +65,19 @@ class TicketController {
     const {
             title,
             description,
-          }                = request.all();
+          }       = request.all();
     const {
             rule,
-          }                = request.headers();
-    let newTicket          = new Ticket();
-    newTicket.user_id = auth.user.id;
+          }       = request.headers();
+    let newTicket = new Ticket();
+    if (rule === 'admin') {
+      let user          = await User.query().where('id', request.input('id')).last();
+      newTicket.user_id = user.id;
+      await new Sms().reciveTicket(user.mobile);
+    } else {
+      await new Sms().sendTicket(auth.user.mobile);
+      newTicket.user_id = auth.user.id;
+    }
     //added table type user for this line below
     newTicket.user_type    = 1;
     newTicket.title        = title;
@@ -76,7 +85,7 @@ class TicketController {
     newTicket.admin_answer = '';
     newTicket.status       = 1;
     let data               = await newTicket.save();
-    return response.json({ status_code: 200, status_text: 'successfully done' });
+    return response.json({ status_code: 200, status_text: 'successfully done', id: Ticket.id });
   }
 
   /**
@@ -108,8 +117,18 @@ class TicketController {
     newTicket.user_id   = auth.user.id;
     newTicket.user_type = user_type;
     newTicket.pm        = pm;
-    newTicket.save();
-    return response.json({ status_code: 200 });
+    await newTicket.save();
+
+    let ticket2sda    = await Ticket.query().where('id', ticket_id).last();
+    ticket2sda.status = user_type === 'admin' ? 2 : 1;
+    await ticket2sda.save();
+
+    let user = await User.query().where('id', ticket2sda.user_id).last();
+    if (user_type === 'admin')
+      await new Sms().answerTicket(user.mobile);
+    else if (user_type === 'user')
+
+      return response.json({ status_code: 200 });
   }
 
   /**
@@ -202,11 +221,9 @@ class TicketController {
     const {
             id,
             answer,
-          } = request.all();
-    console.log(request.all());
+          }             = request.all();
     let ticket          = await Ticket.query().where('id', id).last();
     ticket.admin_answer = answer;
-    console.log(ticket);
     await ticket.save();
     return response.json({ status_code: 200 });
   }

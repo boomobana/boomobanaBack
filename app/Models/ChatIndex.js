@@ -17,7 +17,7 @@ class ChatIndex extends Model {
   }
 
   LChat() {
-    return this.hasOne('App/Models/Chat', 'slug', 'slug').orderBy('id', 'desc');
+    return this.hasOne('App/Models/Chat', 'slug', 'slug');
   }
 }
 
