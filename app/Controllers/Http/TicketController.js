@@ -65,27 +65,40 @@ class TicketController {
     const {
             title,
             description,
-          }       = request.all();
+          }             = request.all();
     const {
             rule,
-          }       = request.headers();
-    let newTicket = new Ticket();
+          }             = request.headers();
+    let jsonNewticket   = {};
+    let jsonNewTicketPm = {};
     if (rule === 'admin') {
-      let user          = await User.query().where('id', request.input('id')).last();
-      newTicket.user_id = user.id;
+      let user                = await User.query().where('id', request.input('id')).last();
+      jsonNewticket.user_id   = user.id;
+      jsonNewTicketPm.user_id = auth.user.id;
       await new Sms().reciveTicket(user.mobile);
     } else {
+      jsonNewticket.user_id   = auth.user.id;
+      jsonNewTicketPm.user_id = auth.user.id;
       await new Sms().sendTicket(auth.user.mobile);
-      newTicket.user_id = auth.user.id;
     }
     //added table type user for this line below
-    newTicket.user_type    = 1;
-    newTicket.title        = title;
-    newTicket.description  = description;
-    newTicket.admin_answer = '';
-    newTicket.status       = 1;
-    let data               = await newTicket.save();
-    return response.json({ status_code: 200, status_text: 'successfully done', id: Ticket.id });
+    jsonNewticket.user_type    = 1;
+    jsonNewticket.title        = title;
+    jsonNewticket.description  = description;
+    jsonNewticket.admin_answer = '';
+    jsonNewticket.status       = 1;
+    // let data               = await newTicket.save();
+    let newTicket              = await Ticket.create(jsonNewticket);
+    jsonNewTicketPm.ticket_id  = newTicket.id;
+    if (rule === 'realEstate') {
+      jsonNewTicketPm.user_type = 'amlak';
+    } else {
+      jsonNewTicketPm.user_type = rule;
+    }
+    jsonNewTicketPm.pm = description;
+
+    let newTicketPm = await TicketPm.create(jsonNewTicketPm);
+    return response.json({ status_code: 200, status_text: 'successfully done', id: newTicket.id });
   }
 
   /**
@@ -127,8 +140,8 @@ class TicketController {
     if (user_type === 'admin')
       await new Sms().answerTicket(user.mobile);
     else if (user_type === 'user')
-
-      return response.json({ status_code: 200 });
+      await new Sms().sendTicket(user.mobile);
+    return response.json({ status_code: 200 });
   }
 
   /**

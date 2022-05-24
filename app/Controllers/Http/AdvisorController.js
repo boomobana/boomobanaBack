@@ -6,7 +6,10 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 var Adviser           = use('App/Models/Adviser'),
     AdviserRealEstate = use('App/Models/AdviserRealEstate'),
-    { validate }      = use('Validator');
+    User              = use('App/Models/User'),
+    Sms               = use('App/Controllers/Http/SmsSender'),
+    { validate }      = use('Validator'),
+    Database          = use('Database');
 
 /**
  * Resourceful controller for interacting with packages
@@ -23,6 +26,190 @@ class AdvisorController {
    */
   async index({ auth, response }) {
     return response.json(await AdviserRealEstate.query().where('real_estate_id', auth.user.id).with(['Advisor']).fetch());
+  }
+
+  async indexReport({ auth, response }) {
+    let from     = '2021-04-23' + ' 00:00:00',
+        to       = '2022-02-23' + ' 00:00:00',
+        allFiles = (await Database
+          .raw('select count(*) as count,created_at from residences where created_at BETWEEN (?) AND (?) group by MONTH(created_at) order by YEAR(created_at) ASC , MONTH(created_at) ASC', [
+            from,
+            to,
+          ]))[0],
+        json     = {
+          allFiles: allFiles,
+          mandeFile: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          sellTransaction: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          rentTransaction: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          removed: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          onCheck: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          archived: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          sell: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          rent: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          occousion: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          video: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          toor: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          ladder: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+          important: [
+            { count: Math.floor(Math.random() * 12), created_at: '2021-04-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-05-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-06-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-07-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-08-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-09-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-10-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-11-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2021-12-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-01-23' },
+            { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
+          ],
+        };
+    console.log(allFiles);
+    return response.json(json);
   }
 
   async find({ auth, response, request }) {
@@ -233,6 +420,51 @@ class AdvisorController {
   async fetchAdvisorAdmin({ params, request, response }) {
     return response.json(await Adviser.query().where('advisor', 1).paginate());
   }
+
+  async fetchRequestAdvisor({ auth, request, response }) {
+    return response.json(await AdviserRealEstate.query().where('adviser_id', auth.user.id).where('status', 0).with('Realestate').fetch());
+  }
+
+  async codeRequest({ auth, request, response }) {
+    let { id } = request.all();
+    let re     = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).last();
+    console.log(re.status);
+    if (re.status == 0) {
+      let code   = Math.floor(Math.random() * 999999);
+      re.smsCode = code;
+      await re.save();
+      await new Sms().acceptAdvisor(code, auth.user.mobile);
+      return response.json({ status_code: 200 });
+    }
+  }
+
+  async checkRequestCode({ auth, request, response }) {
+    let { status, code, id } = request.all();
+    let re                   = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).with('Realestate').last();
+    let rea                  = await User.query().where('id', re.real_estate_id).last();
+    if (re.status == 0) {
+      if (status === 1) {
+        if (re.smsCode == code) {
+          re.status = 1;
+          await re.save();
+          // console.log(rea.mobile);
+          await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
+          await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+          return response.json({ status_code: 200 });
+        } else {
+          return response.json({ status_code: 400 });
+        }
+      } else if (status === 2) {
+        re.status = 2;
+        await re.save();
+        await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
+        await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+      }
+    } else {
+      return response.json({ status_code: 401 });
+    }
+  }
+
 }
 
 module.exports = AdvisorController;

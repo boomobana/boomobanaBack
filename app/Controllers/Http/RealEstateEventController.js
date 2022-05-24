@@ -21,7 +21,7 @@ class RealEstateEventController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await RealEstateEvent.query().where('real_estate_id', auth.user.id).fetch());
+    return response.json(await RealEstateEvent.query().where('real_estate_id', auth.user.id).where('time', 'like', '%' + request.input('time') + '%').fetch());
 
   }
 

@@ -7,6 +7,10 @@ class AdviserRealEstate extends Model {
   Advisor() {
     return this.hasOne('App/Models/Adviser', 'adviser_id', 'id');
   }
+
+  Realestate() {
+    return this.hasOne('App/Models/User', 'real_estate_id', 'id');
+  }
 }
 
 module.exports = AdviserRealEstate;

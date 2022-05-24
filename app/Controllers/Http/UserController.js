@@ -225,6 +225,33 @@ class UserController {
     let user     = await User.query().where('id', id).last();
     user.active  = user.active == 1 ? 0 : 1;
     await user.save();
+    let title;
+    let description;
+
+    if (user.active == 1) {
+      await new Sms().activeUser(user.mobile);
+      title       = 'حساب شما تایید شد';
+      description = 'ما حساب شمارا بررسی و تایید کردیم.اکنون می توانید از امکانات بوم و بنا استفاده کنید';
+    } else {
+
+      title       = 'حساب شما رد شد';
+      description = 'ما حساب شمارا بررسی و رد کردیم.';
+    }
+    let jsonNewticket          = {};
+    let jsonNewTicketPm        = {};
+    jsonNewticket.user_id      = user.id;
+    jsonNewTicketPm.user_id    = auth.user.id;
+    jsonNewticket.user_type    = 1;
+    jsonNewticket.title        = title;
+    jsonNewticket.description  = description;
+    jsonNewticket.admin_answer = '';
+    jsonNewticket.status       = 1;
+    let newTicket              = await Ticket.create(jsonNewticket);
+    jsonNewTicketPm.ticket_id  = newTicket.id;
+    jsonNewTicketPm.user_type  = 'admin';
+    jsonNewTicketPm.pm         = description;
+
+    let newTicketPm = await TicketPm.create(jsonNewTicketPm);
     return response.json({ status_code: 200 });
   }
 

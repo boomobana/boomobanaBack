@@ -71,7 +71,7 @@ https://boomobana.com/rules`, mobile);
     return await this.sendTemplate(`کاربر گرامی آگهی شما در سامانه ثبت شد بعد از بررسی با شما تماس گرفته می شود.`, mobile);
   };
 
-  async activeUser(code, mobile) {
+  async activeUser(mobile) {
     return await this.sendTemplate(`کاربر گرامی پنل شما با موفقیت فعال شد`, mobile);
   };
 
@@ -107,6 +107,27 @@ https://boomobana.com/rules`, mobile);
 
   async loginSuccess(mobile) {
     return await this.sendTemplate(`به ${Env.get('APP_NAME')} خوش آمدید`, mobile);
+  };
+
+  async acceptAdvisor(code, mobile) {
+    return await this.sendTemplate(`کد تایید شما برای املاک :
+${code}`, mobile);
+  };
+
+  async acceptedAdvisor(code, mobile) {
+    return await this.sendTemplate(`شما املاک ${code} را تایید کردید`, mobile);
+  };
+
+  async deniedAdvisor(code, mobile) {
+    return await this.sendTemplate(`شما املاک ${code} را تایید کردید`, mobile);
+  };
+
+  async acceptedAdvisorTR(code, mobile) {
+    return await this.sendTemplate(`مشاور ${code} املاک شمارا تایید کرد`, mobile);
+  };
+
+  async deniedAdvisorTR(code, mobile) {
+    return await this.sendTemplate(`مشاور ${code} املاک شمارا رد کرد`, mobile);
   };
 
 }
