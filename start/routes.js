@@ -87,9 +87,12 @@ Route.group(() => {
   Route.post('/advisor/fetch', 'AdvisorController.index');
   Route.post('/advisor/fetch/report', 'AdvisorController.indexReport');
   Route.post('/advisor/find', 'AdvisorController.find');
+  Route.post('/advisor/disable/by/realestate', 'AdvisorController.advisorDisableByRealestate');
   Route.post('/advisor/realestate/request', 'AdvisorController.fetchRequestAdvisor');
   Route.post('/advisor/realestate/request/get/code', 'AdvisorController.codeRequest');
   Route.post('/advisor/realestate/request/check/code', 'AdvisorController.checkRequestCode');
+  Route.post('/advisor/exist/add', 'AdvisorController.isExistAdvisor');
+  Route.post('/advisor/exist/add/request', 'AdvisorController.isReqesutExistAdvisor');
 
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');

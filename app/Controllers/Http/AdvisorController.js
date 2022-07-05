@@ -25,7 +25,7 @@ class AdvisorController {
    * @param {View} ctx.view
    */
   async index({ auth, response }) {
-    return response.json(await AdviserRealEstate.query().where('real_estate_id', auth.user.id).with(['Advisor']).fetch());
+    return response.json(await AdviserRealEstate.query().where('real_estate_id', auth.user.id).with('Realestate').with(['Advisor']).fetch());
   }
 
   async indexReport({ auth, response }) {
@@ -417,12 +417,29 @@ class AdvisorController {
   async destroy({ params, request, response }) {
   }
 
+  async advisorDisableByRealestate({ request, response }) {
+    let user     = await User.query().where('id', request.input('id')).last();
+    user.disable = user.disable == 1 ? 0 : 1;
+    await user.save();
+    return response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
   async fetchAdvisorAdmin({ params, request, response }) {
     return response.json(await Adviser.query().where('advisor', 1).paginate());
   }
 
   async fetchRequestAdvisor({ auth, request, response }) {
     return response.json(await AdviserRealEstate.query().where('adviser_id', auth.user.id).where('status', 0).with('Realestate').fetch());
+  }
+
+  async isExistAdvisor({ auth, request, response }) {
+    let ad = await User.query()
+      .where('firstname', request.input('firstname'))
+      .where('lastname', request.input('lastname'))
+      .where('mobile', request.input('mobile'))
+      .fetch();
+    console.log(ad);
+    return response.json({ ex: ad.rows.length == 1 });
   }
 
   async codeRequest({ auth, request, response }) {
@@ -436,6 +453,52 @@ class AdvisorController {
       await new Sms().acceptAdvisor(code, auth.user.mobile);
       return response.json({ status_code: 200 });
     }
+  }
+
+  async isReqesutExistAdvisor({ auth, request, response }) {
+    const {
+            fileUrl,
+            firstname,
+            lastname,
+            mobile,
+            email,
+            password,
+            type,
+            male,
+            count_file_rent,
+            count_file_sell,
+            count_occasion,
+            count_instant,
+            count_ladder,
+            count_video,
+            count_file_adviser,
+            count_file_archive,
+          }                      = request.all();
+    let newAdviser               = await Adviser.query()
+      .where('firstname', request.input('firstname'))
+      .where('lastname', request.input('lastname'))
+      .where('mobile', request.input('mobile'))
+      .last();
+    let newRealAdviserRealEstate = new AdviserRealEstate();
+    if (typeof request.body.id != undefined && request.body.id != null) {
+      newRealAdviserRealEstate = await AdviserRealEstate.query()
+        .where('adviser_id', newAdviser.id)
+        .where('real_estate_id', auth.user.id)
+        .last();
+    } else {
+      newRealAdviserRealEstate.count_file_rent    = 0;
+      newRealAdviserRealEstate.count_file_sell    = 0;
+      newRealAdviserRealEstate.count_occasion     = 0;
+      newRealAdviserRealEstate.count_instant      = 0;
+      newRealAdviserRealEstate.count_ladder       = 0;
+      newRealAdviserRealEstate.count_video        = 0;
+      newRealAdviserRealEstate.count_file_adviser = 0;
+      newRealAdviserRealEstate.count_file_archive = 0;
+      newRealAdviserRealEstate.real_estate_id     = auth.user.id;
+      newRealAdviserRealEstate.adviser_id         = newAdviser.id;
+    }
+    newRealAdviserRealEstate.status = 0;
+    await newRealAdviserRealEstate.save();
   }
 
   async checkRequestCode({ auth, request, response }) {
