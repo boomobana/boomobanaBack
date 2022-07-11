@@ -29,7 +29,7 @@ const options = {
 new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .fireHttpServer((handler) => {
-    // return https.createServer(options, handler);
+    return https.createServer(options, handler);
   })
   .then(() => {
     const server = use('Server');
