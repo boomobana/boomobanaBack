@@ -17,7 +17,10 @@ module.exports = {
   |
   */
   origin: [
+    'capacitor://localhost',
+    'ionic://localhost',
     'http://192.168.1.42:8887',
+    'http://localhost',
     'http://localhost:8200',
     'http://localhost:8100',
     'http://localhost:4200',
