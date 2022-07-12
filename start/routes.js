@@ -15,10 +15,14 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route                = use('Route');
+const SiteSetting          = use('App/Models/SiteSetting');
 const { nameOfManagement } = require('../config/app');
 Route.group(() => {
   Route.get('/', () => {
     return { greeting: 'Hello world in JSON ' + nameOfManagement };
+  });
+  Route.get('/site/settings', async ({ response }) => {
+    return response.json(await SiteSetting.all());
   });
   Route.post('/package', 'PackageController.index');
   Route.post('/login/with/mobile', 'AuthController.wihMobile');
