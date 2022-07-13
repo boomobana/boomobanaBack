@@ -162,6 +162,10 @@ Route.group(() => {
   Route.post('/comment/change/status', 'BlogCommentController.changeStatus');
   // accounting
   Route.post('/blogger/accounting', 'BlogPostController.WalletFetch');
+  // fetch Wallet
+  Route.post('/fetch/wallet', 'WalletController.fetchWallet');
+  Route.post('/package/buy/wallet/:id', 'WalletController.packageBuy');
+
   // blogger home data
   Route.post('/blogger/home/data', 'BlogPostController.home');
 }).prefix('api/user').middleware(['auth', 'userRule']);

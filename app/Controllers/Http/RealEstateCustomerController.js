@@ -22,7 +22,7 @@ class RealEstateCustomerController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await RealEstateCustomer.query().where('real_estate_id', auth.user.id).fetch());
+    return response.json(await RealEstateCustomer.query().where('real_estate_id', auth.user.id).orderBy('id', 'desc').fetch());
   }
 
   /**
@@ -47,6 +47,14 @@ class RealEstateCustomerController {
       description: 'required',
       region_id: 'required',
       province_id: 'required',
+      type_melk: 'required',
+      type_user: 'required',
+      title: 'required',
+      metraj_kol: 'required',
+      metraj_bana: 'required',
+      melk_age: 'required',
+      count_bed: 'required',
+      emkanat: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -64,12 +72,23 @@ class RealEstateCustomerController {
             description,
             region_id,
             province_id,
-          }        = request.all();
-    const { rule } = request.headers();
-    const user     = auth.user;
-    let newCust    = new RealEstateCustomer();
-
+            type_melk,
+            type_user,
+            title,
+            metraj_kol,
+            metraj_bana,
+            melk_age,
+            count_bed,
+            emkanat,
+          }                = request.all();
+    const { rule }         = request.headers();
+    const user             = auth.user;
+    let newCust            = new RealEstateCustomer();
+    let EX                 = await RealEstateCustomer.query().where('id', request.input('id')).fetch();
     newCust.real_estate_id = user.id;
+    if (EX.length === 1)
+      newCust = await RealEstateCustomer.query().where('id', request.input('id')).first();
+
     // if (await RealEstateCustomer.query().where('mobile', mobile).where('real_estate_id', user.id).fetch().length != 0) {
     //   newCust = await RealEstateCustomer.query().where('mobile', mobile).where('real_estate_id', user.id).last();
     // }
@@ -84,6 +103,14 @@ class RealEstateCustomerController {
     newCust.description   = description;
     newCust.region_id     = region_id;
     newCust.province_id   = province_id;
+    newCust.type_melk     = type_melk;
+    newCust.type_user     = type_user;
+    newCust.title         = title;
+    newCust.metraj_kol    = metraj_kol;
+    newCust.metraj_bana   = metraj_bana;
+    newCust.melk_age      = melk_age;
+    newCust.count_bed     = count_bed;
+    newCust.emkanat       = emkanat;
     await newCust.save();
     return response.json({ status_code: 200 });
   }

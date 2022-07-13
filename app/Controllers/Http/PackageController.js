@@ -6,6 +6,9 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 var Package     = use('App/Models/Package');
 var Transaction = use('App/Models/Transaction');
+const {
+        makeid,
+      }         = require('../Helper');
 
 /**
  * Resourceful controller for interacting with packages
@@ -37,7 +40,7 @@ class PackageController {
     let { rule }                   = request.headers();
     let { id }                     = request.params;
     let { title, price, discount } = await Package.query().where('id', id).last();
-    let slug                       = Math.floor(Math.random() * 100000000000);
+    let slug                       = makeid(5, 10, 5);
     let newBuy                     = new Transaction();
     newBuy.user_id                 = auth.user.id;
     newBuy.slug                    = slug;
