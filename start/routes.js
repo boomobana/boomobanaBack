@@ -148,6 +148,8 @@ Route.group(() => {
   Route.post('/creators/list/file', 'CreatorController.listFile');
   Route.post('/creators/remove', 'CreatorController.deletes');
 
+  Route.post('/moamele/create', 'MoamelatController.createMoamele');
+
   // blogger
   // post
   Route.post('/post/add', 'BlogPostController.create');
