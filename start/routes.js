@@ -149,6 +149,8 @@ Route.group(() => {
   Route.post('/creators/remove', 'CreatorController.deletes');
 
   Route.post('/moamele/create', 'MoamelatController.createMoamele');
+  Route.post('/moamele/fetch', 'MoamelatController.fetchMoamele');
+  Route.post('/moamele/find', 'MoamelatController.findMoamele');
 
   // blogger
   // post
