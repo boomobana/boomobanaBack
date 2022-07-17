@@ -4,10 +4,12 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 const ResidenceTypeOption = use('App/Models/ResidenceTypeOption');
+const Sms                 = use('App/Controllers/Http/SmsSender');
 const Residence           = use('App/Models/Residence');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const { validate }        = require('@adonisjs/validator/src/Validator');
+const { auth }            = require('mysql/lib/protocol/Auth');
 
 /**
  * Resourceful controller for interacting with residencetypeoptions
@@ -53,7 +55,7 @@ class ResidenceTypeOptionController {
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
-  async changeStatus({ request, response }) {
+  async changeStatus({ request, response, auth }) {
     const rules      = {
       residence_id: 'required',
     };
@@ -68,6 +70,8 @@ class ResidenceTypeOptionController {
     let res    = await Residence.query().where('id', residence_id).last();
     res.status = 1;
     await res.save();
+    // todo send sms here
+    var sms = await new Sms().addMelk(0, auth.user.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }
