@@ -39,6 +39,10 @@ class SaveRequestController {
       name: 'required',
       zaman_bazdid: 'required',
       zaman_karshenasi: 'required',
+      metrazh: 'required',
+      arz: 'required',
+      tool: 'required',
+      title: 'required',
       description: 'required',
       address: 'required',
       mobile: 'required',
@@ -52,6 +56,10 @@ class SaveRequestController {
             name,
             zaman_bazdid,
             zaman_karshenasi,
+            metrazh,
+            arz,
+            tool,
+            title,
             description,
             address,
             mobile,
@@ -65,6 +73,10 @@ class SaveRequestController {
     newReq.name                  = name;
     newReq.zaman_bazdid          = zaman_bazdid;
     newReq.zaman_tamas_karshenas = zaman_karshenasi;
+    newReq.metrazh               = metrazh;
+    newReq.arz                   = arz;
+    newReq.tool                  = tool;
+    newReq.title                 = title;
     newReq.description           = description;
     newReq.address               = address;
     newReq.mobile                = mobile;
@@ -86,6 +98,7 @@ class SaveRequestController {
     } else {
       const rules3      = {
         rto_1: 'required',
+        rto_2: 'required',
       };
       const validation3 = await validate(request.all(), rules3);
       if (validation3.fails()) {
@@ -93,8 +106,10 @@ class SaveRequestController {
       }
       const {
               rto_1,
+              rto_2,
             }      = request.all();
       newReq.rto_2 = rto_1;
+      newReq.rto_3 = rto_2;
     }
     await newReq.save();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });

@@ -65,12 +65,22 @@ class ResidenceTypeOptionController {
     }
     let {
           residence_id,
+          answer_name,
+          answer_mobile,
+          showing_call,
         } = request.all();
 
-    let res    = await Residence.query().where('id', residence_id).last();
-    res.status = 1;
+    let res           = await Residence.query().where('id', residence_id).last();
+    res.status        = 1;
+    res.showing_call  = showing_call;
+    res.answer_name   = answer_name;
+    res.answer_mobile = answer_mobile;
+    console.log(showing_call,
+      answer_name,
+      answer_mobile);
+
     await res.save();
-    // todo send sms here
+    // todo send sms here if user accept to receive sms and if post added for the first time
     var sms = await new Sms().addMelk(0, auth.user.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
