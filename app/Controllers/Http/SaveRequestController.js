@@ -4,35 +4,29 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-const SaveRequest  = use('App/Models/SaveRequest');
-const { validate } = use('Validator');
+const SaveRequest           = use('App/Models/SaveRequest');
+const SaveRequestRealestate = use('App/Models/SaveRequestRealestate');
+const { validate }          = use('Validator');
 
 /**
  * Resourceful controller for interacting with saverequests
  */
 class SaveRequestController {
-  /**
-   * Show a list of all saverequests.
-   * GET saverequests
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async index({ request, response, auth }) {
-    return response.json(await SaveRequest.query().where('user_id', auth.fetch()));
+    return response.json(await SaveRequest.query().with('option').with('RTO2').with('RTO3').where('user_id', auth.user.id).fetch());
   }
 
-  /**
-   * Render a form to be used for creating a new saverequest.
-   * GET saverequests/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
+  async indexReal({ request, response, auth }) {
+    let arr = [];
+    let RSQ = await SaveRequestRealestate.query().where('user_id', 50).fetch();
+    // let RSQ = await SaveRequestRealestate.query().where('user_id', auth.user.id).fetch();
+    console.log(RSQ.rows);
+    for (let rsqElement of RSQ.rows) {
+      arr.push(rsqElement.request_id);
+    }
+    return response.json(await SaveRequest.query().whereIn('id', arr).with('option').with('RTO2').with('RTO3').fetch());
+  }
+
   async create({ request, response, auth }) {
     const rules      = {
       type: 'required',
@@ -58,6 +52,9 @@ class SaveRequestController {
             zaman_karshenasi,
             metrazh,
             arz,
+            age,
+            lat,
+            lng,
             tool,
             title,
             description,
@@ -99,77 +96,33 @@ class SaveRequestController {
       const rules3      = {
         rto_1: 'required',
         rto_2: 'required',
+        age: 'required',
+        lat: 'required',
+        lng: 'required',
+
       };
       const validation3 = await validate(request.all(), rules3);
       if (validation3.fails()) {
         return response.json(validation3.messages());
       }
       const {
+              age,
+              lat,
+              lng,
               rto_1,
               rto_2,
-            }      = request.all();
-      newReq.rto_2 = rto_1;
-      newReq.rto_3 = rto_2;
+            }        = request.all();
+      newReq.metrazh = metrazh;
+      newReq.arz     = arz;
+      newReq.age     = age;
+      newReq.lat     = lat;
+      newReq.lng     = lng;
+      newReq.tool    = tool;
+      newReq.rto_2   = rto_1;
+      newReq.rto_3   = rto_2;
     }
     await newReq.save();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
-  }
-
-  /**
-   * Create/save a new saverequest.
-   * POST saverequests
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store({ request, response }) {
-  }
-
-  /**
-   * Display a single saverequest.
-   * GET saverequests/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing saverequest.
-   * GET saverequests/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {
-  }
-
-  /**
-   * Update saverequest details.
-   * PUT or PATCH saverequests/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update({ params, request, response }) {
-  }
-
-  /**
-   * Delete a saverequest with id.
-   * DELETE saverequests/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy({ params, request, response }) {
   }
 }
 
