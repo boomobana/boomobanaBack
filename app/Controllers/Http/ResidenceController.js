@@ -201,6 +201,8 @@ class ResidenceController {
     if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '') {
       if (typeof request.body.month_discount2 === 'string' && request.body.month_discount2 !== null && request.body.month_discount2 !== '') {
         userIsExist.whereBetween('month_discount', [request.body.month_discount, request.body.month_discount2]);
+      } else {
+        userIsExist.where('month_discount', request.body.month_discount);
       }
     }
     // if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
