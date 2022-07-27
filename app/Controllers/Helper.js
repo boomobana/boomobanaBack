@@ -34,7 +34,7 @@ module.exports = {
     let last_amount = 0;
     let available   = 0;
     let ex          = await Wallet.query().where('user_id', user_id).orderBy('id', 'desc').limit(1).fetch();
-    console.log(ex);
+    // // console.log(ex);
     if (ex.rows.length == 1) {
       last_amount = ex.rows[0].available;
     }

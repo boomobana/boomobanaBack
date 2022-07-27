@@ -8,18 +8,18 @@ module.exports = function (server) {
   let userNamespace  = io.of('user');
   userNamespace.on('connection', function (socket) {
     socket.on('disconnect', (res) => {
-      console.log(res);
+      // console.log(res);
     });
-    console.log('connection created >>>', socket.id);
+    // console.log('connection created >>>', socket.id);
     socket.on('auth', async res => {
-      console.log(res);
+      // console.log(res);
       let user    = await User.query().where('id', res.id).last();
       socket.user = user;
       socket.join('user/' + user.id);
       socket.emit('auth', true);
     });
     socket.on('getMessage', async data => {
-      console.log('s', socket.user.id);
+      // console.log('s', socket.user.id);
       let chatIndex = await ChatIndex.query().where('user_id', socket.user.id).last();
       if (chatIndex) {
         socket.emit('getMessage', await Chat.query().where('slug', chatIndex.slug).with('user').fetch());
@@ -47,9 +47,9 @@ module.exports = function (server) {
   });
   adminNamespace.on('connection', function (socket) {
     socket.on('disconnect', (res) => {
-      console.log(res);
+      // console.log(res);
     });
-    console.log('connection created >>>', socket.id);
+    // console.log('connection created >>>', socket.id);
     socket.on('auth', async res => {
       let user = await User.query().where('id', res.id).last();
       if (user.is_admin == 1) {

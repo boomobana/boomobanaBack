@@ -215,7 +215,7 @@ class RealEstateCustomerController {
             description,
             real_estate_id,
           } = request.all();
-    console.log(firstname);
+    // // console.log(firstname);
     let re = new RealEstateCustomer();
     if (!!request.body.id && request.body.id != '') {
       re = await RealEstateCustomer.query().where('id', request.body.id).last();

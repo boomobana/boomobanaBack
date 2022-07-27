@@ -66,7 +66,7 @@ class UserController {
 
     let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
     if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
-    console.log(userIsExist);
+    // // console.log(userIsExist);
     userIsExist.avatar = avatar;
     userIsExist.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
@@ -283,7 +283,7 @@ class UserController {
     var u      = new User();
     u.password = 'Mah998877';
     //TODO: // send sms to user and now it password
-    console.log(request.body.id);
+    // // console.log(request.body.id);
     if (request.body.id != '') {
       u = await User.query().where('id', request.body.id).last();
     }

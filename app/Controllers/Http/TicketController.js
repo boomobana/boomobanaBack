@@ -205,7 +205,7 @@ class TicketController {
     let { id }      = request.all();
     let { rule }    = request.headers();
     let ticketFetch = await Ticket.query().where('id', id).last();
-    console.log(auth.user.id);
+    // // console.log(auth.user.id);
     if (!!ticketFetch)
       if (ticketFetch.user_id === auth.user.id && ticketFetch.user_type === 1)
         if (ticketFetch.status === '1')

@@ -20,7 +20,7 @@ class SaveRequestController {
     let arr = [];
     let RSQ = await SaveRequestRealestate.query().where('user_id', 50).fetch();
     // let RSQ = await SaveRequestRealestate.query().where('user_id', auth.user.id).fetch();
-    console.log(RSQ.rows);
+    // // console.log(RSQ.rows);
     for (let rsqElement of RSQ.rows) {
       arr.push(rsqElement.request_id);
     }

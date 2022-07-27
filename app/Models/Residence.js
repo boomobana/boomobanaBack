@@ -41,12 +41,12 @@ class Residence extends Model {
     sd.forEach(item => {
       let start = item.start_at.split('/');
       let end   = item.end_at.split('/');
-      // console.log(item, start, end);
+      // // // console.log(item, start, end);
       if (start[0] >= month && end[0] <= month) {
-        // console.log('eyd 2', month);
+        // // // console.log('eyd 2', month);
         id = item.id;
       } else if (end[0] <= month && start[0] >= month) {
-        // console.log('eyd 1', month);
+        // // console.log('eyd 1', month);
         id = item.id;
       }
       // switch (item) {

@@ -208,7 +208,7 @@ class AdvisorController {
             { count: Math.floor(Math.random() * 12), created_at: '2022-02-23' },
           ],
         };
-    console.log(allFiles);
+    // // console.log(allFiles);
     return response.json(json);
   }
 
@@ -438,14 +438,14 @@ class AdvisorController {
       .where('lastname', request.input('lastname'))
       .where('mobile', request.input('mobile'))
       .fetch();
-    console.log(ad);
+    // // console.log(ad);
     return response.json({ ex: ad.rows.length == 1 });
   }
 
   async codeRequest({ auth, request, response }) {
     let { id } = request.all();
     let re     = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).last();
-    console.log(re.status);
+    // // console.log(re.status);
     if (re.status == 0) {
       let code   = Math.floor(Math.random() * 999999);
       re.smsCode = code;
@@ -510,7 +510,7 @@ class AdvisorController {
         if (re.smsCode == code) {
           re.status = 1;
           await re.save();
-          // console.log(rea.mobile);
+          // // console.log(rea.mobile);
           await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
           await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });

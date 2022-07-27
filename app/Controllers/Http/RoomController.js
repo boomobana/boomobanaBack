@@ -57,7 +57,7 @@ class RoomController {
       roomS.save();
       response.json({ status_code: 200, status_text: 'Successfully Done' });
     } catch (e) {
-      console.log(e);
+      // // console.log(e);
       response.json({ status_code: 400, status_text: 'Unsuccessfully Done' });
 
     }

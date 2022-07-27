@@ -51,7 +51,7 @@ class TransactionController {
           description,
           status,
         } = await Transaction.query().where('slug', slug).last();
-    console.log(price, description);
+    // // console.log(price, description);
     if (status != 1)
       return response.send('payed before');
     let resp = await zarinpal.PaymentRequest({
@@ -59,7 +59,7 @@ class TransactionController {
       CallbackURL: `${Env.get('APP_URL')}/api/user/gateway/zarinpal/verify/${slug}`,
       Description: description,
     });
-    console.log(resp);
+    // // console.log(resp);
     if (resp.status === 100) {
       let transaction   = await Transaction.query().where('slug', slug).last();
       transaction.ref_1 = resp.authority;
@@ -91,10 +91,10 @@ class TransactionController {
       Amount: price, // In Tomans
       Authority: ref_1,
     });
-    console.log(resp);
+    // // console.log(resp);
     if (resp.status !== 100) {
       return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
-      console.log('Empty!');
+      // // console.log('Empty!');
     } else {
       let transaction    = await Transaction.query().where('slug', slug).last();
       transaction.status = 2;
@@ -183,7 +183,7 @@ class TransactionController {
         newTicketPm.pm        = description;
         await newTicketPm.save();
       }
-      console.log(`Verified! Ref ID: ${resp.RefID}`);
+      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
       return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
     }
   }

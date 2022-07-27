@@ -205,6 +205,25 @@ class ResidenceController {
         userIsExist.where('month_discount', request.body.month_discount);
       }
     }
+    if (typeof request.body.date1 === 'string' && request.body.date1 !== null && request.body.date1 !== '') {
+      if (typeof request.body.date2 === 'string' && request.body.date2 !== null && request.body.date2 !== '') {
+        userIsExist.whereBetween('created_at', [request.body.date1, request.body.date2]);
+      }
+    }
+    if (typeof request.body.orderBy === 'string' && request.body.orderBy !== null && request.body.orderBy !== '') {
+      if (request.body.orderBy == '1')
+        userIsExist.orderBy('created_at', 'asc');
+      else if (request.body.orderBy == '2')
+        userIsExist.orderBy('created_at', 'desc');
+      else if (request.body.orderBy == '4')
+        userIsExist.orderBy('created_at', 'desc');
+      // else if (request.body.orderBy == '3')
+      //   userIsExist.orderBy('created_at', 'desc');
+    }
+    if (typeof request.body.type_show === 'string' && request.body.type_show !== null && request.body.type_show !== '') {
+      userIsExist.where('archive', request.body.type_show);
+
+    }
     // if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
     return response.json(await userIsExist.fetch());
   }
@@ -229,7 +248,7 @@ class ResidenceController {
         }
       }
     } catch (e) {
-      // console.log(e);
+      // // console.log(e);
     }
     return response.json(userIsExist);
   }
@@ -324,7 +343,7 @@ class ResidenceController {
           floor_count,
           floor_unit_count,
         }   = request.all();
-    console.log(archive);
+    // // console.log(archive);
     let res = new Residence();
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();
@@ -660,7 +679,7 @@ class ResidenceController {
           floor_count,
           floor_unit_count,
         }   = request.all();
-    console.log(archive);
+    // // console.log(archive);
     let res = new Residence();
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();

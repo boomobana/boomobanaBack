@@ -42,7 +42,7 @@ class AuthController {
   }
 
   async makeLoginActivity(user, userOs, ipA) {
-    console.log(ipA);
+    // // console.log(ipA);
     if (ipA != '127.0.0.1') {
       var geo = geoip.lookup(ipA);
       await LoginActivity.create({

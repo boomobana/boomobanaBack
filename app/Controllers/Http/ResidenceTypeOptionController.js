@@ -75,9 +75,7 @@ class ResidenceTypeOptionController {
     res.showing_call  = showing_call;
     res.answer_name   = answer_name;
     res.answer_mobile = answer_mobile;
-    console.log(showing_call,
-      answer_name,
-      answer_mobile);
+    // // console.log(showing_call,
 
     await res.save();
     // todo send sms here if user accept to receive sms and if post added for the first time

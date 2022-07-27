@@ -62,7 +62,7 @@ class UploadFileController {
       let data = Buffer.from(await fs.readFileSync(file));
       await driver.put(dir + name, data);
     } catch (e) {
-      console.log(e);
+      // // console.log(e);
     }
 
     if (!profilePic.moved()) {
@@ -72,22 +72,22 @@ class UploadFileController {
   }
 
   // async Download({ params, response }) {
-  //   console.log(params.filename);
+  //   // // console.log(params.filename);
   //
   //   const filePath = `${Env.get('FTP_DIR')}${params.filename}`;
-  //   console.log(filePath);
+  //   // // console.log(filePath);
   //   try {
   //     // const isExist = await driver.exists(filePath);
   //     // await this.sleep(1000);
-  //     // console.log(isExist);
+  //     // // // console.log(isExist);
   //     // if (isExist) {
   //       let file = await driver.exists(filePath);
-  //       console.log(file);
+  //       // // console.log(file);
   //       await this.sleep(5000);
   //       return response.download(file);
   //     // }
   //   } catch (e) {
-  //     console.log('err');
+  //     // // console.log('err');
   //   }
   //
   //   return 'File does not exist';
