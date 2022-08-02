@@ -136,6 +136,7 @@ Route.group(() => {
   Route.post('/auth/residence/find', 'ResidenceController.Find');
 
   Route.post('/request/save/fetch', 'SaveRequestController.index');
+  Route.post('/request/save/fetch/:type', 'SaveRequestController.indexLoadType3s');
   Route.post('/request/save/realestate/fetch', 'SaveRequestController.indexReal');
   Route.post('/request/save/add', 'SaveRequestController.create');
 
@@ -200,6 +201,7 @@ Route.group(() => {
   Route.post('/region', 'RegionController.index');
   Route.post('/province', 'ProvinceController.index');
   Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
+  Route.post('/residence/remove/item', 'ResidenceController.removeFile');
   Route.post('/residence/find', 'ResidenceController.Find');
 }).prefix('api/user');
 

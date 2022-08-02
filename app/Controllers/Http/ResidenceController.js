@@ -222,7 +222,8 @@ class ResidenceController {
     }
     if (typeof request.body.type_show === 'string' && request.body.type_show !== null && request.body.type_show !== '') {
       userIsExist.where('archive', request.body.type_show);
-
+    } else {
+      userIsExist.where('archive', '!=', 3);
     }
     // if (typeof request.body.month_discount === 'string' && request.body.month_discount !== null && request.body.month_discount !== '')
     return response.json(await userIsExist.fetch());
@@ -750,6 +751,17 @@ class ResidenceController {
       res.occasion = 0;
     res.save();
     return response.json({ status_code: 200 });
+  }
+
+  async removeFile({ auth, request, response }) {
+    let {
+          id,
+          reason,
+        } = request.all();
+    await Residence.query().where('id', id).update({
+      archive: 3,
+      removeReason: reason,
+    });
   }
 }
 

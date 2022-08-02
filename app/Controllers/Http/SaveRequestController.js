@@ -16,6 +16,11 @@ class SaveRequestController {
     return response.json(await SaveRequest.query().with('option').with('RTO2').with('RTO3').where('user_id', auth.user.id).fetch());
   }
 
+  async indexLoadType3s({ request, response, auth }) {
+    let { type } = request.params;
+    return response.json(await SaveRequest.query().with('option').with('RTO2').with('RTO3').where('user_id', auth.user.id).where('type', type).fetch());
+  }
+
   async indexReal({ request, response, auth }) {
     let arr = [];
     let RSQ = await SaveRequestRealestate.query().where('user_id', 50).fetch();
@@ -40,6 +45,9 @@ class SaveRequestController {
       description: 'required',
       address: 'required',
       mobile: 'required',
+      ax: 'required',
+      sanad: 'required',
+      cartmeli: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -60,6 +68,9 @@ class SaveRequestController {
             description,
             address,
             mobile,
+            ax,
+            sanad,
+            cartmeli,
           }                      = request.all();
     const { rule }               = request.headers();
     const user                   = auth.user;
@@ -77,6 +88,9 @@ class SaveRequestController {
     newReq.description           = description;
     newReq.address               = address;
     newReq.mobile                = mobile;
+    newReq.ax                    = ax;
+    newReq.sanad                 = sanad;
+    newReq.cartmeli              = cartmeli;
     if (type == 3) {
       const rules2      = {
         area: 'required',
