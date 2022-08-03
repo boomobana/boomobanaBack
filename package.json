@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "adonis serve --dev",
-    "test": "node ace test"
+    "runcron": "node ace run:scheduler"
   },
   "keywords": [
     "adonisjs",
@@ -28,6 +28,7 @@
     "@adonisjs/lucid": "^6.1.3",
     "@adonisjs/validator": "^5.0.6",
     "@adonisjs/websocket": "^1.0.12",
+    "adonis-scheduler": "^3.0.2",
     "geoip-lite": "^1.4.5",
     "ip": "^1.1.8",
     "jsftp": "^2.1.3",
