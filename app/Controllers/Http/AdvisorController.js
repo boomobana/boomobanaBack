@@ -429,7 +429,10 @@ class AdvisorController {
   }
 
   async fetchRequestAdvisor({ auth, request, response }) {
-    return response.json(await AdviserRealEstate.query().where('adviser_id', auth.user.id).where('status', 0).with('Realestate').fetch());
+    if (auth.user.is_advisor == 1)
+      return response.json(await AdviserRealEstate.query().where('adviser_id', auth.user.id).where('status', 0).with('Realestate').with('Advisor').fetch());
+    else if (auth.user.is_realestate == 1)
+      return response.json(await AdviserRealEstate.query().where('real_estate_id', auth.user.id).where('status', 3).with('Realestate').with('Advisor').fetch());
   }
 
   async isExistAdvisor({ auth, request, response }) {
@@ -446,7 +449,7 @@ class AdvisorController {
     let { id } = request.all();
     let re     = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).last();
     // // console.log(re.status);
-    if (re.status == 0) {
+    if (re.status == 0 || re.status == 3) {
       let code   = Math.floor(Math.random() * 999999);
       re.smsCode = code;
       await re.save();
@@ -499,6 +502,8 @@ class AdvisorController {
     }
     newRealAdviserRealEstate.status = 0;
     await newRealAdviserRealEstate.save();
+
+    return response.json({ status_code: 200 });
   }
 
   async checkRequestCode({ auth, request, response }) {
@@ -506,6 +511,24 @@ class AdvisorController {
     let re                   = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).with('Realestate').last();
     let rea                  = await User.query().where('id', re.real_estate_id).last();
     if (re.status == 0) {
+      if (status === 4) {
+        if (re.smsCode == code) {
+          re.status = 4;
+          await re.save();
+          // // console.log(rea.mobile);
+          await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
+          await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+          return response.json({ status_code: 200 });
+        } else {
+          return response.json({ status_code: 400 });
+        }
+      } else if (status === 5) {
+        re.status = 5;
+        await re.save();
+        await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
+        await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+      }
+    } else if (re.status == 3) {
       if (status === 1) {
         if (re.smsCode == code) {
           re.status = 1;
@@ -526,6 +549,16 @@ class AdvisorController {
     } else {
       return response.json({ status_code: 401 });
     }
+  }
+
+  async deactiveAdviser({ auth, request, response }) {
+    let {
+          id,
+        }      = request.all();
+    let rea    = await User.query().where('id', id).last();
+    rea.active = 0;
+    rea.save();
+    return response.json({ status_code: 200 });
   }
 
 }

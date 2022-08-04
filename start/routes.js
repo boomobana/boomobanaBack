@@ -90,6 +90,7 @@ Route.group(() => {
   Route.post('/advisor/address', 'AdvisorController.address');
   Route.post('/advisor/fetch', 'AdvisorController.index');
   Route.post('/advisor/fetch/report', 'AdvisorController.indexReport');
+  Route.post('/advisor/deactive', 'AdvisorController.deactiveAdviser');
   Route.post('/advisor/find', 'AdvisorController.find');
   Route.post('/advisor/disable/by/realestate', 'AdvisorController.advisorDisableByRealestate');
   Route.post('/advisor/realestate/request', 'AdvisorController.fetchRequestAdvisor');
