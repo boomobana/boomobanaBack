@@ -68,6 +68,7 @@ Route.group(() => {
   Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
   Route.post('/residence/file/fetch', 'ResidenceFileController.fetchFile');
 
+  Route.post('/residence/option/connect/reset', 'ResidenceOptionConnectController.delete');
   Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
 
   Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');

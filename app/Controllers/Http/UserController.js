@@ -3,6 +3,7 @@
 const Adviser            = use('App/Models/Adviser');
 const Transaction        = use('App/Models/Transaction');
 const RealEstateCustomer = use('App/Models/RealEstateCustomer');
+const Creator            = use('App/Models/Creator');
 const Ticket             = use('App/Models/Ticket');
 const RealEstateEvent    = use('App/Models/RealEstateEvent');
 const Residence          = use('App/Models/Residence');
@@ -144,6 +145,18 @@ class UserController {
     const { id }            = auth.user;
     const files             = await Residence.query().where('user_id', id).count('*');
     const filesCount        = files[0][Object.keys(files[0])];
+    const filesSell         = await Residence.query().where('type', 2).where('user_id', id).count('*');
+    const filesSellCount    = filesSell[0][Object.keys(filesSell[0])];
+    const filesRent         = await Residence.query().where('type', 3).where('user_id', id).count('*');
+    const filesRentCount    = filesRent[0][Object.keys(filesRent[0])];
+    const filesRemove       = await Residence.query().where('archive', 2).where('user_id', id).count('*');
+    const filesRemoveCount  = filesRemove[0][Object.keys(filesRemove[0])];
+    const filesArchive      = await Residence.query().where('archive', 1).where('user_id', id).count('*');
+    const filesArchiveCount = filesArchive[0][Object.keys(filesArchive[0])];
+    const filesOnCheck      = await Residence.query().where('status', '!=', 1).where('user_id', id).count('*');
+    const filesOnCheckCount = filesOnCheck[0][Object.keys(filesOnCheck[0])];
+    const filesDenied       = await Residence.query().where('status', 3).where('user_id', id).count('*');
+    const filesDeniedCount  = filesDenied[0][Object.keys(filesDenied[0])];
     const advisor           = await Adviser.query().where('id', id).count('*');
     const advisorCount      = advisor[0][Object.keys(advisor[0])];
     const event             = await RealEstateEvent.query().where('real_estate_id', id).count('*');
@@ -156,8 +169,26 @@ class UserController {
     const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
     const Favorite2         = await FavoriteAd.query().where('user_id', id).count('*');
     const Favorite2Count    = Favorite2[0][Object.keys(Favorite2[0])];
+    const Creators          = await Creator.query().where('user_id', id).count('*');
+    const CreatorsCount     = Creators[0][Object.keys(Creators[0])];
+    const Shobe             = await User.query().where('parent_realestate_id', id).count('*');
+    const ShobeCount        = Shobe[0][Object.keys(Shobe[0])];
     const json              = {
-      filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count, Favorite2Count,
+      filesCount,
+      filesSellCount,
+      filesRentCount,
+      filesRemoveCount,
+      filesArchiveCount,
+      filesOnCheckCount,
+      filesDeniedCount,
+      advisorCount,
+      eventCount,
+      TicketFCount,
+      CustomerFCount,
+      shobeCount: ShobeCount,
+      Transaction2Count,
+      Favorite2Count,
+      CreatorsCount,
     };
     return response.json(json);
   }

@@ -29,7 +29,6 @@ class ResidenceOptionConnectController {
           checked,
         } = request.all();
     try {
-      await ResidenceOptionConnect.query().where('residence_id', residence_id).delete();
       let resOC                 = new ResidenceOptionConnect();
       resOC.residence_id        = residence_id;
       resOC.residence_option_id = residence_option_id;
@@ -40,6 +39,13 @@ class ResidenceOptionConnectController {
       // // console.log(e);
     }
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async delete({ request, response }) {
+    let {
+          residence_id,
+        } = request.all();
+    await ResidenceOptionConnect.query().where('residence_id', residence_id).delete();
   }
 }
 
