@@ -21,6 +21,8 @@ class UserRule {
       await next();
     } else if (rule === 'user' && !!auth.user && auth.user.is_user == 1) {
       await next();
+    } else if (rule === 'shobe' && !!auth.user && auth.user.is_shobe == 1) {
+      await next();
     } else if (rule === 'advisor' && !!auth.user && auth.user.is_advisor == 1) {
       await next();
     } else {

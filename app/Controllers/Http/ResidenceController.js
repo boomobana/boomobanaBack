@@ -3,11 +3,14 @@
 const { validate }           = require('@adonisjs/validator/src/Validator');
 const Residence              = use('App/Models/Residence');
 const FavoriteAd             = use('App/Models/FavoriteAd');
+const AdviserRealEstate      = use('App/Models/AdviserRealEstate');
+const User                   = use('App/Models/User');
 const ResidenceFile          = use('App/Models/ResidenceFile');
 const ResidenceOptionConnect = use('App/Models/ResidenceOptionConnect');
 const ViewAd                 = use('App/Models/ViewAd');
 const PackageBuy             = use('App/Models/PackageBuy');
 const { sleep }              = require('../Helper');
+const Database               = use('Database');
 
 class ResidenceController {
   async Fetch({ auth, request, response }) {
@@ -143,6 +146,20 @@ class ResidenceController {
     return response.json(await userIsExist.fetch());
   }
 
+  async FetchViewAd({ auth, request, response }) {
+    const {
+            id,
+          } = request.all();
+    return response.json(await ViewAd.query().where('ad_id', id).groupBy(Database.raw('year(created_at) ,month(created_at) ,day(created_at)')).select('created_at').count());
+  }
+
+  async FetchFavoriteAd({ auth, request, response }) {
+    const {
+            id,
+          } = request.all();
+    return response.json(await FavoriteAd.query().where('ad_id', id).count());
+  }
+
   async favoriteFetch({ auth, request, response }) {
     let {
           rule,
@@ -172,8 +189,24 @@ class ResidenceController {
   async FetchMy({ auth, request, response }) {
     let {
           rule,
-        }           = request.headers();
-    let userIsExist = Residence.query().orderBy('id', 'desc').where('user_id', auth.user.id).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
+        }       = request.headers();
+    let userIds = [auth.user.id];
+    if (auth.user.is_realestate == 1) {
+      let advisors = await AdviserRealEstate.query().where('real_estate_id', auth.user.id).fetch();
+      for (let advisor of advisors.rows) {
+        if (userIds.filter(e => e == advisor.adviser_id).length === 0) {
+          userIds.push(advisor.adviser_id);
+        }
+      }
+      let shobes = await User.query().where('parent_realestate_id', auth.user.id).fetch();
+      for (let shobe of shobes.rows) {
+        if (userIds.filter(e => e == shobe.id).length === 0) {
+          userIds.push(shobe.id);
+        }
+      }
+    }
+    console.log(userIds);
+    let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
 
     if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
       userIsExist.where('type', request.body.typeSearch);

@@ -98,6 +98,18 @@ Route.group(() => {
   Route.post('/advisor/realestate/request/check/code', 'AdvisorController.checkRequestCode');
   Route.post('/advisor/exist/add', 'AdvisorController.isExistAdvisor');
   Route.post('/advisor/exist/add/request', 'AdvisorController.isReqesutExistAdvisor');
+  Route.post('/sub/realestate/add', 'SubRealEstateController.create');
+  Route.post('/sub/realestate/address', 'SubRealEstateController.address');
+  Route.post('/sub/realestate/fetch', 'SubRealEstateController.index');
+  Route.post('/sub/realestate/fetch/report', 'SubRealEstateController.indexReport');
+  Route.post('/sub/realestate/deactive', 'SubRealEstateController.deactiveAdviser');
+  Route.post('/sub/realestate/find', 'SubRealEstateController.find');
+  Route.post('/sub/realestate/disable/by/realestate', 'SubRealEstateController.advisorDisableByRealestate');
+  Route.post('/sub/realestate/realestate/request', 'SubRealEstateController.fetchRequestSubRealEstate');
+  Route.post('/sub/realestate/realestate/request/get/code', 'SubRealEstateController.codeRequest');
+  Route.post('/sub/realestate/realestate/request/check/code', 'SubRealEstateController.checkRequestCode');
+  Route.post('/sub/realestate/exist/add', 'SubRealEstateController.isExistSubRealEstate');
+  Route.post('/sub/realestate/exist/add/request', 'SubRealEstateController.isReqesutExistAdvisor');
 
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
@@ -134,6 +146,8 @@ Route.group(() => {
   Route.post('/home/page/fetch', 'UserController.homeFetch');
   Route.post('/my/package', 'PackageBuyController.fetchMy');
   Route.post('/auth/residence/fetch/last', 'ResidenceController.Fetch');
+  Route.post('/auth/residence/fetch/favorite/add', 'ResidenceController.FetchFavoriteAd');
+  Route.post('/auth/residence/fetch/viewad', 'ResidenceController.FetchViewAd');
   Route.post('/auth/residence/find', 'ResidenceController.Find');
 
   Route.post('/request/save/fetch', 'SaveRequestController.index');

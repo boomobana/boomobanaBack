@@ -5,6 +5,7 @@
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 var Adviser           = use('App/Models/Adviser'),
+    PackageBuy        = use('App/Models/PackageBuy'),
     AdviserRealEstate = use('App/Models/AdviserRealEstate'),
     User              = use('App/Models/User'),
     Sms               = use('App/Controllers/Http/SmsSender'),
@@ -14,9 +15,9 @@ var Adviser           = use('App/Models/Adviser'),
 /**
  * Resourceful controller for interacting with packages
  */
-class AdvisorController {
+class SubRealEstateController {
   async index({ auth, response }) {
-    return response.json(await AdviserRealEstate.query().where('real_estate_id', auth.user.id).with('Realestate').with(['Advisor']).fetch());
+    return response.json(await User.query().where('parent_realestate_id', auth.user.id).fetch());
   }
 
   async indexReport({ auth, response, request }) {
@@ -73,14 +74,20 @@ class AdvisorController {
             from,
             to,
           ]))[0],
-        residenceStatus = await AdviserRealEstate.query().where('adviser_id', id).last();
+        residenceStatus = await PackageBuy.query().where('user_id', id).last(),
+        enableAdviser   = await AdviserRealEstate.query().where('real_estate_id', id).with('Advisor', (q) => {
+          q.where('disable', 1);
+        }).fetch(),
+        disableAdviser  = await AdviserRealEstate.query().where('real_estate_id', id).with('Advisor', (q) => {
+          q.where('disable', 0);
+        }).fetch();
 
-    let mandeFile = residenceStatus.count_file_adviser,
-        occousion = residenceStatus.count_occasion,
-        video     = residenceStatus.count_video,
-        toor      = 0,
-        ladder    = residenceStatus.count_ladder,
-        important = residenceStatus.count_instant,
+    let mandeFile = residenceStatus ? residenceStatus.count_file_adviser : 0,
+        occousion = residenceStatus ? residenceStatus.count_occasion : 0,
+        video     = residenceStatus ? residenceStatus.count_video : 0,
+        toor      = residenceStatus ? 0 : 0,
+        ladder    = residenceStatus ? residenceStatus.count_ladder : 0,
+        important = residenceStatus ? residenceStatus.count_instant : 0,
         json      = {
           allFiles: allFiles,
           sellTransaction: sellTransaction,
@@ -96,6 +103,8 @@ class AdvisorController {
           toor: toor,
           ladder: ladder,
           important: important,
+          enableAdviser: enableAdviser.rows.length,
+          disableAdviser: disableAdviser.rows.length,
         };
     // // console.log(allFiles);
     return response.json(json);
@@ -114,24 +123,15 @@ class AdvisorController {
     if (validationHeaders.fails()) {
       return response.json(validationHeaders.messages());
     }
-    const rules      = {
+    const rules = {
       fileUrl: 'required',
       firstname: 'required',
       lastname: 'required',
       mobile: 'required|unique:advisers ,mobile',
       email: 'required',
       password: 'required',
-      type: 'required',
-      male: 'required',
-      count_file_rent: 'required',
-      count_file_sell: 'required',
-      count_occasion: 'required',
-      count_instant: 'required',
-      count_ladder: 'required',
-      count_video: 'required',
-      count_file_adviser: 'required',
-      count_file_archive: 'required',
     };
+
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
       return response.json(validation.messages());
@@ -144,16 +144,6 @@ class AdvisorController {
             mobile,
             email,
             password,
-            type,
-            male,
-            count_file_rent,
-            count_file_sell,
-            count_occasion,
-            count_instant,
-            count_ladder,
-            count_video,
-            count_file_adviser,
-            count_file_archive,
           }        = request.all();
     const {
             rule,
@@ -162,43 +152,20 @@ class AdvisorController {
     if (typeof request.body.id != undefined && request.body.id != null) {
       newAdviser = await Adviser.query().where('id', request.body.id).last();
     }
-    newAdviser.firstname = firstname;
-    newAdviser.lastname  = lastname;
-    newAdviser.email     = email;
-    newAdviser.mobile    = mobile;
-    newAdviser.password  = password;
-    newAdviser.role      = type;
-    newAdviser.lat       = 0;
-    newAdviser.lng       = 0;
-    newAdviser.address   = '';
+    newAdviser.firstname            = firstname;
+    newAdviser.lastname             = lastname;
+    newAdviser.email                = email;
+    newAdviser.mobile               = mobile;
+    newAdviser.password             = password;
+    newAdviser.parent_realestate_id = auth.user.id;
+    newAdviser.lat                  = 0;
+    newAdviser.lng                  = 0;
+    newAdviser.address              = '';
     // newAdviser.active_code = Math.floor(Math.random() * 100000);
-    newAdviser.avatar    = fileUrl;
-    newAdviser.male      = male;
-    let savedData        = await newAdviser.save();
-
-    let newRealAdviserRealEstate = new AdviserRealEstate();
-    if (typeof request.body.id != undefined && request.body.id != null) {
-      newRealAdviserRealEstate = await AdviserRealEstate.query()
-        .where('adviser_id', newAdviser.id)
-        .where('real_estate_id', auth.user.id)
-        .last();
-    }
-    newRealAdviserRealEstate.real_estate_id     = auth.user.id;
-    newRealAdviserRealEstate.adviser_id         = newAdviser.id;
-    newRealAdviserRealEstate.count_file_rent    = count_file_rent;
-    newRealAdviserRealEstate.count_file_sell    = count_file_sell;
-    newRealAdviserRealEstate.count_occasion     = count_occasion;
-    newRealAdviserRealEstate.count_instant      = count_instant;
-    newRealAdviserRealEstate.count_ladder       = count_ladder;
-    newRealAdviserRealEstate.count_video        = count_video;
-    newRealAdviserRealEstate.count_file_adviser = count_file_adviser;
-    newRealAdviserRealEstate.count_file_archive = count_file_archive;
-    newRealAdviserRealEstate.status             = 0;
-    await newRealAdviserRealEstate.save();
-
-    await Sms.sendTemplate('مشاور گرامی درخواست عضویتی از سوی املاک برای شما ارسال شد', mobile);
-
-    return response.json({ status_code: 200, id: newRealAdviserRealEstate.id });
+    newAdviser.avatar               = fileUrl;
+    let savedData                   = await newAdviser.save();
+    await Sms.sendTemplate('شعبه گرامی جهت تکمیل اطلاعات به پنل خود مراجعه کنید', mobile);
+    return response.json({ status_code: 200 });
   }
 
   async address({ request, response, auth }) {
@@ -404,4 +371,4 @@ class AdvisorController {
 
 }
 
-module.exports = AdvisorController;
+module.exports = SubRealEstateController;
