@@ -10,6 +10,8 @@ const Residence          = use('App/Models/Residence');
 const UserCode           = use('App/Models/UserCode');
 const FavoriteAd         = use('App/Models/FavoriteAd');
 const User               = use('App/Models/User');
+const ResidenceComment   = use('App/Models/ResidenceComment');
+const Reserved           = use('App/Models/Reserved');
 const Region             = use('App/Models/Region');
 const Province           = use('App/Models/Province');
 const LoginActivity      = use('App/Models/LoginActivity');
@@ -189,6 +191,31 @@ class UserController {
       Transaction2Count,
       Favorite2Count,
       CreatorsCount,
+    };
+    return response.json(json);
+  }
+
+  async siteDefault({ auth, request, response }) {
+    const { rule }       = request.headers();
+    const files          = await Residence.query().where('type', '!=', 1).where('archive', 0).count('*');
+    const filesCount     = files[0][Object.keys(files[0])];
+    const residence      = await Residence.query().where('type', 1).where('archive', 0).count('*');
+    const residenceCount = residence[0][Object.keys(residence[0])];
+    const advisor        = await Adviser.query().where('is_advisor', 1).count('*');
+    const advisorCount   = advisor[0][Object.keys(advisor[0])];
+    const Shobe          = await User.query().where('is_realestate', 1).count('*');
+    const ShobeCount     = Shobe[0][Object.keys(Shobe[0])];
+    const Comment        = await ResidenceComment.query().count('*');
+    const CommentCount   = Comment[0][Object.keys(Comment[0])];
+    const Reserve        = await Reserved.query().count('*');
+    const ReserveCount   = Reserve[0][Object.keys(Reserve[0])];
+    const json           = {
+      advisorCount,
+      residenceCount,
+      CommentCount,
+      filesCount,
+      ReserveCount,
+      shobeCount: ShobeCount,
     };
     return response.json(json);
   }

@@ -90,12 +90,14 @@ class CreatorController {
       province_id: 'required',
       mizan_daraei: 'required',
       description: 'required',
+      show_on: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
       return response.json(validation.messages());
     }
     let {
+          show_on,
           firstname,
           lastname,
           mobile,
@@ -115,17 +117,18 @@ class CreatorController {
     if (typeof request.body.id != undefined && request.body.id != null) {
       newS = await Creators.query().where('id', request.body.id).last();
     }
-    newS.firstname    = firstname;
-    newS.lastname     = lastname;
-    newS.mobile       = mobile;
-    newS.tell         = tell;
-    newS.scope        = scope;
-    newS.email        = email;
-    newS.lat          = lat;
-    newS.lng          = lng;
-    newS.address      = address;
-    newS.region_id    = region_id;
-    newS.province_id  = province_id;
+    newS.show_on     = show_on;
+    newS.firstname   = firstname;
+    newS.lastname    = lastname;
+    newS.mobile      = mobile;
+    newS.tell        = tell;
+    newS.scope       = scope;
+    newS.email       = email;
+    newS.lat         = lat;
+    newS.lng         = lng;
+    newS.address     = address;
+    newS.region_id   = region_id;
+    newS.province_id = province_id;
     newS.mizan_daraei = mizan_daraei;
     newS.description  = description;
     await newS.save();

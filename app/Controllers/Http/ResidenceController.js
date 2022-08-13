@@ -85,6 +85,12 @@ class ResidenceController {
       }
       userIsExist.whereIn('id', pictureArray);
     }
+    if (request.body.rto_1 != 0) {
+      userIsExist.where('rto_2', request.body.rto_1);
+    }
+    if (request.body.rto_2 != 0) {
+      userIsExist.where('rto_3', request.body.rto_2);
+    }
     if (request.body.province != 0) {
       userIsExist.where('province_id', request.body.province);
     }
@@ -97,8 +103,9 @@ class ResidenceController {
     if (request.body.room != 0) {
       userIsExist.where('count_bathroom', request.body.room);
     }
-    if (request.body.price1 != 0 && request.body.price2 != 0) {
-      userIsExist.whereBetween('month_discount', [String(request.body.price1), String(request.body.price2)]);
+    if (request.body.price1 != 0 && request.body.price2 != 0 && request.body.price1 != null && request.body.price2 != null) {
+      userIsExist.where('month_discount', '>', request.body.price1).where('month_discount', '<', request.body.price2);
+      // .orWhere('week_discount', '>', request.body.price1).orWhere('week_discount', '<', request.body.price2);
     }
     if (request.body.meter1 != 0 && request.body.meter2 != 0) {
       userIsExist.whereBetween('floor_area', [String(request.body.meter1), String(request.body.meter2)]);

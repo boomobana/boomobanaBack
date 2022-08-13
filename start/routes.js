@@ -219,6 +219,8 @@ Route.group(() => {
   Route.post('/residence/fetch/last', 'ResidenceController.Fetch');
   Route.post('/residence/remove/item', 'ResidenceController.removeFile');
   Route.post('/residence/find', 'ResidenceController.Find');
+
+  Route.post('/site/default', 'UserController.siteDefault');
 }).prefix('api/user');
 
 Route.group(() => {

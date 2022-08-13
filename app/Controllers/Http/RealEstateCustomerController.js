@@ -55,6 +55,7 @@ class RealEstateCustomerController {
       melk_age: 'required',
       count_bed: 'required',
       emkanat: 'required',
+      show_on: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -80,7 +81,8 @@ class RealEstateCustomerController {
             melk_age,
             count_bed,
             emkanat,
-          }                = request.all();
+            show_on,
+          }             = request.all();
     const { rule }         = request.headers();
     const user             = auth.user;
     let newCust            = new RealEstateCustomer();
@@ -100,17 +102,18 @@ class RealEstateCustomerController {
     newCust.type          = type;
     newCust.type_customer = type_customer;
     newCust.options       = options;
-    newCust.description   = description;
-    newCust.region_id     = region_id;
-    newCust.province_id   = province_id;
-    newCust.type_melk     = type_melk;
-    newCust.type_user     = type_user;
-    newCust.title         = title;
-    newCust.metraj_kol    = metraj_kol;
-    newCust.metraj_bana   = metraj_bana;
-    newCust.melk_age      = melk_age;
-    newCust.count_bed     = count_bed;
-    newCust.emkanat       = emkanat;
+    newCust.description = description;
+    newCust.region_id   = region_id;
+    newCust.province_id = province_id;
+    newCust.type_melk   = type_melk;
+    newCust.type_user   = type_user;
+    newCust.title       = title;
+    newCust.metraj_kol  = metraj_kol;
+    newCust.metraj_bana = metraj_bana;
+    newCust.melk_age    = melk_age;
+    newCust.count_bed   = count_bed;
+    newCust.emkanat     = emkanat;
+    newCust.show_on     = show_on;
     await newCust.save();
     return response.json({ status_code: 200 });
   }
