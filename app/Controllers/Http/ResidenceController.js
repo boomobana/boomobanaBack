@@ -111,7 +111,7 @@ class ResidenceController {
       userIsExist.whereBetween('floor_area', [String(request.body.meter1), String(request.body.meter2)]);
     }
     if (request.body.sen1 != 0 && request.body.sen2 != 0) {
-      userIsExist.whereBetween('all_area', [String(request.body.sen1), String(request.body.sen2)]);
+      userIsExist.where('age', '>', request.body.sen1).where('age', '<', request.body.sen2);
     }
     pictureArray = [];
     if (request.body.toor) {
@@ -212,7 +212,6 @@ class ResidenceController {
         }
       }
     }
-    console.log(userIds);
     let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
 
     if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
@@ -230,8 +229,8 @@ class ResidenceController {
     if (typeof request.body.count_bathroom === 'string' && request.body.count_bathroom !== null && request.body.count_bathroom !== '') {
       userIsExist.where('count_bathroom', request.body.count_bathroom);
     }
-    if (typeof request.body.all_area === 'string' && request.body.all_area !== null && request.body.all_area !== '') {
-      userIsExist.where('all_area', request.body.all_area);
+    if (typeof request.body.age === 'string' && request.body.age !== null && request.body.age !== '') {
+      userIsExist.where('age', request.body.age);
     }
     if (typeof request.body.floor_area === 'string' && request.body.floor_area !== null && request.body.floor_area !== '') {
       if (typeof request.body.floor_area2 === 'string' && request.body.floor_area2 !== null && request.body.floor_area2 !== '') {
@@ -260,8 +259,17 @@ class ResidenceController {
       // else if (request.body.orderBy == '3')
       //   userIsExist.orderBy('created_at', 'desc');
     }
+    console.log(request.body.status, 'status');
+    if (request.body.status != -1) {
+      userIsExist.where('status', request.body.status);
+    }
     if (typeof request.body.type_show === 'string' && request.body.type_show !== null && request.body.type_show !== '') {
-      userIsExist.where('archive', request.body.type_show);
+      if (request.body.type_show == 1)
+        userIsExist.where('archive', 0);
+      else if (request.body.type_show == 2)
+        userIsExist.where('archive', 1);
+      else if (request.body.type_show == 3)
+        userIsExist.where('archive', 3);
     } else {
       userIsExist.where('archive', '!=', 3);
     }
@@ -333,13 +341,14 @@ class ResidenceController {
   }
 
   async addMelk({ auth, request, response }) {
-    const rules      = {
+    const rules        = {
       title: 'required',
       description: 'required',
       archive: 'required',
       lat: 'required',
       lng: 'required',
       all_area: 'required',
+      age: 'required',
       province_id: 'required',
       region_id: 'required',
       RTO1: 'required',
@@ -376,6 +385,7 @@ class ResidenceController {
           month_discount,
           floor_area,
           all_area,
+          age,
           archive,
           count_bathroom,
           width_area,
@@ -383,7 +393,7 @@ class ResidenceController {
           // room_count,
           floor_count,
           floor_unit_count,
-        }   = request.all();
+        }              = request.all();
     // // console.log(archive);
     let res = new Residence();
     if (request.body.residence_id != 0) {
@@ -413,6 +423,7 @@ class ResidenceController {
     res.rto_3          = RTO3;
     res.month_discount = month_discount;
     res.floor_area     = floor_area;
+    res.age            = age;
     res.width_area     = width_area;
     res.height_area    = height_area;
     if (type === '3')
@@ -642,7 +653,7 @@ class ResidenceController {
       Res.where('count_bathroom', request.body.count_bathroom);
     }
     if (typeof request.body.all_area === 'string' && request.body.all_area !== null && request.body.all_area !== '') {
-      Res.where('all_area', request.body.all_area);
+      Res.where('age', request.body.all_area);
     }
     if (typeof request.body.floor_area === 'string' && request.body.floor_area !== null && request.body.floor_area !== '') {
       if (typeof request.body.floor_area2 === 'string' && request.body.floor_area2 !== null && request.body.floor_area2 !== '') {
