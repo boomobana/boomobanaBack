@@ -282,8 +282,17 @@ class AdvisorController {
       .where('lastname', request.input('lastname'))
       .where('mobile', request.input('mobile'))
       .fetch();
+    console.log(ad.rows, ad.rows.length != 0);
+    if (ad.rows.length != 0) {
+      let ada = await AdviserRealEstate.query()
+        .where('real_estate_id', auth.user.id)
+        .where('adviser_id', ad.rows[0].id)
+        .fetch();
+      console.log(ada);
+      return response.json({ ex: ad.rows.length == 1, exa: ada.rows.length != 0 });
+    }
     // // console.log(ad);
-    return response.json({ ex: ad.rows.length == 1 });
+    return response.json({ ex: ad.rows.length == 1, exa: false });
   }
 
   async codeRequest({ auth, request, response }) {

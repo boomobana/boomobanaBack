@@ -12,19 +12,22 @@ class MoamelatController {
           adviser,
           gharardad,
           update,
-        } = request.all();
+        }            = request.all();
+    let user_side1   = '';
+    let user_side2   = '';
+    let adviser_data = '';
     if (update.id_side1 == 0) {
-      let user_side1 = await MoamelatUser.create(side_1);
+      user_side1 = await MoamelatUser.create(side_1);
     } else {
       await MoamelatUser.query().where({ id: update.id_side1 }).update(side_1);
     }
     if (update.id_side2 == 0) {
-      let user_side2 = await MoamelatUser.create(side_2);
+      user_side2 = await MoamelatUser.create(side_2);
     } else {
       await MoamelatUser.query().where({ id: update.id_side2 }).update(side_2);
     }
     if (update.id_adviser == 0) {
-      let adviser_data = await MoamelatAdviser.create(adviser);
+      adviser_data = await MoamelatAdviser.create(adviser);
     } else {
       await MoamelatAdviser.query().where({ id: update.id_adviser }).update(adviser);
     }
