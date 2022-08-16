@@ -297,7 +297,7 @@ class AdvisorController {
 
   async codeRequest({ auth, request, response }) {
     let { id } = request.all();
-    let re     = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).last();
+    let re     = await AdviserRealEstate.query().where('id', id).last();
     // // console.log(re.status);
     if (re.status == 0 || re.status == 3) {
       let code   = Math.floor(Math.random() * 999999);
@@ -358,12 +358,13 @@ class AdvisorController {
 
   async checkRequestCode({ auth, request, response }) {
     let { status, code, id } = request.all();
-    let re                   = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).with('Realestate').last();
-    let rea                  = await User.query().where('id', re.real_estate_id).last();
+    let re                   = await AdviserRealEstate.query().where('id', id).with('Realestate').last();
+    console.log(status);
     if (re.status == 0) {
-      if (status === 4) {
+      let rea = await User.query().where('id', re.real_estate_id).last();
+      if (status == 1) {
         if (re.smsCode == code) {
-          re.status = 4;
+          re.status = status;
           await re.save();
           // // console.log(rea.mobile);
           await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
@@ -372,16 +373,19 @@ class AdvisorController {
         } else {
           return response.json({ status_code: 400 });
         }
-      } else if (status === 5) {
-        re.status = 5;
+      } else if (status == 2) {
+        re.status = status;
         await re.save();
         await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
         await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
       }
     } else if (re.status == 3) {
-      if (status === 1) {
+      let rea = await User.query().where('id', re.adviser_id).last();
+      if (status == 4) {
+        console.log(re);
+
         if (re.smsCode == code) {
-          re.status = 1;
+          re.status = status;
           await re.save();
           // // console.log(rea.mobile);
           await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
@@ -390,8 +394,8 @@ class AdvisorController {
         } else {
           return response.json({ status_code: 400 });
         }
-      } else if (status === 2) {
-        re.status = 2;
+      } else if (status == 5) {
+        re.status = status;
         await re.save();
         await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
         await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
