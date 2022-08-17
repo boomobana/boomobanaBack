@@ -68,7 +68,7 @@ class WalletController {
       price,
       slug,
     });
-    let url = 'https://localhost:2083/api/user/wallet/money/send/' + slug;
+    let url = 'https://api.boomobana.com:2083/api/user/wallet/money/send/' + slug;
 
     return response.json({ url: url });
   }
