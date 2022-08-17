@@ -413,6 +413,25 @@ class UserController {
   async loginActivityFetch({ auth, request, response }) {
     return response.json(await LoginActivity.query().where({ user_id: auth.user.id }).fetch());
   }
+
+  async requestEnablePanel({ auth, request, response }) {
+    let {
+          is_realestate,
+          is_advisor,
+          is_bloger,
+          is_shobe,
+          make_residence,
+        }                 = request.all();
+    let user              = await User.query().where('id', auth.user.id).last();
+    user.is_panel_request = 1;
+    user.is_realestate    = is_realestate;
+    user.is_advisor       = is_advisor;
+    user.is_bloger        = is_bloger;
+    user.is_shobe         = is_shobe;
+    user.make_residence   = make_residence;
+    await user.save();
+    return response.json({ status_code: 200 });
+  }
 }
 
 module.exports = UserController;

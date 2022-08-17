@@ -1,30 +1,115 @@
 'use strict';
 
-const Wallet      = use('App/Models/Wallet');
-const Transaction = use('App/Models/Transaction');
-const Package     = use('App/Models/Package');
-const PackageBuy  = use('App/Models/PackageBuy');
-const User        = use('App/Models/User');
-const Ticket      = use('App/Models/Ticket');
-const TicketPm    = use('App/Models/TicketPm');
+const Wallet           = use('App/Models/Wallet');
+const Transaction      = use('App/Models/Transaction');
+const Package          = use('App/Models/Package');
+const PackageBuy       = use('App/Models/PackageBuy');
+const User             = use('App/Models/User');
+const WalletRequest    = use('App/Models/WalletRequest');
+const Ticket           = use('App/Models/Ticket');
+const TicketPm         = use('App/Models/TicketPm');
+const Env              = use('Env');
+const ZarinpalCheckout = require('zarinpal-checkout');
+const zarinpal         = ZarinpalCheckout.create('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', true);
+
 const {
         changeAmount,
         makeidF,
         makeid,
-      }           = require('../Helper');
-const Sms         = use('App/Controllers/Http/SmsSender');
+      }    = require('../Helper');
+const Sms  = use('App/Controllers/Http/SmsSender');
 const {
         validate,
-      }           = use('Validator');
-const Hash        = use('Hash');
+      }    = use('Validator');
+const Hash = use('Hash');
 
 class WalletController {
+
+  /**
+   * Render a form to be used for creating a new transaction.
+   * GET transactions/create
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {View} ctx.view
+   */
+  async sendPayment({ request, response, view }) {
+    let {
+          slug,
+        }    = request.params;
+    let {
+          price,
+          status,
+        }    = await WalletRequest.query().where('slug', slug).last();
+    // // console.log(price, description);
+    let resp = await zarinpal.PaymentRequest({
+      Amount: price, // In Tomans
+      CallbackURL: `${Env.get('APP_URL')}/api/user/wallet/money/get/${slug}`,
+      Description: 'شارژ کیف  پول سامانه بوم و بنا',
+    });
+    // // console.log(resp);
+    if (resp.status === 100) {
+      let transaction   = await WalletRequest.query().where('slug', slug).last();
+      transaction.ref_1 = resp.authority;
+      transaction.save();
+
+      return response.redirect(resp.url);
+    }
+  }
+
+  async walletRequestPlus({ request, response, auth }) {
+    let {
+          price,
+        }    = request.all();
+    let slug = makeidF(15);
+    await WalletRequest.create({
+      user_id: auth.user.id,
+      price,
+      slug,
+    });
+    let url = 'https://localhost:2083/api/user/wallet/money/send/' + slug;
+
+    return response.json({ url: url });
+  }
+
+  /**
+   * Create/save a new transaction.
+   * POST transactions
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   */
+  async getPayment({ request, response }) {
+    let { slug }      = request.params;
+    let { Authority } = request.get();
+    let {
+          id,
+          ref_1,
+          user_id,
+          price,
+        }             = await WalletRequest.query().where('slug', slug).last();
+    let resp          = await zarinpal.PaymentVerification({
+      Amount: price, // In Tomans
+      Authority: ref_1,
+    });
+    if (resp.status !== 100) {
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
+      // // console.log('Empty!');
+    } else {
+      await changeAmount(50, parseFloat(price), 1, 2, ref_1, resp.RefID, resp.RefID, slug);
+
+      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
+    }
+  }
+
   async addWallet({ request, response }) {
     let ref1         = makeid(5, 5, 5);
     let ref2         = makeid(5, 5, 5);
     let payment_code = makeidF(8);
     let slug         = makeidF(8);
-    await changeAmount(50, 1000, 1, 2, ref1, ref2, payment_code, slug);
   }
 
   async fetchWallet({ request, response, auth }) {

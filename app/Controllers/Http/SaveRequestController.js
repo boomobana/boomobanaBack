@@ -7,6 +7,9 @@
 const SaveRequest           = use('App/Models/SaveRequest');
 const SaveRequestRealestate = use('App/Models/SaveRequestRealestate');
 const { validate }          = use('Validator');
+const Env                   = use('Env');
+const ZarinpalCheckout      = require('zarinpal-checkout');
+const zarinpal              = ZarinpalCheckout.create('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', true);
 
 /**
  * Resourceful controller for interacting with saverequests
@@ -30,6 +33,77 @@ class SaveRequestController {
       arr.push(rsqElement.request_id);
     }
     return response.json(await SaveRequest.query().whereIn('id', arr).with('option').with('RTO2').with('RTO3').fetch());
+  }
+
+  /**
+   * Render a form to be used for creating a new transaction.
+   * GET transactions/create
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {View} ctx.view
+   */
+  async sendPayment({ request, response, view }) {
+    let {
+          slug,
+        } = request.params;
+    let {
+          price_carshenas,
+          description,
+          status,
+        } = await SaveRequest.query().where('slug', slug).last();
+    // // console.log(price, description);
+    if (status !== 3)
+      return response.send('payed before');
+    let resp = await zarinpal.PaymentRequest({
+      Amount: price_carshenas, // In Tomans
+      CallbackURL: `${Env.get('APP_URL')}/api/user/request/payment/get/${slug}`,
+      Description: description,
+    });
+    // // console.log(resp);
+    if (resp.status === 100) {
+      let transaction   = await SaveRequest.query().where('slug', slug).last();
+      transaction.ref_1 = resp.authority;
+      transaction.save();
+
+      return response.redirect(resp.url);
+    }
+  }
+
+  /**
+   * Create/save a new transaction.
+   * POST transactions
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   */
+  async getPayment({ request, response }) {
+    let { slug }      = request.params;
+    let { Authority } = request.get();
+    let {
+          id,
+          ref_1,
+          ref_3,
+          user_id,
+          price_carshenas,
+        }             = await SaveRequest.query().where('slug', slug).last();
+    let resp          = await zarinpal.PaymentVerification({
+      Amount: price_carshenas, // In Tomans
+      Authority: ref_1,
+    });
+    if (resp.status !== 100) {
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
+      // // console.log('Empty!');
+    } else {
+      let transaction    = await SaveRequest.query().where('slug', slug).last();
+      transaction.status = 4;
+      transaction.ref_2  = resp.RefID;
+      transaction.save();
+      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
+    }
   }
 
   async create({ request, response, auth }) {

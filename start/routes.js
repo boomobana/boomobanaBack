@@ -190,6 +190,8 @@ Route.group(() => {
 
   // blogger home data
   Route.post('/blogger/home/data', 'BlogPostController.home');
+
+  Route.post('/wallet/request/add', 'WalletController.walletRequestPlus');
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
   // blogger
@@ -203,6 +205,7 @@ Route.group(() => {
   Route.post('/blog/post/categories', 'BlogCategoryPostController.index');
   //end blogger
   Route.post('/fetchPosts/search', 'UserController.fetchPostssearch');
+  Route.post('/request/enable/panel', 'UserController.requestEnablePanel');
   Route.post('/get/festivals', 'FestivalController.index');
   Route.post('/realestate/fetch', 'RealEstateController.fetchOnly');
   Route.post('/search/new/fetch', 'RealEstateController.searchNew');
@@ -211,6 +214,12 @@ Route.group(() => {
 
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
   Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
+
+  Route.get('/wallet/money/send/:slug', 'WalletController.sendPayment');
+  Route.get('/wallet/money/get/:slug', 'WalletController.getPayment');
+
+  Route.get('/request/payment/send/:slug', 'SaveRequestController.sendPayment');
+  Route.get('/request/payment/get/:slug', 'SaveRequestController.getPayment');
 
   Route.post('/polici/fetch', 'PoliciController.index');
   Route.post('/festivals', 'FestivalController.index');
