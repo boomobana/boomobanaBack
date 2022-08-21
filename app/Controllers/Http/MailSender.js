@@ -12,6 +12,9 @@ class MailSender {
           user: Env.get('SMTP_USERNAME'), // generated ethereal user
           pass: Env.get('SMTP_PASSWORD'), // generated ethereal password
         },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
       let info        = await transporter.sendMail({
         from: '"Boom O Bana" <info@boomobana.com>', // sender address
