@@ -21,14 +21,33 @@ class ResidenceController {
           options,
         }           = request.all();
     let arrayOp     = [];
-    let userIsExist = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0).where('status', 2);
+    let userIsExist = Residence.query()
+      .with('User')
+      .with('Files')
+      .with('Option')
+      .with('Room')
+      .with('RTO1')
+      .with('RTO2')
+      .with('RTO3')
+      .with('Region')
+      .with('Province')
+      .with('Season')
+      .where('archive', 0)
+      .where('status', 2);
+
+    if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
+      let userIsExist2 = await Residence.query()
+        .orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%').fetch();
+      let res          = [];
+      for (let userIsExist2Element of userIsExist2.rows) {
+        res.push(userIsExist2Element.id);
+      }
+      userIsExist.whereIn('id', res);
+    }
     if (typeof request.body.type === 'string') {
       if (request.body.type != 'nothing') {
         if (request.body.type == 'residence') {
           userIsExist.where('type', '1');
-          if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
-            userIsExist.orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
-          }
           if (request.body.typeResidence != 0) {
             if (request.body.typeResidence == 1) {
               userIsExist.whereNotIn('rto_2', ['5', '42']);
@@ -42,15 +61,6 @@ class ResidenceController {
           } else {
             userIsExist.whereIn('type', [2, 3]);
           }
-          if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
-            userIsExist.orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
-          }
-        } else {
-          userIsExist.orWhere('title', request.body.text);
-        }
-      } else {
-        if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
-          userIsExist.orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%');
         }
       }
     }
@@ -260,7 +270,7 @@ class ResidenceController {
       //   userIsExist.orderBy('created_at', 'desc');
     }
     console.log(request.body.status, 'status');
-    if (request.body.status != -1) {
+    if (request.body.status != undefined && request.body.status != -1) {
       userIsExist.where('status', request.body.status);
     }
     if (typeof request.body.type_show === 'string' && request.body.type_show !== null && request.body.type_show !== '') {
@@ -341,7 +351,7 @@ class ResidenceController {
   }
 
   async addMelk({ auth, request, response }) {
-    const rules        = {
+    const rules = {
       title: 'required',
       description: 'required',
       archive: 'required',
@@ -393,7 +403,7 @@ class ResidenceController {
           // room_count,
           floor_count,
           floor_unit_count,
-        }              = request.all();
+        }       = request.all();
     // // console.log(archive);
     let res = new Residence();
     if (request.body.residence_id != 0) {

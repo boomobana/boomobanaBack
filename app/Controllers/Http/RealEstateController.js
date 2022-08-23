@@ -102,7 +102,9 @@ class RealEstateController {
       'avatar',
       'lastname',
       'firstname',
-    ]).with('residence');
+    ]).with('residence', q => {
+      q.where('archive', 0).where('status', 2);
+    });
     return response.json(await data.last());
   }
 

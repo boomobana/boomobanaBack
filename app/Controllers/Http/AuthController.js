@@ -90,7 +90,7 @@ class AuthController {
           this.makeLoginActivity(realEstate, userOs, ipA);
           let logins = await auth.generate(realEstate);
           await new Sms().loginSuccess(mobile);
-          await new Mail().sendLoginTrue(realEstate.email);
+          // await new Mail().sendLoginTrue(realEstate.email);
 
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
@@ -104,7 +104,7 @@ class AuthController {
           this.makeLoginActivity(user, userOs, ipA);
           let logins = await auth.generate(user);
           await new Sms().loginSuccess(mobile);
-          await new Mail().sendLoginTrue(user.email);
+          // await new Mail().sendLoginTrue(user.email);
 
           return response.json({ status_code: 200, rule: rule, status_text: 'Success Login', token: logins.token });
         } else {
@@ -161,7 +161,7 @@ class AuthController {
     this.makeLoginActivity((await userA.last()), userOs, ipA);
     let authUser = await auth.attempt(mobile, password);
     await new Sms().loginSuccess(mobile);
-    await new Mail().sendLoginTrue((await userA.last()).email);
+    // await new Mail().sendLoginTrue((await userA.last()).email);
 
     return response.json({ token: authUser.token, status_code: 200, status_text: 'Success Login' });
   }
