@@ -229,7 +229,10 @@ Route.group(() => {
   Route.post('/residence/remove/item', 'ResidenceController.removeFile');
   Route.post('/residence/find', 'ResidenceController.Find');
 
+  //todo change this Contollers
   Route.post('/site/default', 'UserController.siteDefault');
+  Route.post('/static/pages/fetch', 'UserController.staticPages');
+  Route.post('/site/modal/pages', 'UserController.modalHomePages');
 }).prefix('api/user');
 
 Route.group(() => {

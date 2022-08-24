@@ -12,6 +12,8 @@ const FavoriteAd         = use('App/Models/FavoriteAd');
 const User               = use('App/Models/User');
 const ResidenceComment   = use('App/Models/ResidenceComment');
 const Reserved           = use('App/Models/Reserved');
+const StaticPages        = use('App/Models/StaticPages');
+const SiteModalPages     = use('App/Models/SiteModalPages');
 const Region             = use('App/Models/Region');
 const Province           = use('App/Models/Province');
 const LoginActivity      = use('App/Models/LoginActivity');
@@ -220,6 +222,16 @@ class UserController {
       shobeCount: ShobeCount,
     };
     return response.json(json);
+  }
+
+  async staticPages({ auth, request, response }) {
+    const { slug } = request.all();
+    let json       = await StaticPages.query().where('slug', slug).last();
+    return response.json(json);
+  }
+
+  async modalHomePages({ auth, request, response }) {
+    return response.json(await SiteModalPages.all());
   }
 
   async homeFetchCountingAdmin({ auth, request, response }) {
