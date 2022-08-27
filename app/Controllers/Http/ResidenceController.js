@@ -209,7 +209,7 @@ class ResidenceController {
         }       = request.headers();
     let userIds = [auth.user.id];
     if (auth.user.is_realestate == 1) {
-      let advisors = await AdviserRealEstate.query().where('real_estate_id', auth.user.id).fetch();
+      let advisors = await AdviserRealEstate.query().whereIn('status', [1, 4]).where('real_estate_id', auth.user.id).fetch();
       for (let advisor of advisors.rows) {
         if (userIds.filter(e => e == advisor.adviser_id).length === 0) {
           userIds.push(advisor.adviser_id);
@@ -222,7 +222,11 @@ class ResidenceController {
         }
       }
     }
-    let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season');
+    let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season')
+    if (rule == 'user')
+      userIsExist.where('rule', 'user');
+    else
+      userIsExist.where('rule', '!=', 'user');
 
     if (typeof request.body.typeSearch === 'string' && request.body.typeSearch !== null && request.body.typeSearch !== '') {
       userIsExist.where('type', request.body.typeSearch);
@@ -343,6 +347,7 @@ class ResidenceController {
     res.province_id = province_id;
     res.region_id   = region_id;
     res.type        = type;
+    res.rule        = rule;
     res.user_id     = auth.user.id;
     await res.save();
     await sleep(1000);
@@ -351,7 +356,7 @@ class ResidenceController {
   }
 
   async addMelk({ auth, request, response }) {
-    const rules = {
+    const rules      = {
       title: 'required',
       description: 'required',
       archive: 'required',
@@ -379,7 +384,7 @@ class ResidenceController {
     }
     const {
             rule,
-          } = request.headers();
+          }  = request.headers();
     let {
           title,
           description,
@@ -403,9 +408,9 @@ class ResidenceController {
           // room_count,
           floor_count,
           floor_unit_count,
-        }       = request.all();
-    // // console.log(archive);
-    let res = new Residence();
+        }    = request.all();
+    let res  = new Residence();
+    res.rule = rule;
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();
     } else {
