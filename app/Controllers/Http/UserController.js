@@ -149,19 +149,19 @@ class UserController {
   async homeFetch({ auth, request, response }) {
     const { rule }          = request.headers();
     const { id }            = auth.user;
-    const files             = await Residence.query().where('user_id', id).count('*');
+    const files             = await Residence.query().where('rule', rule).where('user_id', id).count('*');
     const filesCount        = files[0][Object.keys(files[0])];
-    const filesSell         = await Residence.query().where('type', 2).where('user_id', id).count('*');
+    const filesSell         = await Residence.query().where('rule', rule).where('type', 3).where('user_id', id).count('*');
     const filesSellCount    = filesSell[0][Object.keys(filesSell[0])];
-    const filesRent         = await Residence.query().where('type', 3).where('user_id', id).count('*');
+    const filesRent         = await Residence.query().where('rule', rule).where('type', 2).where('user_id', id).count('*');
     const filesRentCount    = filesRent[0][Object.keys(filesRent[0])];
-    const filesRemove       = await Residence.query().where('archive', 2).where('user_id', id).count('*');
+    const filesRemove       = await Residence.query().where('rule', rule).where('archive', 2).where('user_id', id).count('*');
     const filesRemoveCount  = filesRemove[0][Object.keys(filesRemove[0])];
-    const filesArchive      = await Residence.query().where('archive', 1).where('user_id', id).count('*');
+    const filesArchive      = await Residence.query().where('rule', rule).where('archive', 1).where('user_id', id).count('*');
     const filesArchiveCount = filesArchive[0][Object.keys(filesArchive[0])];
-    const filesOnCheck      = await Residence.query().where('status', '!=', 1).where('user_id', id).count('*');
+    const filesOnCheck      = await Residence.query().where('rule', rule).where('status', '!=', 1).where('user_id', id).count('*');
     const filesOnCheckCount = filesOnCheck[0][Object.keys(filesOnCheck[0])];
-    const filesDenied       = await Residence.query().where('status', 3).where('user_id', id).count('*');
+    const filesDenied       = await Residence.query().where('rule', rule).where('status', 3).where('user_id', id).count('*');
     const filesDeniedCount  = filesDenied[0][Object.keys(filesDenied[0])];
     const advisor           = await Adviser.query().where('id', id).count('*');
     const advisorCount      = advisor[0][Object.keys(advisor[0])];

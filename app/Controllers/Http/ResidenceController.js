@@ -273,7 +273,6 @@ class ResidenceController {
       // else if (request.body.orderBy == '3')
       //   userIsExist.orderBy('created_at', 'desc');
     }
-    console.log(request.body.status, 'status');
     if (request.body.status != undefined && request.body.status != -1) {
       userIsExist.where('status', request.body.status);
     }
