@@ -233,6 +233,8 @@ Route.group(() => {
   Route.post('/site/default', 'UserController.siteDefault');
   Route.post('/static/pages/fetch', 'UserController.staticPages');
   Route.post('/site/modal/pages', 'UserController.modalHomePages');
+
+  Route.post('/get/bazar/nemodar', 'UserController.homeASC');
 }).prefix('api/user');
 
 Route.group(() => {

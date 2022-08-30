@@ -20,6 +20,9 @@ class ResidenceController {
     let {
           options,
         }           = request.all();
+    let {
+          limit,
+        }           = request.qs;
     let arrayOp     = [];
     let userIsExist = Residence.query()
       .with('User')
@@ -34,7 +37,6 @@ class ResidenceController {
       .with('Season')
       .where('archive', 0)
       .where('status', 2);
-
     if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
       let userIsExist2 = await Residence.query()
         .orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%').fetch();
@@ -43,6 +45,9 @@ class ResidenceController {
         res.push(userIsExist2Element.id);
       }
       userIsExist.whereIn('id', res);
+    }
+    if (request.body.realestate && request.body.realestate != 0 && request.body.realestate != null) {
+      userIsExist.whereIn('user_id', [request.body.realestate]);
     }
     if (typeof request.body.type === 'string') {
       if (request.body.type != 'nothing') {
@@ -95,10 +100,10 @@ class ResidenceController {
       }
       userIsExist.whereIn('id', pictureArray);
     }
-    if (request.body.rto_1 != 0) {
+    if (request.body.rto_1 && request.body.rto_1 != 0) {
       userIsExist.where('rto_2', request.body.rto_1);
     }
-    if (request.body.rto_2 != 0) {
+    if (request.body.rto_2 && request.body.rto_2 != 0) {
       userIsExist.where('rto_3', request.body.rto_2);
     }
     if (request.body.province != 0) {
@@ -159,7 +164,8 @@ class ResidenceController {
       }
     } catch (e) {
     }
-
+    if (limit)
+      userIsExist.limit(limit);
     return response.json(await userIsExist.fetch());
   }
 

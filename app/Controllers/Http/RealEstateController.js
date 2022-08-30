@@ -24,8 +24,8 @@ class RealEstateController {
   }
 
   async fetchOnly({ request, response, auth }) {
-    let data = RealEstate.query().where('pageSignup', '3').whereNot('name', '-');
-    if (request.body.textSearch != '' && request.body.textSearch !== null)
+    let data = RealEstate.query().where('pageSignup', '3').whereNot('name', '-').where('active', '1');
+    if (request.body.textSearch && request.body.textSearch != '' && request.body.textSearch !== null)
       data.where('name', 'like', '%' + request.body.textSearch + '%')
         .orWhere('name_en', 'like', '%' + request.body.textSearch + '%')
         .orWhere('lastname', 'like', '%' + request.body.textSearch + '%')
