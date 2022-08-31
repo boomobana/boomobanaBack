@@ -8,21 +8,21 @@ const Ticket             = use('App/Models/Ticket');
 const RealEstateEvent    = use('App/Models/RealEstateEvent');
 const Residence          = use('App/Models/Residence');
 const UserCode           = use('App/Models/UserCode');
-const FavoriteAd       = use('App/Models/FavoriteAd');
-const User             = use('App/Models/User');
-const ResidenceComment = use('App/Models/ResidenceComment');
-const Reserved         = use('App/Models/Reserved');
-const StaticPages      = use('App/Models/StaticPages');
-const SiteModalPages   = use('App/Models/SiteModalPages');
-const Region           = use('App/Models/Region');
-const Province         = use('App/Models/Province');
-const LoginActivity    = use('App/Models/LoginActivity');
-const RealEstate       = use('App/Models/RealEstate');
-const PasswordReset    = use('App/Models/PasswordReset');
-const Database         = use('Database');
-const Sms              = use('App/Controllers/Http/SmsSender');
-const { validate }     = use('Validator');
-const Hash             = use('Hash');
+const FavoriteAd         = use('App/Models/FavoriteAd');
+const User               = use('App/Models/User');
+const ResidenceComment   = use('App/Models/ResidenceComment');
+const Reserved           = use('App/Models/Reserved');
+const StaticPages        = use('App/Models/StaticPages');
+const SiteModalPages     = use('App/Models/SiteModalPages');
+const Region             = use('App/Models/Region');
+const Province           = use('App/Models/Province');
+const LoginActivity      = use('App/Models/LoginActivity');
+const RealEstate         = use('App/Models/RealEstate');
+const PasswordReset      = use('App/Models/PasswordReset');
+const Database           = use('Database');
+const Sms                = use('App/Controllers/Http/SmsSender');
+const { validate }       = use('Validator');
+const Hash               = use('Hash');
 
 class UserController {
   async findUser({ auth, request, response }) {
@@ -238,6 +238,12 @@ class UserController {
   async homeASC({ auth, request, response }) {
     let rows = (await Database.raw('SELECT created_at,AVG((month_discount/all_area)) as avg FROM `residences` where month_discount != 0 and all_area != 0 GROUP by MONTH(created_at);'))[0];
     return response.json(rows);
+  }
+
+  async homeRegion({ auth, request, response }) {
+    let amlak     = (await Database.raw('select regions.image ,regions.title ,count(*) as count,type from residences,regions where residences.region_id != 1 and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC limit 4;'))[0];
+    let residence = (await Database.raw('select regions.image ,regions.title ,count(*) as count,type from residences,regions,reserveds where residences.id = reserveds.residence_id and residences.type = 1 and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC limit 4;'))[0];
+    return response.json({ amlak, residence });
   }
 
   async homeFetchCountingAdmin({ auth, request, response }) {
