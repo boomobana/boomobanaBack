@@ -193,7 +193,6 @@ Route.group(() => {
 
   Route.post('/wallet/request/add', 'WalletController.walletRequestPlus');
 
-  Route.post('/get/bazar/nemodar', 'UserController.homeASC');
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
   // blogger
