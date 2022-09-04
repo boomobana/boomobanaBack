@@ -43,7 +43,7 @@ class AuthController {
 
   async makeLoginActivity(user, userOs, ipA) {
     // // console.log(ipA);
-    if (ipA != '127.0.0.1') {
+    if (ipA != '127.0.0.1' && process.env.NODE_ENV === 'production') {
       var geo = geoip.lookup(ipA);
       await LoginActivity.create({
         user_id: user.id,

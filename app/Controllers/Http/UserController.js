@@ -249,8 +249,14 @@ class UserController {
   async homeFetchCountingAdmin({ auth, request, response }) {
     const files             = await Residence.query().count('*');
     const filesCount        = files[0][Object.keys(files[0])];
-    const advisor           = await Adviser.query().count('*');
+    const user              = await User.query().count('*');
+    const userCount         = user[0][Object.keys(user[0])];
+    const advisor           = await User.query().where('is_advisor', 1).count('*');
     const advisorCount      = advisor[0][Object.keys(advisor[0])];
+    const RealEstateC       = await User.query().where('is_realestate', 1).count('*');
+    const RealEstateCount   = RealEstateC[0][Object.keys(RealEstateC[0])];
+    const BlogerC           = await User.query().where('is_bloger', 1).count('*');
+    const BlogerCount       = BlogerC[0][Object.keys(BlogerC[0])];
     const event             = await RealEstateEvent.query().count('*');
     const eventCount        = event[0][Object.keys(event[0])];
     const TicketF           = await Ticket.query().count('*');
@@ -261,10 +267,23 @@ class UserController {
     const Transaction2Count = Transaction2[0][Object.keys(Transaction2[0])];
     const Favorite2         = await FavoriteAd.query().count('*');
     const Favorite2Count    = Favorite2[0][Object.keys(Favorite2[0])];
-    const RealEstateC       = await RealEstate.query().count('*');
-    const RealEstateCount   = RealEstateC[0][Object.keys(RealEstateC[0])];
+    let residenceStatus     = (await Database.raw(`SELECT sum(case when status = '0' then 1 else 0 end) as countStatus0, sum(case when status = '1' then 1 else 0 end) as countStatus1, sum(case when status = '2' then 1 else 0 end) as countStatus2, sum(case when status = '3' then 1 else 0 end) as countStatus3, created_at from residences GROUP BY MONTH(created_at),YEAR(created_at);`))[0];
+    let residenceType       = (await Database.raw(`SELECT sum(case when type = '1' then 1 else 0 end) as countType1, sum(case when type = '2' then 1 else 0 end) as countType2, sum(case when status = '3' then 1 else 0 end) as countType3, created_at from residences GROUP BY MONTH(created_at),YEAR(created_at);`))[0];
+    let transactionType     = (await Database.raw('SELECT count(*) as count,created_at,type from residences GROUP BY MONTH(created_at),YEAR(created_at),type;'))[0];
     const json              = {
-      filesCount, advisorCount, eventCount, TicketFCount, CustomerFCount, Transaction2Count, Favorite2Count, RealEstateCount,
+      transactionType,
+      residenceStatus,
+      residenceType,
+      BlogerCount,
+      userCount,
+      filesCount,
+      advisorCount,
+      eventCount,
+      TicketFCount,
+      CustomerFCount,
+      Transaction2Count,
+      Favorite2Count,
+      RealEstateCount,
     };
     return response.json(json);
   }
@@ -345,6 +364,7 @@ class UserController {
             is_bloger,
             is_realestate,
             is_advisor,
+            is_shobe,
             lastname,
             firstname,
             firstname_en,
@@ -374,9 +394,10 @@ class UserController {
 
     u.pageSignup    = 1;
     u.active        = 1;
-    u.is_user       = is_user;
+    u.is_user       = 1;
     u.is_bloger     = is_bloger;
     u.is_realestate = is_realestate;
+    u.is_shobe      = is_shobe;
     u.is_advisor    = is_advisor;
     u.lastname      = lastname;
     u.firstname     = firstname;

@@ -248,6 +248,9 @@ Route.group(() => {
   Route.post('/user/active', 'UserController.userActiveAdmin');
   Route.post('/file/fetch', 'ResidenceController.fileFetchAdmin');
   Route.post('/file/find', 'ResidenceController.fileFindAdmin');
+  Route.post('/auth/residence/fetch/favorite/add', 'ResidenceController.FetchFavoriteAd');
+  Route.post('/auth/residence/fetch/viewad', 'ResidenceController.FetchViewAd');
+
   Route.post('/file/active', 'ResidenceController.fileActiveAdmin');
   Route.post('/customer/fetch', 'RealEstateCustomerController.customerFetchAdmin');
   Route.post('/costumer/find', 'RealEstateCustomerController.customerFindAdmin');
@@ -276,4 +279,21 @@ Route.group(() => {
   Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
 
   Route.post('/chat/list', 'ChatController.index');
+
+  // moamelat admin
+  Route.post('/moamele/create', 'Admin/MoamelatController.createMoamele');
+  Route.post('/moamele/fetch', 'Admin/MoamelatController.fetchMoamele');
+  Route.post('/moamele/find', 'Admin/MoamelatController.findMoamele');
+
+  // creators admin
+  Route.post('/creators/list', 'Admin/CreatorController.index');
+  Route.post('/creators/find', 'Admin/CreatorController.show');
+  Route.post('/creators/add', 'Admin/CreatorController.create');
+  Route.post('/creators/add/file', 'Admin/CreatorController.addFile');
+  Route.post('/creators/list/file', 'Admin/CreatorController.listFile');
+  Route.post('/creators/remove', 'Admin/CreatorController.deletes');
+
+  // site setting modal
+  Route.post('/site/setting/modal/fetch', 'Admin/SiteSetting.fetchModal');
+  Route.post('/site/setting/modal/add', 'Admin/SiteSetting.addModal');
 }).prefix('api/admin').middleware(['auth', 'userRule']);
