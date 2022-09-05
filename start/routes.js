@@ -30,6 +30,7 @@ Route.group(() => {
   Route.post('/final/code/signup', 'AuthController.FinalRegisterCode');
   Route.post('/send/modir/det', 'AuthController.SendModirDet');
   Route.post('/final/finall/signup', 'AuthController.FinallRegisterrrr');
+  Route.post('/final/finall/signup/real', 'AuthController.FinallRegisterReal');
   Route.post('/login', 'AuthController.login');
   Route.post('/code', 'AuthController.getCode');
   Route.post('/register', 'AuthController.FinalRegister');
@@ -237,6 +238,9 @@ Route.group(() => {
 
   Route.post('/get/bazar/nemodar', 'UserController.homeASC');
   Route.post('/home/region', 'UserController.homeRegion');
+
+  // Bank Fetcher
+  Route.post('/def/bank', 'AuthController.defBanks');
 }).prefix('api/user');
 
 Route.group(() => {

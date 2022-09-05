@@ -4,6 +4,7 @@ const UserCode      = use('App/Models/UserCode'),
       RealEstate    = use('App/Models/RealEstate'),
       LoginActivity = use('App/Models/LoginActivity'),
       PasswordReset = use('App/Models/PasswordReset'),
+      BankIran      = use('App/Models/BankIran'),
       Sms           = use('App/Controllers/Http/SmsSender'),
       Mail          = use('App/Controllers/Http/MailSender'),
       { validate }  = use('Validator'),
@@ -373,7 +374,8 @@ class AuthController {
         address: 'required',
         about_azhans: 'required',
         lat: 'required',
-        lng: 'required', type: 'required',
+        lng: 'required',
+        // type: 'required',
         card_number: 'required',
         shaba_number: 'required',
         account_owner_name: 'required',
@@ -385,7 +387,7 @@ class AuthController {
         return response.json(realEstateValidation.messages());
       }
       const {
-              type,
+              // type,
               card_number,
               shaba_number,
               shomare_hesab,
@@ -508,6 +510,41 @@ class AuthController {
 
     let logins = await auth.generate(us);
     response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
+  }
+
+  async FinallRegisterReal({ auth, request, response }) {
+    const rulesHeader      = {
+      rule: 'required',
+    };
+    const validationHeader = await validate(request.headers(), rulesHeader);
+    const mobileRule       = {
+      name: 'required',
+      name_en: 'required',
+      tell: 'required',
+      sos: 'required',
+      site_url: 'required',
+      logo: 'required',
+      social_url: 'required',
+      email: 'required',
+      mobile: 'required',
+      economic_code: 'required',
+      postal_code: 'required',
+      business_license: 'required',
+      business_license_number: 'required',
+      statute: 'required',
+      address: 'required',
+      lng: 'required',
+      lat: 'required',
+      bio: 'required',
+    };
+    const mobileValidation = await validate(request.all(), mobileRule);
+    if (mobileValidation.fails()) {
+      return response.json(mobileValidation.messages());
+    } else if (validationHeader.fails()) {
+      return response.json(validationHeader.messages());
+    }
+    await User.query().where('mobile', request.input('mobile')).update({ ...request.all(), userDetailsChange: 1 });
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
   async SendModirDet({ auth, request, response }) {
@@ -742,6 +779,10 @@ class AuthController {
     userIsExist.password = password;
     userIsExist.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async defBanks({ response }) {
+    return response.json(await BankIran.all());
   }
 }
 

@@ -5,6 +5,7 @@ const Transaction        = use('App/Models/Transaction');
 const RealEstateCustomer = use('App/Models/RealEstateCustomer');
 const Creator            = use('App/Models/Creator');
 const Ticket             = use('App/Models/Ticket');
+const TicketPm           = use('App/Models/TicketPm');
 const RealEstateEvent    = use('App/Models/RealEstateEvent');
 const Residence          = use('App/Models/Residence');
 const UserCode           = use('App/Models/UserCode');
@@ -327,6 +328,8 @@ class UserController {
     const { id } = request.all();
     let user     = await User.query().where('id', id).last();
     user.active  = user.active == 1 ? 0 : 1;
+    if (user.active === 1)
+      user.userDetailsChange = 2;
     await user.save();
     let title;
     let description;

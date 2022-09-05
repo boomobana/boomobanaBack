@@ -174,10 +174,11 @@ class RealEstateController {
     const {
             user_id,
             status,
-          } = request.all();
+          }                = request.all();
     // // console.log(request.all());
-    let user    = await RealEstate.query().where('id', user_id).last();
-    user.active = status;
+    let user               = await RealEstate.query().where('id', user_id).last();
+    user.active            = status;
+    user.userDetailsChange = 2;
     await user.save();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }

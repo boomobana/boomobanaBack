@@ -5,6 +5,7 @@
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 var Adviser           = use('App/Models/Adviser'),
+    PackageBuy        = use('App/Models/PackageBuy'),
     AdviserRealEstate = use('App/Models/AdviserRealEstate'),
     User              = use('App/Models/User'),
     Sms               = use('App/Controllers/Http/SmsSender'),
@@ -159,6 +160,9 @@ class AdvisorController {
             rule,
           }        = request.headers();
     let newAdviser = new Adviser();
+
+    newAdviser.is_advisor        = 1;
+    newAdviser.userDetailsChange = 1;
     if (typeof request.body.id != undefined && request.body.id != null) {
       newAdviser = await Adviser.query().where('id', request.body.id).last();
     }
@@ -196,7 +200,7 @@ class AdvisorController {
     newRealAdviserRealEstate.status             = 0;
     await newRealAdviserRealEstate.save();
 
-    await Sms.sendTemplate('مشاور گرامی درخواست عضویتی از سوی املاک برای شما ارسال شد', mobile);
+    // await Sms.sendTemplate('مشاور گرامی درخواست عضویتی از سوی املاک برای شما ارسال شد', mobile);
 
     return response.json({ status_code: 200, id: newRealAdviserRealEstate.id });
   }
@@ -370,9 +374,73 @@ class AdvisorController {
         if (re.smsCode == code) {
           re.status = status;
           await re.save();
+
+          /* TODO update and change this line with a function  */
+          let timeStamp            = new Date().getTime();
+          let count_file           = re.count_file_rent;
+          let count_video          = re.count_video;
+          let count_ladder         = re.count_ladder;
+          let count_occasion       = re.count_occasion;
+          let count_instant        = re.count_instant;
+          // set count different
+          let count_different      = 0;
+          let credit               = 90;
+          let lastPackage          = await PackageBuy.query().where('user_id', auth.user.id).last();
+          let lastTime             = 0;
+          let lastDay              = 0;
+          let last_count_file      = 0,
+              last_count_video     = 0,
+              last_count_ladder    = 0,
+              last_count_occasion  = 0,
+              last_count_instant   = 0,
+              last_count_different = 0;
+          if (!!lastPackage && lastPackage.after_time > 0) {
+            lastTime = parseInt(lastPackage.after_time);
+            if ((lastTime - parseInt(timeStamp)) > 0) {
+              lastDay = (lastTime - parseInt(timeStamp));
+              if (lastPackage.after_count_file >= 1)
+                last_count_file = lastPackage.after_count_file;
+              if (lastPackage.after_count_video >= 1)
+                last_count_video = lastPackage.after_count_video;
+              if (lastPackage.after_count_ladder >= 1)
+                last_count_ladder = lastPackage.after_count_ladder;
+              if (lastPackage.after_count_occasion >= 1)
+                last_count_occasion = lastPackage.after_count_occasion;
+              if (lastPackage.after_count_instant >= 1)
+                last_count_instant = lastPackage.after_count_instant;
+              if (lastPackage.after_count_different >= 1)
+                last_count_different = lastPackage.after_count_different;
+            }
+          }
+          let calcTime                     = (parseInt(credit) * 24 * 60 * 60 * 1000) + lastDay + timeStamp;
+          let beforetime                   = lastTime;
+          let time                         = calcTime;
+          let newPackage                   = new PackageBuy();
+          newPackage.user_id               = auth.user.id;
+          newPackage.type_of               = 2;
+          newPackage.package_id            = id;
+          newPackage.status                = 1;
+          newPackage.transaction_id        = Math.floor(Math.random() * 9999999999) + 1111111111;
+          newPackage.count_file            = last_count_file;
+          newPackage.count_video           = last_count_video;
+          newPackage.count_ladder          = last_count_ladder;
+          newPackage.count_occasion        = last_count_occasion;
+          newPackage.count_instant         = last_count_instant;
+          newPackage.count_different       = last_count_different;
+          newPackage.after_count_file      = parseInt(last_count_file) + parseInt(count_file);
+          newPackage.after_count_video     = parseInt(last_count_video) + parseInt(count_video);
+          newPackage.after_count_ladder    = parseInt(last_count_ladder) + parseInt(count_ladder);
+          newPackage.after_count_occasion  = parseInt(last_count_occasion) + parseInt(count_occasion);
+          newPackage.after_count_instant   = parseInt(last_count_instant) + parseInt(count_instant);
+          newPackage.after_count_different = parseInt(last_count_different) + parseInt(count_different);
+          newPackage.time                  = beforetime;
+          newPackage.after_time            = time;
+          await newPackage.save();
+          /* TODO update and change this line with a function  */
+
           // // console.log(rea.mobile);
-          await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
-          await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+          // await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
+          // await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });
         } else {
           return response.json({ status_code: 400 });
@@ -380,8 +448,8 @@ class AdvisorController {
       } else if (status == 2) {
         re.status = status;
         await re.save();
-        await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
-        await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+        // await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
+        // await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
       }
     } else if (re.status == 3) {
       let rea = await User.query().where('id', re.adviser_id).last();
@@ -391,9 +459,73 @@ class AdvisorController {
         if (re.smsCode == code) {
           re.status = status;
           await re.save();
+
+          /* TODO update and change this line with a function  */
+          let timeStamp            = new Date().getTime();
+          let count_file           = re.count_file_rent;
+          let count_video          = re.count_video;
+          let count_ladder         = re.count_ladder;
+          let count_occasion       = re.count_occasion;
+          let count_instant        = re.count_instant;
+          // set count different
+          let count_different      = 0;
+          let credit               = 90;
+          let lastPackage          = await PackageBuy.query().where('user_id', auth.user.id).last();
+          let lastTime             = 0;
+          let lastDay              = 0;
+          let last_count_file      = 0,
+              last_count_video     = 0,
+              last_count_ladder    = 0,
+              last_count_occasion  = 0,
+              last_count_instant   = 0,
+              last_count_different = 0;
+          if (!!lastPackage && lastPackage.after_time > 0) {
+            lastTime = parseInt(lastPackage.after_time);
+            if ((lastTime - parseInt(timeStamp)) > 0) {
+              lastDay = (lastTime - parseInt(timeStamp));
+              if (lastPackage.after_count_file >= 1)
+                last_count_file = lastPackage.after_count_file;
+              if (lastPackage.after_count_video >= 1)
+                last_count_video = lastPackage.after_count_video;
+              if (lastPackage.after_count_ladder >= 1)
+                last_count_ladder = lastPackage.after_count_ladder;
+              if (lastPackage.after_count_occasion >= 1)
+                last_count_occasion = lastPackage.after_count_occasion;
+              if (lastPackage.after_count_instant >= 1)
+                last_count_instant = lastPackage.after_count_instant;
+              if (lastPackage.after_count_different >= 1)
+                last_count_different = lastPackage.after_count_different;
+            }
+          }
+          let calcTime                     = (parseInt(credit) * 24 * 60 * 60 * 1000) + lastDay + timeStamp;
+          let beforetime                   = lastTime;
+          let time                         = calcTime;
+          let newPackage                   = new PackageBuy();
+          newPackage.user_id               = auth.user.id;
+          newPackage.type_of               = 2;
+          newPackage.package_id            = id;
+          newPackage.status                = 1;
+          newPackage.transaction_id        = Math.floor(Math.random() * 9999999999) + 1111111111;
+          newPackage.count_file            = last_count_file;
+          newPackage.count_video           = last_count_video;
+          newPackage.count_ladder          = last_count_ladder;
+          newPackage.count_occasion        = last_count_occasion;
+          newPackage.count_instant         = last_count_instant;
+          newPackage.count_different       = last_count_different;
+          newPackage.after_count_file      = parseInt(last_count_file) + parseInt(count_file);
+          newPackage.after_count_video     = parseInt(last_count_video) + parseInt(count_video);
+          newPackage.after_count_ladder    = parseInt(last_count_ladder) + parseInt(count_ladder);
+          newPackage.after_count_occasion  = parseInt(last_count_occasion) + parseInt(count_occasion);
+          newPackage.after_count_instant   = parseInt(last_count_instant) + parseInt(count_instant);
+          newPackage.after_count_different = parseInt(last_count_different) + parseInt(count_different);
+          newPackage.time                  = beforetime;
+          newPackage.after_time            = time;
+          await newPackage.save();
+          /* TODO update and change this line with a function  */
+
           // // console.log(rea.mobile);
-          await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
-          await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+          // await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
+          // await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });
         } else {
           return response.json({ status_code: 400 });
@@ -401,8 +533,8 @@ class AdvisorController {
       } else if (status == 5) {
         re.status = status;
         await re.save();
-        await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
-        await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
+        // await new Sms().deniedAdvisor(rea.name, auth.user.mobile);
+        // await new Sms().deniedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
       }
     } else {
       return response.json({ status_code: 401 });
