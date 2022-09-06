@@ -325,11 +325,16 @@ class UserController {
   }
 
   async userActiveAdmin({ auth, request, response }) {
-    const { id } = request.all();
-    let user     = await User.query().where('id', id).last();
-    user.active  = user.active == 1 ? 0 : 1;
+    const {
+            id,
+            active,
+          }     = request.all();
+    let user    = await User.query().where('id', id).last();
+    user.active = active;
     if (user.active === 1)
       user.userDetailsChange = 2;
+    else
+      user.userDetailsChange = 0;
     await user.save();
     let title;
     let description;
@@ -342,6 +347,46 @@ class UserController {
 
       title       = 'حساب شما رد شد';
       description = 'ما حساب شمارا بررسی و رد کردیم.';
+    }
+    let jsonNewticket          = {};
+    let jsonNewTicketPm        = {};
+    jsonNewticket.user_id      = user.id;
+    jsonNewTicketPm.user_id    = auth.user.id;
+    jsonNewticket.user_type    = 1;
+    jsonNewticket.title        = title;
+    jsonNewticket.description  = description;
+    jsonNewticket.admin_answer = '';
+    jsonNewticket.status       = 1;
+    let newTicket              = await Ticket.create(jsonNewticket);
+    jsonNewTicketPm.ticket_id  = newTicket.id;
+    jsonNewTicketPm.user_type  = 'admin';
+    jsonNewTicketPm.pm         = description;
+
+    let newTicketPm = await TicketPm.create(jsonNewTicketPm);
+    return response.json({ status_code: 200 });
+  }
+
+  async userActivePanelAdmin({ auth, request, response }) {
+    const {
+            id,
+            userDetailsChange,
+          }                = request.all();
+    let user               = await User.query().where('id', id).last();
+    user.userDetailsChange = userDetailsChange;
+    await user.save();
+    let title;
+    let description;
+
+    if (user.userDetailsChange == 2) {
+      await new Sms().activeUser(user.mobile);
+      title       = 'حساب شما تایید شد';
+      description = 'ما حساب شمارا بررسی و تایید کردیم.اکنون می توانید از امکانات بوم و بنا استفاده کنید';
+    } else if (user.userDetailsChange == 3) {
+      title       = 'حساب شما رد شد';
+      description = 'ما حساب شمارا بررسی و رد کردیم.';
+    } else if (user.userDetailsChange == 0) {
+      title       = 'حساب خود را تایید کنید';
+      description = 'لطفا برای تکمیل اطلاعات حساب خود به بخش ویرایش مشخصات حساب مراجعه کنید.';
     }
     let jsonNewticket          = {};
     let jsonNewTicketPm        = {};

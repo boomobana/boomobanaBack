@@ -543,7 +543,7 @@ class AuthController {
     } else if (validationHeader.fails()) {
       return response.json(validationHeader.messages());
     }
-    await User.query().where('mobile', request.input('mobile')).update({ ...request.all(), userDetailsChange: 1 });
+    await User.query().where('mobile', request.input('mobile')).update({ ...request.all(), userDetailsChange: 1, pageSignup: 3 });
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 

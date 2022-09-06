@@ -250,6 +250,7 @@ Route.group(() => {
   Route.post('/user/find', 'UserController.userFindAdmin');
   Route.post('/user/create', 'UserController.userCreateAdmin');
   Route.post('/user/active', 'UserController.userActiveAdmin');
+  Route.post('/user/active/panel', 'UserController.userActivePanelAdmin');
   Route.post('/file/fetch', 'ResidenceController.fileFetchAdmin');
   Route.post('/file/find', 'ResidenceController.fileFindAdmin');
   Route.post('/auth/residence/fetch/favorite/add', 'ResidenceController.FetchFavoriteAd');
@@ -300,4 +301,8 @@ Route.group(() => {
   // site setting modal
   Route.post('/site/setting/modal/fetch', 'Admin/SiteSetting.fetchModal');
   Route.post('/site/setting/modal/add', 'Admin/SiteSetting.addModal');
+
+  // site setting
+  Route.post('/site/setting/fetch', 'Admin/SiteSetting.fetch');
+  Route.post('/site/setting/add', 'Admin/SiteSetting.add');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

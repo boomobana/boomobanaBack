@@ -6,6 +6,7 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Ticket       = use('App/Models/Ticket'),
       TicketPm     = use('App/Models/TicketPm'),
+      TicketFile   = use('App/Models/TicketFile'),
       User         = use('App/Models/User'),
       Sms          = use('App/Controllers/Http/SmsSender'),
       { validate } = use('Validator');
@@ -142,41 +143,6 @@ class TicketController {
     else if (user_type === 'user')
       await new Sms().sendTicket(user.mobile);
     return response.json({ status_code: 200 });
-  }
-
-  /**
-   * Display a single ticket.
-   * GET tickets/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing ticket.
-   * GET tickets/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {
-  }
-
-  /**
-   * Update ticket details.
-   * PUT or PATCH tickets/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update({ params, request, response }) {
   }
 
   /**
