@@ -305,4 +305,10 @@ Route.group(() => {
   // site setting
   Route.post('/site/setting/fetch', 'Admin/SiteSetting.fetch');
   Route.post('/site/setting/add', 'Admin/SiteSetting.add');
+
+  //region edit
+  Route.post('/site/setting/update/region', 'RegionController.regionEdit');
+
+  //Residence Type Option edit
+  Route.post('/site/setting/update/residence/type/option', 'ResidenceTypeOptionController.edit');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

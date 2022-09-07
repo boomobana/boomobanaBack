@@ -82,6 +82,11 @@ class ResidenceTypeOptionController {
     var sms = await new Sms().addMelk(0, auth.user.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
+
+  async edit({ response, request }) {
+    await ResidenceTypeOption.query().where('id', request.input('id')).update(request.all());
+    return response.json({ status_code: 200 });
+  }
 }
 
 module.exports = ResidenceTypeOptionController;

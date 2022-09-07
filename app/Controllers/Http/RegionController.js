@@ -32,7 +32,9 @@ class RegionController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create({ request, response, view }) {
+  async regionEdit({ request, response }) {
+    await Region.query().where('id', request.input('id')).update(request.all());
+    return response.json({ status_code: 200 });
   }
 
   /**

@@ -8,6 +8,7 @@ const Ticket             = use('App/Models/Ticket');
 const TicketPm           = use('App/Models/TicketPm');
 const RealEstateEvent    = use('App/Models/RealEstateEvent');
 const Residence          = use('App/Models/Residence');
+const ViewAd             = use('App/Models/ViewAd');
 const UserCode           = use('App/Models/UserCode');
 const FavoriteAd         = use('App/Models/FavoriteAd');
 const User               = use('App/Models/User');
@@ -203,6 +204,12 @@ class UserController {
 
   async siteDefault({ auth, request, response }) {
     const { rule }       = request.headers();
+    const allFiles       = await Residence.query().where('archive', 0).count('*');
+    const allFilesCount  = allFiles[0][Object.keys(allFiles[0])];
+    const ViewAdS        = await ViewAd.query().count('*').groupBy('created_at');
+    const ViewAdCount    = ViewAdS[0][Object.keys(ViewAdS[0])];
+    const regionS        = await Region.query().count('*').groupBy('created_at');
+    const regionCount    = regionS[0][Object.keys(regionS[0])];
     const files          = await Residence.query().where('type', '!=', 1).where('archive', 0).count('*');
     const filesCount     = files[0][Object.keys(files[0])];
     const residence      = await Residence.query().where('type', 1).where('archive', 0).count('*');
@@ -220,6 +227,9 @@ class UserController {
       residenceCount,
       CommentCount,
       filesCount,
+      ViewAdCount,
+      allFilesCount,
+      regionCount,
       ReserveCount,
       shobeCount: ShobeCount,
     };
