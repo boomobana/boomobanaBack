@@ -107,14 +107,13 @@ class SaveRequestController {
   }
 
   async create({ request, response, auth }) {
+    console.log(request.all());
     const rules      = {
       type: 'required',
       name: 'required',
       zaman_bazdid: 'required',
       zaman_karshenasi: 'required',
       metrazh: 'required',
-      arz: 'required',
-      tool: 'required',
       title: 'required',
       description: 'required',
       address: 'required',
@@ -133,11 +132,6 @@ class SaveRequestController {
             zaman_bazdid,
             zaman_karshenasi,
             metrazh,
-            arz,
-            age,
-            lat,
-            lng,
-            tool,
             title,
             description,
             address,
@@ -156,8 +150,6 @@ class SaveRequestController {
     newReq.zaman_bazdid          = zaman_bazdid;
     newReq.zaman_tamas_karshenas = zaman_karshenasi;
     newReq.metrazh               = metrazh;
-    newReq.arz                   = arz;
-    newReq.tool                  = tool;
     newReq.title                 = title;
     newReq.description           = description;
     newReq.address               = address;
@@ -167,19 +159,23 @@ class SaveRequestController {
     newReq.cartmeli              = cartmeli;
     if (type == 3) {
       const rules2      = {
-        area: 'required',
+        // area: 'required',
         price: 'required',
+
       };
       const validation2 = await validate(request.all(), rules2);
       if (validation2.fails()) {
         return response.json(validation2.messages());
       }
       const {
-              area,
+              // area,
+
+              // area,
               price,
             }      = request.all();
-      newReq.area  = area;
+      // newReq.area  = area;
       newReq.price = price;
+
     } else {
       const rules3      = {
         rto_1: 'required',
@@ -187,6 +183,8 @@ class SaveRequestController {
         age: 'required',
         lat: 'required',
         lng: 'required',
+        arz: 'required',
+        tool: 'required',
 
       };
       const validation3 = await validate(request.all(), rules3);
@@ -199,15 +197,17 @@ class SaveRequestController {
               lng,
               rto_1,
               rto_2,
+              arz,
+              tool,
             }        = request.all();
       newReq.metrazh = metrazh;
-      newReq.arz     = arz;
       newReq.age     = age;
       newReq.lat     = lat;
       newReq.lng     = lng;
-      newReq.tool    = tool;
       newReq.rto_2   = rto_1;
       newReq.rto_3   = rto_2;
+      newReq.arz     = arz;
+      newReq.tool    = tool;
     }
     await newReq.save();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });

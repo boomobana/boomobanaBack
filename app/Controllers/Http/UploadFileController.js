@@ -16,7 +16,7 @@ class UploadFileController {
 
     const profilePic = request.file('file', {
       types: ['image', 'video'],
-      size: '2mb',
+      // size: '2mb',
     });
     let type_file    = 1;
     switch (profilePic.subtype) {
