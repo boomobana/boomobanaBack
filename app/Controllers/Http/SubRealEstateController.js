@@ -157,6 +157,7 @@ class SubRealEstateController {
     newAdviser.email                = email;
     newAdviser.mobile               = mobile;
     newAdviser.password             = password;
+    newAdviser.is_shobe             = 1;
     newAdviser.parent_realestate_id = auth.user.id;
     newAdviser.lat                  = 0;
     newAdviser.lng                  = 0;

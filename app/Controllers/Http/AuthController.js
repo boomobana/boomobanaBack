@@ -581,8 +581,8 @@ class AuthController {
             avatar,
             birthday,
           } = request.all();
-
-    if (rule === 'realEstate') {
+    console.log(request.all());
+    if (rule === 'realEstate' || rule === 'shobe') {
       const rules2      = {
         firstname_en: 'required',
         lastname_en: 'required',
@@ -627,9 +627,10 @@ class AuthController {
       userStart.shaba_number       = shaba_number;
       userStart.card_number        = card_number;
     } else if (rule === 'user') {
+      userStart         = await User.query().where('mobile', mobile).last();
       const rules2      = {
         kart_meli: 'required',
-        address: 'required',
+        bio: 'required',
       };
       const validation2 = await validate(request.all(), rules2);
       if (validation2.fails()) {
@@ -637,28 +638,103 @@ class AuthController {
       }
       const {
               kart_meli,
-              address,
-            }             = request.all();
-      userStart           = await User.query().where('mobile', mobile).last();
-      userStart.kart_meli = kart_meli;
-      userStart.address   = address;
+              bio,
+            }               = request.all();
+      userStart.pageSignup  = 2;
+      userStart.kart_meli   = kart_meli;
+      userStart.bio         = bio;
+      userStart.firstname   = firstname;
+      userStart.lastname    = lastname;
+      userStart.national_id = national_id;
+      userStart.male        = male;
+      userStart.mobile      = mobile;
+      userStart.avatar      = avatar;
+      userStart.birthday    = birthday;
+
+      if (request.input('type') == 1) {
+        const type1Validation = await validate(request.all(), {
+          type: 'required',
+          shomare_hesab: 'required',
+          card_number: 'required',
+          shaba_number: 'required',
+          account_owner_name: 'required',
+          bank_name: 'required',
+          address: 'required',
+        });
+        if (type1Validation.fails()) {
+          return response.json(type1Validation.messages());
+        }
+        const {
+                type,
+                shomare_hesab,
+                card_number,
+                shaba_number,
+                account_owner_name,
+                bank_name,
+                address,
+              }                      = request.all();
+        userStart.pageSignup         = 3;
+        userStart.type               = type;
+        userStart.shomare_hesab      = shomare_hesab;
+        userStart.card_number        = card_number;
+        userStart.shaba_number       = shaba_number;
+        userStart.account_owner_name = account_owner_name;
+        userStart.bank_name          = bank_name;
+        userStart.address            = address;
+      }
+      if (request.input('type') == 2) {
+        const type2Validation = await validate(request.all(), {
+          economic_code: 'required',
+          tell: 'required',
+          postal_code: 'required',
+          business_license: 'required',
+          business_license_number: 'required',
+          statute: 'required',
+          type: 'required',
+          shomare_hesab: 'required',
+          card_number: 'required',
+          shaba_number: 'required',
+          account_owner_name: 'required',
+          bank_name: 'required',
+          address: 'required',
+
+        });
+        if (type2Validation.fails()) {
+          return response.json(type2Validation.messages());
+        }
+        const {
+                economic_code,
+                tell,
+                postal_code,
+                business_license,
+                business_license_number,
+                statute, type,
+                shomare_hesab,
+                card_number,
+                shaba_number,
+                account_owner_name,
+                bank_name,
+                address,
+              }                           = request.all();
+        userStart.pageSignup              = 3;
+        userStart.economic_code           = economic_code;
+        userStart.tell                    = tell;
+        userStart.postal_code             = postal_code;
+        userStart.business_license        = business_license;
+        userStart.business_license_number = business_license_number;
+        userStart.statute                 = statute;
+        userStart.type                    = type;
+        userStart.shomare_hesab           = shomare_hesab;
+        userStart.card_number             = card_number;
+        userStart.shaba_number            = shaba_number;
+        userStart.account_owner_name      = account_owner_name;
+        userStart.bank_name               = bank_name;
+        userStart.address                 = address;
+      }
     }
-    userStart.firstname   = firstname;
-    userStart.lastname    = lastname;
-    userStart.national_id = national_id;
-    userStart.male        = male;
-    userStart.mobile      = mobile;
-    userStart.avatar      = avatar;
-    userStart.birthday    = birthday;
-    userStart.pageSignup  = 2;
 
     await userStart.save();
-    let us;
-    if (rule === 'realEstate') {
-      us = await RealEstate.query().where('id', userStart.id).last();
-    } else if (rule === 'user') {
-      us = await User.query().where('mobile', mobile).last();
-    }
+    let us     = await User.query().where('mobile', mobile).last();
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
     let ipA    = await request.ip();
     this.makeLoginActivity(us, userOs, ipA);
