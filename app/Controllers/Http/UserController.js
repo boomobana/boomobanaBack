@@ -236,9 +236,14 @@ class UserController {
     return response.json(json);
   }
 
-  async staticPages({ auth, request, response }) {
+  async staticPage({ request, response }) {
     const { slug } = request.all();
     let json       = await StaticPages.query().where('slug', slug).last();
+    return response.json(json);
+  }
+
+  async staticPages({ response }) {
+    let json = await StaticPages.query().fetch();
     return response.json(json);
   }
 

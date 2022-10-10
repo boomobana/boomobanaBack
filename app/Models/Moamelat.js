@@ -20,6 +20,13 @@ class Moamelat extends Model {
     return this.hasOne('App/Models/User', 'realestate_id', 'id');
   }
 
+  RTO_2() {
+    return this.hasOne('App/Models/ResidenceTypeOption', 'type_user', 'id').select('title', 'id');
+  }
+
+  RTO_3() {
+    return this.hasOne('App/Models/ResidenceTypeOption', 'type_melk', 'id').select('title', 'id');
+  }
 }
 
 module.exports = Moamelat;

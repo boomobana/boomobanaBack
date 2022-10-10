@@ -233,6 +233,7 @@ Route.group(() => {
 
   //todo change this Contollers
   Route.post('/site/default', 'UserController.siteDefault');
+  Route.post('/static/pages/find', 'UserController.staticPage');
   Route.post('/static/pages/fetch', 'UserController.staticPages');
   Route.post('/site/modal/pages', 'UserController.modalHomePages');
 

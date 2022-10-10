@@ -15,6 +15,14 @@ class RealEstateCustomer extends Model {
   province() {
     return this.hasOne('App/Models/Province', 'province_id', 'id');
   }
+
+  RTO_2() {
+    return this.hasOne('App/Models/ResidenceTypeOption', 'type_customer', 'id').select('title', 'id');
+  }
+
+  RTO_3() {
+    return this.hasOne('App/Models/ResidenceTypeOption', 'type_melk', 'id').select('title', 'id');
+  }
 }
 
 module.exports = RealEstateCustomer;

@@ -59,6 +59,8 @@ class MoamelatController {
       })
       .with('Adviser')
       .with('User')
+      .with('RTO_2')
+      .with('RTO_3')
       .fetch());
   }
 
@@ -75,6 +77,8 @@ class MoamelatController {
       })
       .with('Adviser')
       .with('User')
+      .with('RTO_2')
+      .with('RTO_3')
       .last());
   }
 }

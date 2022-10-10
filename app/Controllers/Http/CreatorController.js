@@ -88,9 +88,7 @@ class CreatorController {
       address: 'required',
       region_id: 'required',
       province_id: 'required',
-      mizan_daraei: 'required',
       description: 'required',
-      show_on: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -117,7 +115,6 @@ class CreatorController {
     if (typeof request.body.id != undefined && request.body.id != null) {
       newS = await Creators.query().where('id', request.body.id).last();
     }
-    newS.show_on     = show_on;
     newS.firstname   = firstname;
     newS.lastname    = lastname;
     newS.mobile      = mobile;
@@ -129,8 +126,11 @@ class CreatorController {
     newS.address     = address;
     newS.region_id   = region_id;
     newS.province_id = province_id;
-    newS.mizan_daraei = mizan_daraei;
-    newS.description  = description;
+    newS.description = description;
+    if (auth.user.is_advisor === 1) {
+      newS.show_on      = show_on;
+      newS.mizan_daraei = mizan_daraei;
+    }
     await newS.save();
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }

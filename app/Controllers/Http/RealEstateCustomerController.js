@@ -22,7 +22,8 @@ class RealEstateCustomerController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await RealEstateCustomer.query().where('real_estate_id', auth.user.id).orderBy('id', 'desc').fetch());
+    return response.json(await RealEstateCustomer.query().where('real_estate_id', auth.user.id).orderBy('id', 'desc')
+      .with('RTO_2').with('RTO_3').with('region').with('province').fetch());
   }
 
   /**
@@ -55,7 +56,6 @@ class RealEstateCustomerController {
       melk_age: 'required',
       count_bed: 'required',
       emkanat: 'required',
-      show_on: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -82,18 +82,14 @@ class RealEstateCustomerController {
             count_bed,
             emkanat,
             show_on,
-          }             = request.all();
+          }                = request.all();
     const { rule }         = request.headers();
     const user             = auth.user;
     let newCust            = new RealEstateCustomer();
-    let EX                 = await RealEstateCustomer.query().where('id', request.input('id')).fetch();
     newCust.real_estate_id = user.id;
-    if (EX.length === 1)
+    if (await RealEstateCustomer.query().where('id', request.input('id')).first())
       newCust = await RealEstateCustomer.query().where('id', request.input('id')).first();
 
-    // if (await RealEstateCustomer.query().where('mobile', mobile).where('real_estate_id', user.id).fetch().length != 0) {
-    //   newCust = await RealEstateCustomer.query().where('mobile', mobile).where('real_estate_id', user.id).last();
-    // }
     newCust.firstname     = firstname;
     newCust.lastname      = lastname;
     newCust.mobile        = mobile;
@@ -102,18 +98,19 @@ class RealEstateCustomerController {
     newCust.type          = type;
     newCust.type_customer = type_customer;
     newCust.options       = options;
-    newCust.description = description;
-    newCust.region_id   = region_id;
-    newCust.province_id = province_id;
-    newCust.type_melk   = type_melk;
-    newCust.type_user   = type_user;
-    newCust.title       = title;
-    newCust.metraj_kol  = metraj_kol;
-    newCust.metraj_bana = metraj_bana;
-    newCust.melk_age    = melk_age;
-    newCust.count_bed   = count_bed;
-    newCust.emkanat     = emkanat;
-    newCust.show_on     = show_on;
+    newCust.description   = description;
+    newCust.region_id     = region_id;
+    newCust.province_id   = province_id;
+    newCust.type_melk     = type_melk;
+    newCust.type_user     = type_user;
+    newCust.title         = title;
+    newCust.metraj_kol    = metraj_kol;
+    newCust.metraj_bana   = metraj_bana;
+    newCust.melk_age      = melk_age;
+    newCust.count_bed     = count_bed;
+    newCust.emkanat       = emkanat;
+    if (auth.user.is_advisor === 1)
+      newCust.show_on = show_on;
     await newCust.save();
     return response.json({ status_code: 200 });
   }
