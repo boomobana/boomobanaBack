@@ -9,7 +9,7 @@ const SaveRequestRealestate = use('App/Models/SaveRequestRealestate');
 const { validate }          = use('Validator');
 const Env                   = use('Env');
 const ZarinpalCheckout      = require('zarinpal-checkout');
-const zarinpal              = ZarinpalCheckout.create('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', true);
+const zarinpal              = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
 
 /**
  * Resourceful controller for interacting with saverequests

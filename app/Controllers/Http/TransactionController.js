@@ -10,10 +10,10 @@ const Package          = use('App/Models/Package');
 const User             = use('App/Models/User');
 const Ticket           = use('App/Models/Ticket');
 const TicketPm         = use('App/Models/TicketPm');
+const Env              = use('Env');
 const ZarinpalCheckout = require('zarinpal-checkout');
 const { rule }         = require('@adonisjs/validator/src/Validator');
-const zarinpal         = ZarinpalCheckout.create('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', true);
-const Env              = use('Env');
+const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
 const Sms              = use('App/Controllers/Http/SmsSender');
 
 /**

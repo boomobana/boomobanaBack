@@ -10,7 +10,7 @@ const Ticket           = use('App/Models/Ticket');
 const TicketPm         = use('App/Models/TicketPm');
 const Env              = use('Env');
 const ZarinpalCheckout = require('zarinpal-checkout');
-const zarinpal         = ZarinpalCheckout.create('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', true);
+const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
 
 const {
         changeAmount,
@@ -68,7 +68,7 @@ class WalletController {
       price,
       slug,
     });
-    let url = 'https://api.boomobana.com:2083/api/user/wallet/money/send/' + slug;
+    let url = `${Env.get('PAYMENT_URL')}/api/user/wallet/money/send/${slug}`;
 
     return response.json({ url: url });
   }
@@ -98,7 +98,7 @@ class WalletController {
       return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
       // // console.log('Empty!');
     } else {
-      await changeAmount(50, parseFloat(price), 1, 2, ref_1, resp.RefID, resp.RefID, slug);
+      await changeAmount(user_id, parseFloat(price), 1, 2, ref_1, resp.RefID, resp.RefID, slug);
 
       // // console.log(`Verified! Ref ID: ${resp.RefID}`);
       return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);

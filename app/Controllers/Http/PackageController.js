@@ -24,7 +24,7 @@ class PackageController {
    * @param {View} ctx.view
    */
   async index({ request, response }) {
-    return response.json(await Package.all());
+    return response.json(await Package.query().where('are_load', 1).fetch());
   }
 
   /**
