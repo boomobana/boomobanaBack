@@ -9,6 +9,7 @@ const { validate }     = require('@adonisjs/validator/src/Validator'),
       BlogCategory     = use('App/Models/BlogCategory'),
       BlogCategoryPost = use('App/Models/BlogCategoryPost'),
       BlogPost         = use('App/Models/BlogPost');
+const { makeidF }      = require('../Helper');
 
 /**
  * Resourceful controller for interacting with blogposts
@@ -107,7 +108,7 @@ class BlogPostController {
           active,
           price,
         }          = request.all();
-    let slug       = Math.floor(Math.random() * 999999999999) + '-' + Math.floor(Math.random() * 999999999999) + '-' + Math.floor(Math.random() * 999999999999);
+    let slug       = makeidF(20);
     let newP       = new BlogPost();
     newP.slug      = slug;
     newP.user_id   = auth.user.id;

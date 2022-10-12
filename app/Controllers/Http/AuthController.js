@@ -10,7 +10,10 @@ const UserCode      = use('App/Models/UserCode'),
       { validate }  = use('Validator'),
       Hash          = use('Hash'),
       geoip         = require('geoip-lite'),
-      ip            = require('ip');
+      ip            = require('ip'),
+      {
+        randomNum,
+      }             = require('../Helper');
 
 class AuthController {
   async wihMobile({ auth, request, response }) {
@@ -33,8 +36,8 @@ class AuthController {
     user.firstname   = '';
     user.lastname    = '';
     user.mobile      = mobile;
-    user.password    = Math.floor(Math.random() * (999999 - 111111) + 111111);
-    user.code        = Math.floor(Math.random() * (999999 - 111111) + 111111);
+    user.password    = randomNum(6);
+    user.code        = randomNum(6);
     user.rule        = request.header('rule');
     user.save();
 
@@ -243,7 +246,7 @@ class AuthController {
     user.mobile    = mobile;
     user.password  = password;
     user.rule      = rule;
-    user.code      = Math.floor(Math.random() * (999999 - 111111) + 111111);
+    user.code      = randomNum(6);
     user.used      = '1';
     var sms        = await new Sms().sendCodeRegister(user.code, user.mobile);
     user.save();
@@ -822,7 +825,7 @@ class AuthController {
 
     var pr    = new PasswordReset();
     pr.mobile = mobile;
-    pr.token  = Math.floor(Math.random() * (999999 - 111111) + 111111);
+    pr.token  = randomNum(6);
     pr.save();
     await new Sms().sendCodeForgot(pr.token, pr.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });

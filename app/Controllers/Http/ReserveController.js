@@ -4,7 +4,14 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const Reserved = use('App/Models/Reserved');
+const Reserved         = use('App/Models/Reserved');
+const Env              = use('Env');
+const ZarinpalCheckout = require('zarinpal-checkout');
+const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), true);
+const {
+        randomNum,
+        makeidF, changeAmount,
+      }                = require('../Helper');
 
 /**
  * Resourceful controller for interacting with regions
@@ -21,7 +28,7 @@ class ReserveController {
    */
   async index({ request, response, auth }) {
     const { rule } = request.headers();
-    return response.json(await Reserved.query().with('Residence').where('user_id', auth.user.id).fetch());
+    return response.json(await Reserved.query().with('Residence').where('user_id', auth.user.id).where('status', 1).fetch());
   }
 
   /**
@@ -41,16 +48,64 @@ class ReserveController {
             end_time,
             count_user,
           }                 = request.all();
+    let slug                = makeidF(16);
     const ReserveS          = new Reserved();
     ReserveS.user_id        = auth.user.id;
     ReserveS.residence_id   = residence_id;
     ReserveS.start_time     = start_time;
     ReserveS.end_time       = end_time;
     ReserveS.count_user     = count_user;
-    ReserveS.transaction_id = Math.floor(Math.random() * (999999 - 111111) + 111111);
-    ReserveS.slug           = Math.floor(Math.random() * (999999 - 111111) + 111111) + '-' + Math.floor(Math.random() * (999999 - 111111) + 111111) + '-' + Math.floor(Math.random() * (999999 - 111111) + 111111);
+    ReserveS.price          = 100000;
+    ReserveS.transaction_id = randomNum(6);
+    ReserveS.slug           = slug;
     await ReserveS.save();
-    return response.json({ status_code: 200, status_text: 'Successfully Done' });
+    let link = `${Env.get('PAYMENT_URL')}/api/user/reserve/residence/send/${slug}`;
+    return response.json({ status_code: 200, status_text: 'Successfully Done', link: `${link}` });
+  }
+
+  async sendPayment({ request, response }) {
+    let {
+          slug,
+        } = request.params;
+    console.log(slug);
+    let {
+          price,
+          status,
+        }    = await Reserved.query().where('slug', slug).last();
+    // // console.log(price, description);
+    let resp = await zarinpal.PaymentRequest({
+      Amount: price, // In Tomans
+      CallbackURL: `${Env.get('APP_URL')}/api/user/reserve/residence/get/${slug}`,
+      Description: 'رزرو اقامتگاه در بوم و بنا',
+    });
+    // // console.log(resp);
+    if (resp.status === 100) {
+      let transaction   = await Reserved.query().where('slug', slug).last();
+      transaction.ref_1 = resp.authority;
+      transaction.save();
+
+      return response.redirect(resp.url);
+    }
+  }
+
+  async getPayment({ request, response }) {
+    let { slug }      = request.params;
+    let { Authority } = request.get();
+    let resx          = await Reserved.query().where('slug', slug).last();
+    let resp          = await zarinpal.PaymentVerification({
+      Amount: resx.price, // In Tomans
+      Authority: resx.ref_1,
+    });
+    if (resp.status !== 100) {
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
+      // // console.log('Empty!');
+    } else {
+      resx.status = 1;
+      resx.ref_2  = resp.RefID;
+      await resx.save();
+      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
+    }
   }
 
   /**

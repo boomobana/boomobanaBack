@@ -3,6 +3,7 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
+const { randomNum }   = require('../Helper');
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 var Adviser           = use('App/Models/Adviser'),
     PackageBuy        = use('App/Models/PackageBuy'),
@@ -162,7 +163,7 @@ class SubRealEstateController {
     newAdviser.lat                  = 0;
     newAdviser.lng                  = 0;
     newAdviser.address              = '';
-    // newAdviser.active_code = Math.floor(Math.random() * 100000);
+    // newAdviser.active_code = randomNum(12);
     newAdviser.avatar               = fileUrl;
     let savedData                   = await newAdviser.save();
     await Sms.sendTemplate('شعبه گرامی جهت تکمیل اطلاعات به پنل خود مراجعه کنید', mobile);
@@ -259,7 +260,7 @@ class SubRealEstateController {
     let re     = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).last();
     // // console.log(re.status);
     if (re.status == 0 || re.status == 3) {
-      let code   = Math.floor(Math.random() * 999999);
+      let code = randomNum(6);
       re.smsCode = code;
       await re.save();
       await new Sms().acceptAdvisor(code, auth.user.mobile);

@@ -4,6 +4,15 @@ module.exports = {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
+  randomNum: function (length = 12) {
+    let result           = '',
+        characters       = '123456789',
+        charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return parseFloat(result);
+  },
   makeid: function (length = 12, length2 = 12, length3 = 12) {
     let result           = '',
         result2          = '',

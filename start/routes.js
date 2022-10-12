@@ -220,6 +220,9 @@ Route.group(() => {
   Route.get('/wallet/money/send/:slug', 'WalletController.sendPayment');
   Route.get('/wallet/money/get/:slug', 'WalletController.getPayment');
 
+  Route.get('/reserve/residence/send/:slug', 'ReserveController.sendPayment');
+  Route.get('/reserve/residence/get/:slug', 'ReserveController.getPayment');
+
   Route.get('/request/payment/send/:slug', 'SaveRequestController.sendPayment');
   Route.get('/request/payment/get/:slug', 'SaveRequestController.getPayment');
 

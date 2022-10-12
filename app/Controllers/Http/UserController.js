@@ -1,5 +1,6 @@
 'use strict';
 
+const { randomNum }      = require('../Helper');
 const Adviser            = use('App/Models/Adviser');
 const Transaction        = use('App/Models/Transaction');
 const RealEstateCustomer = use('App/Models/RealEstateCustomer');
@@ -141,7 +142,7 @@ class UserController {
     if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
     let passwordReset    = new PasswordReset();
     // userIsExist.password = await Hash.make(password);
-    let passsword        = String(Math.floor(Math.random() * (999999 - 111111) + 111111));
+    let passsword = String(randomNum(6));
     passwordReset.token  = passsword;
     passwordReset.mobile = auth.user.mobile;
     passwordReset.save();

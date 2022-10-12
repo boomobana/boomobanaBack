@@ -9,6 +9,7 @@ const SaveRequestRealestate = use('App/Models/SaveRequestRealestate');
 const { validate }          = use('Validator');
 const Env                   = use('Env');
 const ZarinpalCheckout      = require('zarinpal-checkout');
+const { randomNum }         = require('../Helper');
 const zarinpal              = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
 
 /**
@@ -143,7 +144,7 @@ class SaveRequestController {
     const { rule }               = request.headers();
     const user                   = auth.user;
     let newReq                   = new SaveRequest();
-    newReq.slug                  = Math.floor(Math.random() * (999999999999 - 111111111111) + 111111111111);
+    newReq.slug                  = randomNum(12);
     newReq.user_id               = user.id;
     newReq.type                  = type;
     newReq.name                  = name;
