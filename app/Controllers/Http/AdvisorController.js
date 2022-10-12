@@ -457,7 +457,7 @@ class AdvisorController {
     } else if (re.status == 3) {
       let rea = await User.query().where('id', re.adviser_id).last();
       if (status == 4) {
-        console.log(re);
+        // console.log(re);
 
         if (re.smsCode == code) {
           re.status = status;

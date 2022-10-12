@@ -108,7 +108,7 @@ class SaveRequestController {
   }
 
   async create({ request, response, auth }) {
-    console.log(request.all());
+    // console.log(request.all());
     const rules      = {
       type: 'required',
       name: 'required',

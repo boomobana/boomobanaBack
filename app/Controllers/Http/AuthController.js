@@ -584,7 +584,7 @@ class AuthController {
             avatar,
             birthday,
           } = request.all();
-    console.log(request.all());
+    // console.log(request.all());
     if (rule === 'realEstate' || rule === 'shobe') {
       const rules2      = {
         firstname_en: 'required',

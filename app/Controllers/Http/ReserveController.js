@@ -4,6 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Residence        = use('App/Models/Residence');
 const Reserved         = use('App/Models/Reserved');
 const Env              = use('Env');
 const ZarinpalCheckout = require('zarinpal-checkout');
@@ -41,21 +42,35 @@ class ReserveController {
    * @param {View} ctx.view
    */
   async create({ request, response, auth }) {
-    const { rule }          = request.headers();
+    const { rule } = request.headers();
     const {
             residence_id,
             start_time,
             end_time,
             count_user,
-          }                 = request.all();
-    let slug                = makeidF(16);
+          }        = request.all();
+    let slug       = makeidF(16),
+        res        = await Residence.query()
+          .with('Season')
+          .where('id', residence_id)
+          .last(),
+        timeSt     = start_time.split('/'),
+        timeEn     = end_time.split('/'),
+        day1       = parseInt(timeSt[2]),
+        day2       = parseInt(timeEn[2]),
+        days       = 0;
+    if (parseInt(timeEn[1]) > parseInt(timeSt[1])) {
+      day2 = day2 + ((timeEn[1] - timeSt[1]) * 30);
+    }
+    days                    = day2 - day1;
+    let price               = parseInt(res.$relations.Season.rows[0].price) * days;
     const ReserveS          = new Reserved();
     ReserveS.user_id        = auth.user.id;
     ReserveS.residence_id   = residence_id;
     ReserveS.start_time     = start_time;
     ReserveS.end_time       = end_time;
     ReserveS.count_user     = count_user;
-    ReserveS.price          = 100000;
+    ReserveS.price          = price;
     ReserveS.transaction_id = randomNum(6);
     ReserveS.slug           = slug;
     await ReserveS.save();
@@ -66,8 +81,8 @@ class ReserveController {
   async sendPayment({ request, response }) {
     let {
           slug,
-        } = request.params;
-    console.log(slug);
+        }    = request.params;
+    // console.log(slug);
     let {
           price,
           status,

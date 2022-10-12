@@ -14,7 +14,7 @@ const Database               = use('Database');
 
 class ResidenceController {
   async Fetch({ auth, request, response }) {
-    console.log(request.all());
+    // console.log(request.all());
     let {
           rule,
         }           = request.headers();
