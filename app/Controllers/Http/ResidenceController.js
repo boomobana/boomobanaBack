@@ -7,6 +7,7 @@ const AdviserRealEstate      = use('App/Models/AdviserRealEstate');
 const User                   = use('App/Models/User');
 const ResidenceFile          = use('App/Models/ResidenceFile');
 const ResidenceOptionConnect = use('App/Models/ResidenceOptionConnect');
+const ResidenceComment       = use('App/Models/ResidenceComment');
 const ViewAd                 = use('App/Models/ViewAd');
 const PackageBuy             = use('App/Models/PackageBuy');
 const { sleep }              = require('../Helper');
@@ -301,7 +302,7 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').last();
+    let userIsExist = await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Comment').last();
     try {
       if (typeof request.body.save === 'boolean') {
         if (request.body.save === true) {
@@ -834,6 +835,18 @@ class ResidenceController {
       archive: 3,
       removeReason: reason,
     });
+  }
+
+  async addResidenceComment({ auth, request, response }) {
+    let data = await ResidenceComment.query().where('user_id', auth.user.id).where('residence_id', request.input('residence_id')).fetch();
+    if (data.rows.length == 0)
+      await ResidenceComment.create({ ...request.all(), user_id: auth.user.id, status: 0 });
+    else
+      await ResidenceComment.query().where('user_id', auth.user.id).where('residence_id', request.input('residence_id')).update({
+        ...request.all(),
+        status: 0,
+      });
+    return response.json({ status_code: 200, status_text: 'successfully done' });
   }
 }
 

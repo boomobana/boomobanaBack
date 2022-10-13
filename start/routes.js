@@ -83,6 +83,7 @@ Route.group(() => {
   Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
   Route.post('/residence/level/change', 'ResidenceController.levelChange');
   Route.post('/residence/upgrade/payment', 'ResidenceController.upgradeLevel');
+  Route.post('/residence/comment/add', 'ResidenceController.addResidenceComment');
 
   Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
 

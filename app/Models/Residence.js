@@ -87,6 +87,10 @@ class Residence extends Model {
     return this.hasMany('App/Models/Room');
   }
 
+  Comment() {
+    return this.hasMany('App/Models/ResidenceComment', 'id', 'residence_id').where('status', 1).orderBy('id', 'desc').with('User');
+  }
+
   RTO1() {
     return this.hasOne('App/Models/ResidenceTypeOption', 'rto_1', 'id').select('title', 'id');
   }
