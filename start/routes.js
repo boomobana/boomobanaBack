@@ -314,6 +314,13 @@ Route.group(() => {
   //region edit
   Route.post('/site/setting/update/region', 'RegionController.regionEdit');
 
+  //Static Pages
+  Route.post('/site/static/pages/fetch', 'Admin/SiteSetting.staticPagesFetch');
+  Route.post('/site/static/pages/edit', 'Admin/SiteSetting.staticPagesEdit');
+
   //Residence Type Option edit
   Route.post('/site/setting/update/residence/type/option', 'ResidenceTypeOptionController.edit');
+
+  // reserved residence
+  Route.post('/reserved/fetch', 'Admin/ReserveController.fetchList');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

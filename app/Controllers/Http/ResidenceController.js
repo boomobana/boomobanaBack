@@ -652,6 +652,7 @@ class ResidenceController {
   async fileFetchAdmin({ auth, request, response }) {
     const { page } = request.qs;
     const limit    = 10;
+    console.log(request.body);
     let Res        = Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').orderBy('id', 'desc');
     if (typeof request.body.user_id === 'string' && request.body.user_id !== null && request.body.user_id !== '') {
       Res.where('user_id', request.body.user_id);
@@ -687,6 +688,8 @@ class ResidenceController {
         Res.whereBetween('month_discount', [request.body.month_discount, request.body.month_discount2]);
       }
     }
+    if (request.body.userSelected != 0)
+      Res.where('user_id', request.body.userSelected);
     return response.json(await Res.paginate(page, limit));
   }
 

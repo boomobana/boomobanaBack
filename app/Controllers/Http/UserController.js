@@ -307,23 +307,70 @@ class UserController {
 
   async userFetchAdmin({ auth, request, response }) {
     const { page } = request.qs;
-    const { type } = request.body;
+    const {
+            type,
+            firstname,
+            lastname,
+            mobile,
+            active,
+            pageSignup,
+          }        = request.body;
     const limit    = 15;
-    let user       = User.query().orderBy('id', 'DESC');
+    console.log(request.body);
+    let user = User.query().orderBy('id', 'DESC');
     if (type === 'realestate') {
-      user
-        .where('name', '!=', '-')
-        .where('name_en', '!=', '-')
-        .where('is_realestate', 1);
+      user.where('is_realestate', 1);
+      if (active !== '' && active !== null) {
+        if (active == 1)
+          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+        else
+          user.where('userDetailsChange', '!=', 2);
+      }
     } else if (type === 'advisor') {
-      user
-        .where('name', '!=', '-')
-        .where('name_en', '!=', '-')
-        .where('is_advisor', 1);
+      user.where('is_advisor', 1);
+      if (active !== '' && active !== null) {
+        if (active == 1)
+          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+        else
+          user.where('userDetailsChange', '!=', 2);
+      }
     } else if (type === 'blogger') {
-      user
-        .where('is_bloger', 1);
+      user.where('is_bloger', 1);
+      if (active !== '' && active !== null) {
+        if (active == 1)
+          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+        else
+          user.where('userDetailsChange', '!=', 2);
+      }
+    } else if (type === 'shobe') {
+      user.where('is_shobe', 1);
+      if (active !== '' && active !== null) {
+        if (active == 1)
+          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+        else
+          user.where('userDetailsChange', '!=', 2);
+      }
+    } else if (type === 'user') {
+      if (active !== '' && active !== null) {
+        if (active == 1)
+          user.where('active', 1).where('pageSignup', '=', 3);
+        else
+          user.where('active', '!=', 1);
+      }
     }
+    if (firstname !== '' && firstname !== null) {
+      user.where('firstname', 'like', '%' + firstname + '%');
+    }
+    if (lastname !== '' && lastname !== null) {
+      user.where('lastname', 'like', '%' + lastname + '%');
+    }
+    if (mobile !== '' && mobile !== null) {
+      user.where('mobile', 'like', '%' + mobile + '%');
+    }
+    if (pageSignup !== '' && pageSignup !== null) {
+      user.where('type', pageSignup);
+    }
+
     return response.json(await user.paginate(page, limit));
   }
 
@@ -452,9 +499,9 @@ class UserController {
     u.password = 'Mah998877';
     //TODO: // send sms to user and now it password
     // // console.log(request.body.id);
-    if (request.body.id != '') {
-      u = await User.query().where('id', request.body.id).last();
-    }
+    // if (request.body.id != '') {
+    //   u = await User.query().where('id', request.body.id).last();
+    // }
 
     u.pageSignup    = 1;
     u.active        = 1;
