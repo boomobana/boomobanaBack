@@ -107,7 +107,6 @@ class SubRealEstateController {
           enableAdviser: enableAdviser.rows.length,
           disableAdviser: disableAdviser.rows.length,
         };
-    // // console.log(allFiles);
     return response.json(json);
   }
 
@@ -251,14 +250,12 @@ class SubRealEstateController {
       .where('lastname', request.input('lastname'))
       .where('mobile', request.input('mobile'))
       .fetch();
-    // // console.log(ad);
     return response.json({ ex: ad.rows.length == 1 });
   }
 
   async codeRequest({ auth, request, response }) {
     let { id } = request.all();
     let re     = await AdviserRealEstate.query().where('id', id).where('adviser_id', auth.user.id).last();
-    // // console.log(re.status);
     if (re.status == 0 || re.status == 3) {
       let code = randomNum(6);
       re.smsCode = code;
@@ -325,7 +322,6 @@ class SubRealEstateController {
         if (re.smsCode == code) {
           re.status = 4;
           await re.save();
-          // // console.log(rea.mobile);
           await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
           await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });
@@ -343,7 +339,6 @@ class SubRealEstateController {
         if (re.smsCode == code) {
           re.status = 1;
           await re.save();
-          // // console.log(rea.mobile);
           await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
           await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });

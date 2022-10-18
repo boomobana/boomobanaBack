@@ -77,7 +77,6 @@ class UserController {
 
     let userIsExist = await User.query().where('mobile', auth.user.mobile).last();
     if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
-    // // console.log(userIsExist);
     userIsExist.avatar = avatar;
     userIsExist.save();
     response.json({ status_code: 200, status_text: 'Successfully Done' });
@@ -316,58 +315,62 @@ class UserController {
             pageSignup,
           }        = request.body;
     const limit    = 15;
-    console.log(request.body);
-    let user = User.query().orderBy('id', 'DESC');
-    if (type === 'realestate') {
-      user.where('is_realestate', 1);
-      if (active !== '' && active !== null) {
-        if (active == 1)
-          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
-        else
-          user.where('userDetailsChange', '!=', 2);
-      }
-    } else if (type === 'advisor') {
-      user.where('is_advisor', 1);
-      if (active !== '' && active !== null) {
-        if (active == 1)
-          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
-        else
-          user.where('userDetailsChange', '!=', 2);
-      }
-    } else if (type === 'blogger') {
-      user.where('is_bloger', 1);
-      if (active !== '' && active !== null) {
-        if (active == 1)
-          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
-        else
-          user.where('userDetailsChange', '!=', 2);
-      }
-    } else if (type === 'shobe') {
-      user.where('is_shobe', 1);
-      if (active !== '' && active !== null) {
-        if (active == 1)
-          user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
-        else
-          user.where('userDetailsChange', '!=', 2);
-      }
-    } else if (type === 'user') {
-      if (active !== '' && active !== null) {
-        if (active == 1)
-          user.where('active', 1).where('pageSignup', '=', 3);
-        else
-          user.where('active', '!=', 1);
+    let user       = User.query().orderBy('id', 'DESC');
+    if (type) {
+      if (type === 'realestate') {
+        user.where('is_realestate', 1);
+        if (active !== '' && active !== null) {
+          if (active == 1)
+            user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+          else
+            user.where('userDetailsChange', '!=', 2);
+        }
+      } else if (type === 'advisor') {
+        user.where('is_advisor', 1);
+        if (active !== '' && active !== null) {
+          if (active == 1)
+            user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+          else
+            user.where('userDetailsChange', '!=', 2);
+        }
+      } else if (type === 'blogger') {
+        user.where('is_bloger', 1);
+        if (active !== '' && active !== null) {
+          if (active == 1)
+            user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+          else
+            user.where('userDetailsChange', '!=', 2);
+        }
+      } else if (type === 'shobe') {
+        user.where('is_shobe', 1);
+        if (active !== '' && active !== null) {
+          if (active == 1)
+            user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
+          else
+            user.where('userDetailsChange', '!=', 2);
+        }
+      } else if (type === 'user') {
+        user.where('is_realestate', '!=', 1).where('is_shobe', '!=', 1).where('is_advisor', '!=', 1).where('is_bloger', '!=', 1);
+        if (active !== '' && active !== null) {
+          if (active == 1)
+            user.where('active', 1).where('pageSignup', '=', 3);
+          else
+            user.where('active', '!=', 1);
+        }
+      } else if (type === 'allAd') {
+        user.where('is_realestate', 1).orWhere('is_shobe', 1).orWhere('is_advisor', 1);
       }
     }
-    if (firstname !== '' && firstname !== null) {
+    if (firstname && firstname !== '' && firstname !== null) {
       user.where('firstname', 'like', '%' + firstname + '%');
     }
-    if (lastname !== '' && lastname !== null) {
+    if (lastname && lastname !== '' && lastname !== null) {
       user.where('lastname', 'like', '%' + lastname + '%');
     }
-    if (mobile !== '' && mobile !== null) {
+    if (mobile && mobile !== '' && mobile !== null) {
       user.where('mobile', 'like', '%' + mobile + '%');
     }
-    if (pageSignup !== '' && pageSignup !== null) {
+    if (pageSignup && pageSignup !== '' && pageSignup !== null) {
       user.where('type', pageSignup);
     }
 
@@ -498,7 +501,6 @@ class UserController {
     var u      = new User();
     u.password = 'Mah998877';
     //TODO: // send sms to user and now it password
-    // // console.log(request.body.id);
     // if (request.body.id != '') {
     //   u = await User.query().where('id', request.body.id).last();
     // }

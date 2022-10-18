@@ -112,7 +112,20 @@ class PackageController {
   }
 
   async packageFetchAdmin({ params, request, response }) {
-    return response.json(await Package.query().paginate());
+    return response.json(await Package.query().where('are_load', 1).paginate());
+  }
+
+  async packageFindAdmin({ request, response }) {
+    return response.json(await Package.query().where('id', request.body.id).last());
+  }
+
+  async packageAddAdmin({ request, response }) {
+    if (request.body.id != 0) {
+      await Package.query().where('id', request.body.id).update(request.body);
+    } else {
+      await Package.create({ ...request.body, are_load: 1 });
+    }
+    return response.json({ status_code: 200 });
   }
 }
 

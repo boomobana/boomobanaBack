@@ -101,7 +101,6 @@ class AdvisorController {
           ladder: ladder,
           important: important,
         };
-    // // console.log(allFiles);
     return response.json(json);
   }
 
@@ -302,14 +301,12 @@ class AdvisorController {
         .fetch();
       return response.json({ ex: ad.rows.length == 1, exa: ada.rows.length != 0, exaa: adaa.rows.length != 0 });
     }
-    // // console.log(ad);
     return response.json({ ex: ad.rows.length == 1, exa: false, exaa: false });
   }
 
   async codeRequest({ auth, request, response }) {
     let { id } = request.all();
     let re     = await AdviserRealEstate.query().where('id', id).last();
-    // // console.log(re.status);
     if (re.status == 0 || re.status == 3) {
       let code = randomNum(6);
       re.smsCode = code;
@@ -370,7 +367,6 @@ class AdvisorController {
   async checkRequestCode({ auth, request, response }) {
     let { status, code, id } = request.all();
     let re                   = await AdviserRealEstate.query().where('id', id).with('Realestate').last();
-    console.log(status);
     if (re.status == 0) {
       let rea = await User.query().where('id', re.real_estate_id).last();
       if (status == 1) {
@@ -441,7 +437,6 @@ class AdvisorController {
           await newPackage.save();
           /* TODO update and change this line with a function  */
 
-          // // console.log(rea.mobile);
           // await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
           // await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });
@@ -457,7 +452,6 @@ class AdvisorController {
     } else if (re.status == 3) {
       let rea = await User.query().where('id', re.adviser_id).last();
       if (status == 4) {
-        // console.log(re);
 
         if (re.smsCode == code) {
           re.status = status;
@@ -526,7 +520,6 @@ class AdvisorController {
           await newPackage.save();
           /* TODO update and change this line with a function  */
 
-          // // console.log(rea.mobile);
           // await new Sms().acceptedAdvisor(rea.name, auth.user.mobile);
           // await new Sms().acceptedAdvisorTR(auth.user.firstname + ' ' + auth.user.lastname, rea.mobile);
           return response.json({ status_code: 200 });

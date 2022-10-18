@@ -62,7 +62,6 @@ class TicketController {
     if (validationHeaders.fails()) {
       return response.json(validationHeaders.messages());
     }
-
     const {
             title,
             description,
@@ -171,7 +170,6 @@ class TicketController {
     let { id }      = request.all();
     let { rule }    = request.headers();
     let ticketFetch = await Ticket.query().where('id', id).last();
-    // // console.log(auth.user.id);
     if (!!ticketFetch)
       if (ticketFetch.user_id === auth.user.id && ticketFetch.user_type === 1)
         if (ticketFetch.status === '1')
@@ -193,7 +191,32 @@ class TicketController {
   }
 
   async ticketFetchAdmin({ params, request, response }) {
-    return response.json(await Ticket.query().with('user').paginate());
+    const { page } = request.qs;
+    const limit    = 15;
+    let Tic        = Ticket.query().with('user').orderBy('id', 'desc');
+    let Userss     = User.query();
+    let userIn     = [];
+    if (request.body.mobile != null && request.body.mobile != '')
+      Userss.where('mobile', 'like', '%' + request.body.mobile + '%');
+    if (request.body.lastname != null && request.body.lastname != '')
+      Userss.where('lastname', 'like', '%' + request.body.lastname + '%');
+    if (request.body.firstname != null && request.body.firstname != '')
+      Userss.where('firstname', 'like', '%' + request.body.firstname + '%');
+    if ((request.body.mobile != null && request.body.mobile != '') ||
+      (request.body.lastname != null && request.body.lastname != '') ||
+      (request.body.firstname != null && request.body.firstname != '')) {
+      let us = (await Userss.fetch()).rows;
+      for (let user of us) {
+        userIn.push(user.id);
+      }
+      Tic.whereIn('user_id', userIn);
+    }
+
+    if (request.body.title != null && request.body.title != '')
+      Tic.where('title', 'like', '%' + request.body.title + '%');
+    if (request.body.status != null && request.body.status != '')
+      Tic.where('status', request.body.status);
+    return response.json(await Tic.paginate(page, limit));
   }
 
   async ticketAnswerAdmin({ params, request, response }) {

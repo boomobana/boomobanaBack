@@ -82,18 +82,15 @@ class ReserveController {
     let {
           slug,
         }    = request.params;
-    // console.log(slug);
     let {
           price,
           status,
         }    = await Reserved.query().where('slug', slug).last();
-    // // console.log(price, description);
     let resp = await zarinpal.PaymentRequest({
       Amount: price, // In Tomans
       CallbackURL: `${Env.get('APP_URL')}/api/user/reserve/residence/get/${slug}`,
       Description: 'رزرو اقامتگاه در بوم و بنا',
     });
-    // // console.log(resp);
     if (resp.status === 100) {
       let transaction   = await Reserved.query().where('slug', slug).last();
       transaction.ref_1 = resp.authority;
@@ -113,12 +110,10 @@ class ReserveController {
     });
     if (resp.status !== 100) {
       return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
-      // // console.log('Empty!');
     } else {
       resx.status = 1;
       resx.ref_2  = resp.RefID;
       await resx.save();
-      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
       return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
     }
   }

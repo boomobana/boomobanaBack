@@ -42,13 +42,11 @@ class WalletController {
           price,
           status,
         }    = await WalletRequest.query().where('slug', slug).last();
-    // // console.log(price, description);
     let resp = await zarinpal.PaymentRequest({
       Amount: price, // In Tomans
       CallbackURL: `${Env.get('APP_URL')}/api/user/wallet/money/get/${slug}`,
       Description: 'شارژ کیف  پول سامانه بوم و بنا',
     });
-    // // console.log(resp);
     if (resp.status === 100) {
       let transaction   = await WalletRequest.query().where('slug', slug).last();
       transaction.ref_1 = resp.authority;
@@ -96,11 +94,9 @@ class WalletController {
     });
     if (resp.status !== 100) {
       return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
-      // // console.log('Empty!');
     } else {
       await changeAmount(user_id, parseFloat(price), 1, 2, ref_1, resp.RefID, resp.RefID, slug);
 
-      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
       return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
     }
   }

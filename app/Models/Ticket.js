@@ -9,7 +9,7 @@ class Ticket extends Model {
   }
 
   user() {
-    return this.hasOne('App/Models/User', 'user_id', 'id').select(['id', 'firstname', 'lastname']);
+    return this.hasOne('App/Models/User', 'user_id', 'id').select(['id', 'firstname', 'lastname', 'mobile']);
   }
 
   pm() {

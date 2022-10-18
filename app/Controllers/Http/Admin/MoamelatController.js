@@ -48,7 +48,7 @@ class MoamelatController {
   }
 
   async fetchMoamele({ request, response, auth }) {
-    return response.json(await Moamelat.query()
+    let moa = Moamelat.query()
       .orderBy('id', 'desc')
       .with('Side1', q => {
         q.with('Region').with('Province');
@@ -59,8 +59,12 @@ class MoamelatController {
       .with('Adviser')
       .with('User')
       .with('RTO_2')
-      .with('RTO_3')
-      .fetch());
+      .with('RTO_3');
+
+    if (request.body.userSelected != 0)
+      moa.where('user_id', request.body.userSelected);
+
+    return response.json(await moa.fetch());
   }
 
   async findMoamele({ request, response, auth }) {

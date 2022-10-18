@@ -46,7 +46,6 @@ class AuthController {
   }
 
   async makeLoginActivity(user, userOs, ipA) {
-    // // console.log(ipA);
     if (ipA != '127.0.0.1' && process.env.NODE_ENV === 'production') {
       var geo = geoip.lookup(ipA);
       await LoginActivity.create({
@@ -584,7 +583,6 @@ class AuthController {
             avatar,
             birthday,
           } = request.all();
-    // console.log(request.all());
     if (rule === 'realEstate' || rule === 'shobe') {
       const rules2      = {
         firstname_en: 'required',

@@ -214,12 +214,17 @@ class RealEstateCustomerController {
             type,
             description,
             real_estate_id,
+            type_melk,
+            type_user,
+            emkanat,
+            show_on,
           } = request.all();
-    // // console.log(firstname);
+    console.log(request.all());
     let re = new RealEstateCustomer();
     if (!!request.body.id && request.body.id != '') {
       re = await RealEstateCustomer.query().where('id', request.body.id).last();
     }
+    console.log(re);
     re.firstname      = firstname;
     re.lastname       = lastname;
     re.mobile         = mobile;
@@ -232,6 +237,10 @@ class RealEstateCustomerController {
     re.type           = type;
     re.description    = description;
     re.real_estate_id = real_estate_id;
+    re.type_melk      = type_melk;
+    re.type_user      = type_user;
+    re.emkanat        = emkanat;
+    re.show_on        = show_on;
     await re.save();
 
     return response.json({ status_code: 200, status_text: 'Successfully Done' });

@@ -7,6 +7,10 @@ class Reserved extends Model {
   Residence() {
     return this.hasOne('App/Models/Residence', 'residence_id', 'id').with('User').with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season');
   }
+
+  User() {
+    return this.hasOne('App/Models/User', 'user_id', 'id').select(['id', 'firstname', 'lastname']);
+  }
 }
 
 module.exports = Reserved;

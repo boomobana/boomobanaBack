@@ -48,7 +48,6 @@ class BlogPostController {
       } else {
         subCatsArr.push(SubCat.id);
       }
-      // // console.log(subCatsArr);
       cats = await BlogCategoryPost.query().whereIn('category_id', subCatsArr).fetch();
       for (let cat in cats.rows) {
         catsArr.push(cats.rows[cat].post_id);

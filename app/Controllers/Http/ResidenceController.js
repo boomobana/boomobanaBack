@@ -15,7 +15,6 @@ const Database               = use('Database');
 
 class ResidenceController {
   async Fetch({ auth, request, response }) {
-    // console.log(request.all());
     let {
           rule,
         }           = request.headers();
@@ -318,7 +317,6 @@ class ResidenceController {
         }
       }
     } catch (e) {
-      // // console.log(e);
     }
     return response.json(userIsExist);
   }
@@ -652,7 +650,6 @@ class ResidenceController {
   async fileFetchAdmin({ auth, request, response }) {
     const { page } = request.qs;
     const limit    = 10;
-    console.log(request.body);
     let Res        = Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').orderBy('id', 'desc');
     if (typeof request.body.user_id === 'string' && request.body.user_id !== null && request.body.user_id !== '') {
       Res.where('user_id', request.body.user_id);
@@ -756,7 +753,6 @@ class ResidenceController {
           floor_count,
           floor_unit_count,
         }   = request.all();
-    // // console.log(archive);
     let res = new Residence();
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();

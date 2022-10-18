@@ -62,21 +62,16 @@ class Residence extends Model {
       var to    = new Date(date.getFullYear() + x, parseInt(d2[0]) - 1, d2[1]);
       var check = new Date(date.getFullYear(), parseInt(month) - 1, day);
       if (check > from && check < to) {
-        // // // console.log('eyd 2', month);
         id = item.id;
       }
     }
 
     /*for (let item of sd.filter(e => e.middle == 2)) {
-      console.log(item);
       let start = item.start_at.split('/');
       let end   = item.end_at.split('/');
-      // // // console.log(item, start, end);
       if (start[0] >= month && end[0] <= month) {
-        // // // console.log('eyd 2', month);
         id = item.id;
       } else if (end[0] <= month && start[0] >= month) {
-        // // console.log('eyd 1', month);
         id = item.id;
       }
     }*/

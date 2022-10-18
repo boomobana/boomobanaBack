@@ -274,7 +274,13 @@ Route.group(() => {
   Route.post('/ticket/add/pm', 'TicketController.store');
   Route.post('/ticket/add', 'TicketController.create');
   Route.post('/ticket/admin/remove', 'TicketController.ticketRemoveAdmin');
+
+  //package
   Route.post('/package/fetch', 'PackageController.packageFetchAdmin');
+  Route.post('/package/find', 'PackageController.packageFindAdmin');
+  Route.post('/package/add', 'PackageController.packageAddAdmin');
+
+  //transaction
   Route.post('/transaction/fetch', 'TransactionController.transactionFetchAdmin');
 
   Route.post('/melk/add', 'ResidenceController.addMelkAdmin');

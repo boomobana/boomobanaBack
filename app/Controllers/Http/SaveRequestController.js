@@ -29,7 +29,6 @@ class SaveRequestController {
     let arr = [];
     let RSQ = await SaveRequestRealestate.query().where('user_id', 50).fetch();
     // let RSQ = await SaveRequestRealestate.query().where('user_id', auth.user.id).fetch();
-    // // console.log(RSQ.rows);
     for (let rsqElement of RSQ.rows) {
       arr.push(rsqElement.request_id);
     }
@@ -54,7 +53,6 @@ class SaveRequestController {
           description,
           status,
         } = await SaveRequest.query().where('slug', slug).last();
-    // // console.log(price, description);
     if (status !== 3)
       return response.send('payed before');
     let resp = await zarinpal.PaymentRequest({
@@ -62,7 +60,6 @@ class SaveRequestController {
       CallbackURL: `${Env.get('APP_URL')}/api/user/request/payment/get/${slug}`,
       Description: description,
     });
-    // // console.log(resp);
     if (resp.status === 100) {
       let transaction   = await SaveRequest.query().where('slug', slug).last();
       transaction.ref_1 = resp.authority;
@@ -96,19 +93,16 @@ class SaveRequestController {
     });
     if (resp.status !== 100) {
       return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
-      // // console.log('Empty!');
     } else {
       let transaction    = await SaveRequest.query().where('slug', slug).last();
       transaction.status = 4;
       transaction.ref_2  = resp.RefID;
       transaction.save();
-      // // console.log(`Verified! Ref ID: ${resp.RefID}`);
       return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
     }
   }
 
   async create({ request, response, auth }) {
-    // console.log(request.all());
     const rules      = {
       type: 'required',
       name: 'required',
@@ -169,12 +163,8 @@ class SaveRequestController {
         return response.json(validation2.messages());
       }
       const {
-              // area,
-
-              // area,
               price,
             }      = request.all();
-      // newReq.area  = area;
       newReq.price = price;
 
     } else {

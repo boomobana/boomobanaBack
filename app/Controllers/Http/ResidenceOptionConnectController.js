@@ -22,7 +22,6 @@ class ResidenceOptionConnectController {
     if (validation.fails()) {
       return response.json(validation.messages());
     }
-    // // console.log('run here');
     let {
           residence_id,
           residence_option_id,
@@ -36,7 +35,6 @@ class ResidenceOptionConnectController {
         resOC.description = request.input('description');
       resOC.save();
     } catch (e) {
-      // // console.log(e);
     }
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }

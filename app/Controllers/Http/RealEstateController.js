@@ -175,7 +175,6 @@ class RealEstateController {
             user_id,
             status,
           }                = request.all();
-    // // console.log(request.all());
     let user               = await RealEstate.query().where('id', user_id).last();
     user.active            = status;
     user.userDetailsChange = 2;
