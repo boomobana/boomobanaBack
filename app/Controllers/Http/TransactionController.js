@@ -229,8 +229,34 @@ class TransactionController {
   async destroy({ params, request, response }) {
   }
 
-  async transactionFetchAdmin({ response }) {
-    return response.json(await Transaction.query().paginate());
+  async transactionFetchAdmin({ response, request }) {
+    const { page } = request.qs;
+    const limit    = 10;
+    let Tra        = Transaction.query().orderBy('id', 'desc').with('User');
+    let userid     = [];
+    let Users      = User.query();
+
+    if (request.body.ref_2 && request.body.ref_2 != null && request.body.ref_2 != undefined && request.body.ref_2 != 0)
+      Tra.where('ref_2', 'like', `%${request.body.ref_2}%`);
+    if (request.body.gateway && request.body.gateway != null && request.body.gateway != undefined && request.body.gateway != 0)
+      Tra.where('gateway', 'like', `%${request.body.gateway}%`);
+    if (request.body.status && request.body.status != null && request.body.status != undefined && request.body.status != 0)
+      Tra.where('status', 'like', `%${request.body.status}%`);
+
+    if (request.body.firstname && request.body.firstname != null && request.body.firstname != undefined && request.body.firstname != 0)
+      Users.where('firstname', 'like', `%${request.body.firstname}%`);
+    if (request.body.lastname && request.body.lastname != null && request.body.lastname != undefined && request.body.lastname != 0)
+      Users.where('lastname', 'like', `%${request.body.lastname}%`);
+    if (
+      (request.body.firstname && request.body.firstname != null && request.body.firstname != undefined && request.body.firstname != 0) ||
+      (request.body.lastname && request.body.lastname != null && request.body.lastname != undefined && request.body.lastname != 0)
+    ) {
+      for (let row of (await Users.fetch()).rows) {
+        userid.push(row.id);
+      }
+      Tra.whereIn('user_id', userid);
+    }
+    return response.json(await Tra.paginate(page, limit));
   }
 }
 

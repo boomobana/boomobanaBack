@@ -847,6 +847,18 @@ class ResidenceController {
       });
     return response.json({ status_code: 200, status_text: 'successfully done' });
   }
+
+  async indexCommentAdmin({ request, response, auth }) {
+    const { page } = request.qs;
+    const limit    = 10;
+    return response.json(await ResidenceComment.query().orderBy('id', 'desc').with('User').with('Residence').paginate(page, limit));
+  }
+
+  async activeCommentAdmin({ request, response, auth }) {
+    await ResidenceComment.query().where('id', request.body.id).update({ status: request.body.status });
+    return response.json({ status_code: 200 });
+  }
+
 }
 
 module.exports = ResidenceController;

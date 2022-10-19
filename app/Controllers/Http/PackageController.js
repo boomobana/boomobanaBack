@@ -112,7 +112,9 @@ class PackageController {
   }
 
   async packageFetchAdmin({ params, request, response }) {
-    return response.json(await Package.query().where('are_load', 1).paginate());
+    const { page } = request.qs;
+    const limit    = 10;
+    return response.json(await Package.query().where('are_load', 1).paginate(page, limit));
   }
 
   async packageFindAdmin({ request, response }) {

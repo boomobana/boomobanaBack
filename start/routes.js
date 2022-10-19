@@ -329,4 +329,12 @@ Route.group(() => {
 
   // reserved residence
   Route.post('/reserved/fetch', 'Admin/ReserveController.fetchList');
+
+  // comment
+  Route.post('/blog/comments/fetch', 'BlogCommentController.indexAdmin');
+  Route.post('/blog/comments/status', 'BlogCommentController.activeCommAdmin');
+
+  // comment
+  Route.post('/residence/comments/fetch', 'ResidenceController.indexCommentAdmin');
+  Route.post('/residence/comments/status', 'ResidenceController.activeCommentAdmin');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

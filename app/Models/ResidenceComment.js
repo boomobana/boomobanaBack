@@ -11,6 +11,10 @@ class ResidenceComment extends Model {
   User() {
     return this.hasOne('App/Models/User', 'user_id', 'id').select('id', 'firstname', 'lastname');
   }
+
+  Residence() {
+    return this.hasOne('App/Models/Residence', 'residence_id', 'id');
+  }
 }
 
 module.exports = ResidenceComment;

@@ -30,6 +30,17 @@ class BlogCommentController {
     ]).where('user_posted', auth.user.id).with('userA').paginate(page, limit));
   }
 
+  async indexAdmin({ request, response, auth }) {
+    const { page } = request.qs;
+    const limit    = 10;
+    return response.json(await BlogComment.query().orderBy('id', 'desc').with('userA').paginate(page, limit));
+  }
+
+  async activeCommAdmin({ request, response, auth }) {
+    await BlogComment.query().where('id', request.body.id).update({ active: request.body.active });
+    return response.json({ status_code: 200 });
+  }
+
   /**
    * Render a form to be used for creating a new blogcomment.
    * GET blogcomments/create
