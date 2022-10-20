@@ -7,6 +7,10 @@ class BlogCategoryPost extends Model {
   static get table() {
     return 'blog_post_categories';
   }
+
+  category() {
+    return this.hasOne('App/Models/BlogCategory', 'category_id', 'id');
+  }
 }
 
 module.exports = BlogCategoryPost;

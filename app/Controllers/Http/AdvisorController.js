@@ -411,26 +411,26 @@ class AdvisorController {
                 last_count_different = lastPackage.after_count_different;
             }
           }
-          let calcTime                    = (parseInt(credit) * 24 * 60 * 60 * 1000) + lastDay + timeStamp;
-          let beforetime                  = lastTime;
-          let time                        = calcTime;
-          let newPackage                  = new PackageBuy();
-          newPackage.user_id              = auth.user.id;
-          newPackage.type_of              = 2;
-          newPackage.package_id           = id;
-          newPackage.status               = 1;
-          newPackage.transaction_id       = randomNum(12);
-          newPackage.count_file           = last_count_file;
-          newPackage.count_video          = last_count_video;
-          newPackage.count_ladder         = last_count_ladder;
-          newPackage.count_occasion       = last_count_occasion;
-          newPackage.count_instant        = last_count_instant;
-          newPackage.count_different      = last_count_different;
-          newPackage.after_count_file     = parseInt(last_count_file) + parseInt(count_file);
-          newPackage.after_count_video    = parseInt(last_count_video) + parseInt(count_video);
-          newPackage.after_count_ladder   = parseInt(last_count_ladder) + parseInt(count_ladder);
-          newPackage.after_count_occasion = parseInt(last_count_occasion) + parseInt(count_occasion);
-          newPackage.after_count_instant  = parseInt(last_count_instant) + parseInt(count_instant);
+          let calcTime                     = (parseInt(credit) * 24 * 60 * 60 * 1000) + lastDay + timeStamp;
+          let beforetime                   = lastTime;
+          let time                         = calcTime;
+          let newPackage                   = new PackageBuy();
+          newPackage.user_id               = auth.user.id;
+          newPackage.type_of               = 2;
+          newPackage.package_id            = id;
+          newPackage.status                = 1;
+          newPackage.transaction_id        = randomNum(12);
+          newPackage.count_file            = last_count_file;
+          newPackage.count_video           = last_count_video;
+          newPackage.count_ladder          = last_count_ladder;
+          newPackage.count_occasion        = last_count_occasion;
+          newPackage.count_instant         = last_count_instant;
+          newPackage.count_different       = last_count_different;
+          newPackage.after_count_file      = parseInt(last_count_file) + parseInt(count_file);
+          newPackage.after_count_video     = parseInt(last_count_video) + parseInt(count_video);
+          newPackage.after_count_ladder    = parseInt(last_count_ladder) + parseInt(count_ladder);
+          newPackage.after_count_occasion  = parseInt(last_count_occasion) + parseInt(count_occasion);
+          newPackage.after_count_instant   = parseInt(last_count_instant) + parseInt(count_instant);
           newPackage.after_count_different = parseInt(last_count_different) + parseInt(count_different);
           newPackage.time                  = beforetime;
           newPackage.after_time            = time;
@@ -494,26 +494,26 @@ class AdvisorController {
                 last_count_different = lastPackage.after_count_different;
             }
           }
-          let calcTime                    = (parseInt(credit) * 24 * 60 * 60 * 1000) + lastDay + timeStamp;
-          let beforetime                  = lastTime;
-          let time                        = calcTime;
-          let newPackage                  = new PackageBuy();
-          newPackage.user_id              = auth.user.id;
-          newPackage.type_of              = 2;
-          newPackage.package_id           = id;
-          newPackage.status               = 1;
-          newPackage.transaction_id       = randomNum(12);
-          newPackage.count_file           = last_count_file;
-          newPackage.count_video          = last_count_video;
-          newPackage.count_ladder         = last_count_ladder;
-          newPackage.count_occasion       = last_count_occasion;
-          newPackage.count_instant        = last_count_instant;
-          newPackage.count_different      = last_count_different;
-          newPackage.after_count_file     = parseInt(last_count_file) + parseInt(count_file);
-          newPackage.after_count_video    = parseInt(last_count_video) + parseInt(count_video);
-          newPackage.after_count_ladder   = parseInt(last_count_ladder) + parseInt(count_ladder);
-          newPackage.after_count_occasion = parseInt(last_count_occasion) + parseInt(count_occasion);
-          newPackage.after_count_instant  = parseInt(last_count_instant) + parseInt(count_instant);
+          let calcTime                     = (parseInt(credit) * 24 * 60 * 60 * 1000) + lastDay + timeStamp;
+          let beforetime                   = lastTime;
+          let time                         = calcTime;
+          let newPackage                   = new PackageBuy();
+          newPackage.user_id               = auth.user.id;
+          newPackage.type_of               = 2;
+          newPackage.package_id            = id;
+          newPackage.status                = 1;
+          newPackage.transaction_id        = randomNum(12);
+          newPackage.count_file            = last_count_file;
+          newPackage.count_video           = last_count_video;
+          newPackage.count_ladder          = last_count_ladder;
+          newPackage.count_occasion        = last_count_occasion;
+          newPackage.count_instant         = last_count_instant;
+          newPackage.count_different       = last_count_different;
+          newPackage.after_count_file      = parseInt(last_count_file) + parseInt(count_file);
+          newPackage.after_count_video     = parseInt(last_count_video) + parseInt(count_video);
+          newPackage.after_count_ladder    = parseInt(last_count_ladder) + parseInt(count_ladder);
+          newPackage.after_count_occasion  = parseInt(last_count_occasion) + parseInt(count_occasion);
+          newPackage.after_count_instant   = parseInt(last_count_instant) + parseInt(count_instant);
           newPackage.after_count_different = parseInt(last_count_different) + parseInt(count_different);
           newPackage.time                  = beforetime;
           newPackage.after_time            = time;
@@ -545,6 +545,18 @@ class AdvisorController {
     rea.active = 0;
     rea.save();
     return response.json({ status_code: 200 });
+  }
+
+  async requestAdviserFetchAdmin({ auth, request, response }) {
+    const { page } = request.qs;
+    const limit    = 10;
+
+    let rea = AdviserRealEstate.query();
+
+    if (request.body.userSelected != 0 && request.body.userSelected != undefined)
+      rea.where('user_id', request.body.userSelected);
+
+    return response.json(await rea.orderBy('id', 'desc').with('Advisor').with('Realestate').paginate(page, limit));
   }
 
 }

@@ -331,10 +331,21 @@ Route.group(() => {
   Route.post('/reserved/fetch', 'Admin/ReserveController.fetchList');
 
   // comment
+  Route.post('/blog/post/fetch', 'BlogPostController.indexAdmin');
+  Route.post('/blog/post/find', 'BlogPostController.findAdmin');
+  Route.post('/blog/post/create', 'BlogPostController.createPostAdmin');
+  Route.post('/blog/post/file/create', 'BlogPostController.createPostCategoryAdmin');
+  Route.post('/blog/post/category/create', 'BlogPostController.createPostFileAdmin');
   Route.post('/blog/comments/fetch', 'BlogCommentController.indexAdmin');
   Route.post('/blog/comments/status', 'BlogCommentController.activeCommAdmin');
+  Route.post('/blog/category/create', 'BlogPostController.createCategoryAdmin');
+  Route.post('/blog/category/fetch', 'BlogPostController.fetchCategoryAdmin');
+  Route.post('/blog/category/find', 'BlogPostController.findCategoryAdmin');
 
   // comment
   Route.post('/residence/comments/fetch', 'ResidenceController.indexCommentAdmin');
   Route.post('/residence/comments/status', 'ResidenceController.activeCommentAdmin');
+
+  //advisor
+  Route.post('/advisor/request/fetch', 'AdvisorController.requestAdviserFetchAdmin');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

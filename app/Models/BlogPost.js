@@ -11,6 +11,10 @@ class BlogPost extends Model {
   comment() {
     return this.hasMany('App/Models/BlogComment', 'id', 'post_id').with('userI').with('userA').where('active', 1);
   }
+
+  category() {
+    return this.hasMany('App/Models/BlogCategoryPost', 'id', 'post_id').with('category');
+  }
 }
 
 module.exports = BlogPost;
