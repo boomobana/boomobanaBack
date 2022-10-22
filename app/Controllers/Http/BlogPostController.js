@@ -23,6 +23,7 @@ class BlogPostController {
       .orderBy('id', 'desc')
       .with('user')
       .with('comment')
+      .with('category')
       .where('active', 1);
     if (request.body.type === 'tag') {
 
@@ -89,19 +90,32 @@ class BlogPostController {
           body_more,
           active,
           price,
-        }          = request.all();
-    let slug       = makeidF(20);
-    let newP       = new BlogPost();
-    newP.slug      = slug;
-    newP.user_id   = auth.user.id;
-    newP.title     = title;
-    newP.body      = body;
-    newP.body_more = body_more;
-    newP.active    = active;
-    newP.price     = price;
-    await newP.save();
-    let data = await newP;
-    return response.json({ ...data.$attributes, status_code: 200 });
+        }              = request.all();
+    let slug           = makeidF(20);
+    let { categories } = request.all();
+    let data           = request.body;
+    delete data.categories;
+    delete data.tags;
+    if (request.body.id == 0 || request.body.id == null) {
+      let newP = await BlogPost.create({
+        user_id: auth.user.id,
+        slug: slug,
+        ...data,
+      });
+      await BlogCategoryPost.create({
+        post_id: newP.id,
+        category_id: categories,
+      });
+    } else {
+      let newP = await BlogPost.query().where('id', request.body.id).update({
+        user_id: auth.user.id,
+        ...data,
+      });
+      await BlogCategoryPost.query().where('post_id', request.body.id).update({
+        category_id: categories,
+      });
+    }
+    return response.json({ status_code: 200 });
   }
 
   async store({ request, response }) {
@@ -112,6 +126,7 @@ class BlogPostController {
       .query()
       .with('user')
       .with('comment')
+      .with('category')
       .where('slug', request.body.slug)
       .first());
   }

@@ -317,7 +317,9 @@ class UserController {
     const limit    = 15;
     let user       = User.query().orderBy('id', 'DESC');
     if (type) {
-      if (type === 'realestate') {
+      if (type === 'admin') {
+        user.where('is_admin', 1);
+      } else if (type === 'realestate') {
         user.where('is_realestate', 1);
         if (active !== '' && active !== null) {
           if (active == 1)
@@ -473,100 +475,19 @@ class UserController {
   }
 
   async userCreateAdmin({ auth, request, response }) {
-    const {
-            is_user,
-            is_bloger,
-            is_realestate,
-            is_advisor,
-            is_shobe,
-            lastname,
-            firstname,
-            firstname_en,
-            lastname_en,
-            mobile,
-            tell,
-            postal_code,
-            sos,
-            national_id,
-            birthday,
-            male,
-            email,
-            about,
-            address,
-            kartMeli,
-            avatar,
-            lat,
-            lng,
-          }    = request.all();
-    var u      = new User();
-    u.password = 'Mah998877';
-    //TODO: // send sms to user and now it password
-    // if (request.body.id != '') {
-    //   u = await User.query().where('id', request.body.id).last();
-    // }
-
-    u.pageSignup    = 1;
-    u.active        = 1;
-    u.is_user       = 1;
-    u.is_bloger     = is_bloger;
-    u.is_realestate = is_realestate;
-    u.is_shobe      = is_shobe;
-    u.is_advisor    = is_advisor;
-    u.lastname      = lastname;
-    u.firstname     = firstname;
-    u.firstname_en  = firstname_en;
-    u.lastname_en   = lastname_en;
-    u.mobile        = mobile;
-    u.tell          = tell;
-    u.postal_code   = postal_code;
-    u.sos           = sos;
-    u.national_id   = national_id;
-    u.birthday      = birthday;
-    u.male          = male;
-    u.email         = email;
-    u.address       = address;
-    u.about         = about;
-    u.kart_meli     = kartMeli;
-    u.lat           = lat;
-    u.lng           = lng;
-    u.avatar        = avatar;
-    if (is_bloger == 1) {
-      u.site_url     = request.body.site_url;
-      u.social_url   = request.body.social_url;
-      u.username     = request.body.username;
-      u.usernameshow = request.body.usernameshow;
+    if (request.body.id == 0 || request.body.id == null) {
+      await User.create({
+        pageSignup: 1,
+        active: 1,
+        is_user: 1,
+        password: 'Mah998877',
+        ...request.all(),
+      });
+    } else {
+      await User.query().where('id', request.body.id).update({
+        ...request.all(),
+      });
     }
-    if (is_advisor == 1) {
-      u.parent_realestate_id = request.body.parent_realestate_id;
-    }
-    if (is_user == 1) {
-      u.type               = request.body.type;
-      u.bank_name          = request.body.bank_name;
-      u.card_number        = request.body.card_number;
-      u.shaba_number       = request.body.shaba_number;
-      u.account_owner_name = request.body.account_owner_name;
-      if (u.type == 2) {
-        u.economic_code           = request.body.economic_code;
-        u.statute                 = request.body.statute;
-        u.business_license        = request.body.business_license;
-        u.business_license_number = request.body.business_license_number;
-      }
-    }
-    if (is_realestate == 1) {
-      u.logo                    = request.body.logo;
-      u.name                    = request.body.name;
-      u.name_en                 = request.body.name_en;
-      u.site_url                = request.body.site_url;
-      u.social_url              = request.body.social_url;
-      u.economic_code           = request.body.economic_code;
-      u.postal_code             = request.body.postal_code;
-      u.business_license        = request.body.business_license;
-      u.business_license_number = request.body.business_license_number;
-      u.statute                 = request.body.statute;
-      u.bio                     = request.body.bio;
-    }
-    await u.save();
-
     return response.json({ status_code: 200 });
   }
 

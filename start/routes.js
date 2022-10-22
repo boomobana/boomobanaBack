@@ -36,6 +36,7 @@ Route.group(() => {
   Route.post('/register', 'AuthController.FinalRegister');
   Route.post('/forgot/code', 'AuthController.requestForgetPass');
   Route.post('/forgot/change', 'AuthController.changeForgotPassword');
+  Route.post('/fetch/blog/category', 'BlogCategoryController.index');
 }).middleware('guest');
 
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
@@ -333,7 +334,8 @@ Route.group(() => {
   // comment
   Route.post('/blog/post/fetch', 'BlogPostController.indexAdmin');
   Route.post('/blog/post/find', 'BlogPostController.findAdmin');
-  Route.post('/blog/post/create', 'BlogPostController.createPostAdmin');
+  Route.post('/post/add', 'BlogPostController.create');
+  Route.post('/post/remove', 'BlogPostController.deletes');
   Route.post('/blog/post/file/create', 'BlogPostController.createPostCategoryAdmin');
   Route.post('/blog/post/category/create', 'BlogPostController.createPostFileAdmin');
   Route.post('/blog/comments/fetch', 'BlogCommentController.indexAdmin');
