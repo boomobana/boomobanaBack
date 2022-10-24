@@ -320,7 +320,7 @@ class UserController {
       if (type === 'admin') {
         user.where('is_admin', 1);
       } else if (type === 'realestate') {
-        user.where('is_realestate', 1);
+        user.where('is_realestate', 1).where('is_admin', '!=', 1);
         if (active !== '' && active !== null) {
           if (active == 1)
             user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
@@ -328,7 +328,7 @@ class UserController {
             user.where('userDetailsChange', '!=', 2);
         }
       } else if (type === 'advisor') {
-        user.where('is_advisor', 1);
+        user.where('is_advisor', 1).where('is_admin', '!=', 1);
         if (active !== '' && active !== null) {
           if (active == 1)
             user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
@@ -336,7 +336,7 @@ class UserController {
             user.where('userDetailsChange', '!=', 2);
         }
       } else if (type === 'blogger') {
-        user.where('is_bloger', 1);
+        user.where('is_bloger', 1).where('is_admin', '!=', 1);
         if (active !== '' && active !== null) {
           if (active == 1)
             user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
@@ -344,7 +344,7 @@ class UserController {
             user.where('userDetailsChange', '!=', 2);
         }
       } else if (type === 'shobe') {
-        user.where('is_shobe', 1);
+        user.where('is_shobe', 1).where('is_admin', '!=', 1);
         if (active !== '' && active !== null) {
           if (active == 1)
             user.where('active', 1).where('pageSignup', '=', 3).where('userDetailsChange', 2);
@@ -352,7 +352,7 @@ class UserController {
             user.where('userDetailsChange', '!=', 2);
         }
       } else if (type === 'user') {
-        user.where('is_realestate', '!=', 1).where('is_shobe', '!=', 1).where('is_advisor', '!=', 1).where('is_bloger', '!=', 1);
+        user.where('is_admin', '!=', 1).where('is_realestate', '!=', 1).where('is_shobe', '!=', 1).where('is_advisor', '!=', 1).where('is_bloger', '!=', 1);
         if (active !== '' && active !== null) {
           if (active == 1)
             user.where('active', 1).where('pageSignup', '=', 3);
@@ -480,12 +480,11 @@ class UserController {
         pageSignup: 1,
         active: 1,
         is_user: 1,
-        password: 'Mah998877',
         ...request.all(),
       });
     } else {
       await User.query().where('id', request.body.id).update({
-        ...request.all(),
+        ...request.all(), password: await Hash.make(request.body.password),
       });
     }
     return response.json({ status_code: 200 });

@@ -259,6 +259,12 @@ Route.group(() => {
   Route.post('/user/active/panel', 'UserController.userActivePanelAdmin');
   Route.post('/file/fetch', 'ResidenceController.fileFetchAdmin');
   Route.post('/file/find', 'ResidenceController.fileFindAdmin');
+  Route.post('/residence/find', 'ResidenceController.fileFindAdmin');
+  Route.post('/residence/option/fetch', 'ResidenceOptionController.index');
+  Route.post('/residence/type/option/connect/fetch', 'ResidenceTypeOptionController.index');
+  Route.post('/region', 'RegionController.index');
+  Route.post('/province', 'ProvinceController.index');
+
   Route.post('/auth/residence/fetch/favorite/add', 'ResidenceController.FetchFavoriteAd');
   Route.post('/auth/residence/fetch/viewad', 'ResidenceController.FetchViewAd');
 

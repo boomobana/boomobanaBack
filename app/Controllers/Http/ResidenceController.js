@@ -12,6 +12,8 @@ const ViewAd                 = use('App/Models/ViewAd');
 const PackageBuy             = use('App/Models/PackageBuy');
 const { sleep }              = require('../Helper');
 const Database               = use('Database');
+const Ticket                 = use('App/Models/Ticket');
+const TicketPm               = use('App/Models/TicketPm');
 
 class ResidenceController {
   async Fetch({ auth, request, response }) {
@@ -685,6 +687,16 @@ class ResidenceController {
         Res.whereBetween('month_discount', [request.body.month_discount, request.body.month_discount2]);
       }
     }
+    if (typeof request.body.type_show === 'string' && request.body.type_show !== null && request.body.type_show !== '') {
+      if (request.body.type_show == 1)
+        Res.where('archive', 0);
+      else if (request.body.type_show == 2)
+        Res.where('archive', 1);
+      else if (request.body.type_show == 3)
+        Res.where('archive', 3);
+    } else {
+      Res.where('archive', '!=', 3);
+    }
     if (request.body.userSelected != 0)
       Res.where('user_id', request.body.userSelected);
     return response.json(await Res.paginate(page, limit));
@@ -698,6 +710,24 @@ class ResidenceController {
     let res    = await Residence.query().where('id', request.body.id).last();
     res.status = request.body.status;
     await res.save();
+    if (request.body.status == 3) {
+      let jsonNewticket          = {};
+      let jsonNewTicketPm        = {};
+      let user                   = await User.query().where('id', res.user_id).last();
+      jsonNewticket.user_id      = user.id;
+      jsonNewTicketPm.user_id    = auth.user.id;
+      jsonNewticket.user_type    = 1;
+      jsonNewticket.title        = 'فایل شما رد شد';
+      jsonNewticket.description  = request.body.text;
+      jsonNewticket.admin_answer = '';
+      jsonNewticket.status       = 1;
+      let newTicket              = await Ticket.create(jsonNewticket);
+      jsonNewTicketPm.ticket_id  = newTicket.id;
+      jsonNewTicketPm.user_type  = 'admin';
+      jsonNewTicketPm.pm         = request.body.text;
+
+      let newTicketPm = await TicketPm.create(jsonNewTicketPm);
+    }
     return response.json({ status_code: 200 });
   }
 
