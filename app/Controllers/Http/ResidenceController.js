@@ -8,12 +8,18 @@ const User                   = use('App/Models/User');
 const ResidenceFile          = use('App/Models/ResidenceFile');
 const ResidenceOptionConnect = use('App/Models/ResidenceOptionConnect');
 const ResidenceComment       = use('App/Models/ResidenceComment');
+const UpgradeOption          = use('App/Models/UpgradeOption');
+const Transaction            = use('App/Models/Transaction');
+const ResidenceUpgrade       = use('App/Models/ResidenceUpgrade');
 const ViewAd                 = use('App/Models/ViewAd');
 const PackageBuy             = use('App/Models/PackageBuy');
-const { sleep }              = require('../Helper');
+const { sleep, makeidF }     = require('../Helper');
 const Database               = use('Database');
 const Ticket                 = use('App/Models/Ticket');
 const TicketPm               = use('App/Models/TicketPm');
+const Env                    = use('Env');
+const ZarinpalCheckout       = require('zarinpal-checkout');
+const zarinpal               = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), true);
 
 class ResidenceController {
   async Fetch({ auth, request, response }) {
@@ -40,6 +46,9 @@ class ResidenceController {
       .with('Season')
       .where('archive', 0)
       .where('status', 2);
+    userIsExist.with('favorite', q => {
+      q.where('user_id', auth.user.id);
+    });
     if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
       let userIsExist2 = await Residence.query()
         .orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%').fetch();
@@ -130,6 +139,26 @@ class ResidenceController {
     }
     if (request.body.sen1 != 0 && request.body.sen2 != 0) {
       userIsExist.where('age', '>', request.body.sen1).where('age', '<', request.body.sen2);
+    }
+    if (!!request.body.sort && request.body.sort != 0) {
+      if (request.body.sort == 1)
+        userIsExist.orderBy('created_at', 'desc');
+      else if (request.body.sort == 2)
+        userIsExist.orderBy('created_at', 'asc');
+      if (request.body.sort == 3)
+        userIsExist.orderBy('month_discount', 'asc');
+      else if (request.body.sort == 4)
+        userIsExist.orderBy('month_discount', 'desc');
+    }
+    if (!!request.body.filter && request.body.filter.length != 0 && request.body.filter != 0) {
+      if (request.body.filter.filter(e => e == 'different').length != 0)
+        userIsExist.where('different', '!=', '0');
+      if (request.body.filter.filter(e => e == 'instantaneous').length != 0)
+        userIsExist.where('instantaneous', '!=', '0');
+      if (request.body.filter.filter(e => e == 'special').length != 0)
+        userIsExist.where('Special', '!=', '0');
+      if (request.body.filter.filter(e => e == 'occasion').length != 0)
+        userIsExist.where('occasion', '!=', '0');
     }
     pictureArray = [];
     if (request.body.toor) {
@@ -826,33 +855,98 @@ class ResidenceController {
     response.json({ status_code: 200, status_text: 'Successfully Done', id: res.id });
   }
 
-  async upgradeLevel({ auth, request, response }) {
+  async sendupgradeLevel({ auth, request, response }) {
     const {
+            product_id,
             residence_id,
             different,
             instantaneous,
             Special,
             occasion,
-          } = request.all();
-    let res = await Residence.query().where('id', residence_id).last();
-    if (different === true)
-      res.different = 1;
-    else
-      res.different = 0;
-    if (instantaneous === true)
-      res.instantaneous = 1;
-    else
-      res.instantaneous = 0;
-    if (Special === true)
-      res.Special = 1;
-    else
-      res.Special = 0;
-    if (occasion === true)
-      res.occasion = 1;
-    else
-      res.occasion = 0;
-    res.save();
-    return response.json({ status_code: 200 });
+          }    = request.all();
+    const slug = makeidF(6);
+    for (let residenceIdElement of residence_id) {
+      let ru = await ResidenceUpgrade.create({
+        product_id,
+        user_id: auth.user.id,
+        residence_id: residenceIdElement,
+        transaction_slug: slug,
+        different,
+        instantaneous,
+        Special,
+        occasion,
+      });
+    }
+
+    let price = 0;
+    let up    = await UpgradeOption.query().fetch();
+    for (let upElement of up.rows) {
+      if (different && upElement.slug == 'different')
+        price += parseInt(upElement.price);
+      if (instantaneous && upElement.slug == 'instantaneous')
+        price += parseInt(upElement.price);
+      if (Special && upElement.slug == 'Special')
+        price += parseInt(upElement.price);
+      if (occasion && upElement.slug == 'occasion')
+        price += parseInt(upElement.price);
+    }
+    let resp = await zarinpal.PaymentRequest({
+      Amount: price,
+      CallbackURL: `${Env.get('APP_URL')}/api/user/verify/residence/upgrade/${slug}`,
+      Description: `خرید ارتقاء دهنده پست`,
+    });
+    let tra  = await Transaction.create({
+      user_id: auth.user.id,
+      slug: slug,
+      gateway: 'zarinpal',
+      type_of_transaction: 'upgrade',
+      ref_2: resp.authority,
+      ref_3: 0,
+      price: price,
+      price_without: price,
+      description: `خرید ارتقاء دهنده پست`,
+    });
+
+    return response.json({ status_code: 200, url: `${resp.url}` });
+  }
+
+  async verifyupgradeLevel({ auth, request, response }) {
+    const {
+            ref_2,
+            price,
+          }    = await Transaction.query().where('slug', request.params.slug).last();
+    const awda = await ResidenceUpgrade.query().where('transaction_slug', request.params.slug).fetch();
+    let resp   = await zarinpal.PaymentVerification({
+      Amount: price, // In Tomans
+      Authority: ref_2,
+    });
+    if (resp.status !== 100) {
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/unsuccess`);
+    } else {
+      let transaction    = await Transaction.query().where('slug', request.params.slug).last();
+      transaction.status = 2;
+      transaction.ref_2  = resp.RefID;
+      transaction.save();
+      for (let row of awda.rows) {
+        let res = await Residence.query().where('id', row.residence_id).last();
+        if (row.different == 1)
+          res.different = new Date().getTime() + (60 * 60 * 24 * 1000);
+        if (row.instantaneous == 1)
+          res.instantaneous = new Date().getTime() + (60 * 60 * 24 * 1000);
+        if (row.Special == 1) {
+          res.Special    = new Date().getTime() + (60 * 60 * 24 * 1000);
+          res.product_id = row.product_id;
+        }
+        if (row.occasion == 1)
+          res.occasion = new Date().getTime() + (60 * 60 * 24 * 1000);
+        res.save();
+      }
+      return response.redirect(`${Env.get('VIEW_URL')}/pay/success`);
+    }
+  }
+
+  async fetchUpgradeOption({ auth, request, response }) {
+    return response.json(await UpgradeOption.query().with('products').fetch());
   }
 
   async removeFile({ auth, request, response }) {

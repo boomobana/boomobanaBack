@@ -61,6 +61,7 @@ Route.group(() => {
   Route.post('/login/activity', 'UserController.loginActivityFetch');
 
   Route.post('/melk/add', 'ResidenceController.addMelk');
+  Route.post('/upgrade/option/fetch', 'ResidenceController.fetchUpgradeOption');
 
   Route.post('/residence/add', 'ResidenceController.add');
   Route.post('/residence/capacity', 'ResidenceController.changeCapacity');
@@ -83,7 +84,7 @@ Route.group(() => {
   Route.post('/residence/price/max/man', 'ResidenceController.changePriceMaxMan');
   Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
   Route.post('/residence/level/change', 'ResidenceController.levelChange');
-  Route.post('/residence/upgrade/payment', 'ResidenceController.upgradeLevel');
+  Route.post('/residence/upgrade/payment', 'ResidenceController.sendupgradeLevel');
   Route.post('/residence/comment/add', 'ResidenceController.addResidenceComment');
 
   Route.post('/residence/favorite/add', 'ResidenceController.favoriteAdd');
@@ -218,6 +219,7 @@ Route.group(() => {
 
   Route.get('gateway/zarinpal/send/:slug', 'TransactionController.send');
   Route.get('gateway/zarinpal/verify/:slug', 'TransactionController.verify');
+  Route.get('/verify/residence/upgrade/:slug', 'ResidenceController.verifyupgradeLevel');
 
   Route.get('/wallet/money/send/:slug', 'WalletController.sendPayment');
   Route.get('/wallet/money/get/:slug', 'WalletController.getPayment');

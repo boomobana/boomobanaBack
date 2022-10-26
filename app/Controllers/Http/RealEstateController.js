@@ -5,6 +5,7 @@
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const RealEstate = use('App/Models/RealEstate'),
+      Region     = use('App/Models/Region'),
       Residence  = use('App/Models/Residence');
 
 /**
@@ -32,6 +33,11 @@ class RealEstateController {
         .orWhere('firstname', 'like', '%' + request.body.textSearch + '%')
         .orWhere('lastname_en', 'like', '%' + request.body.textSearch + '%')
         .orWhere('firstname_en', 'like', '%' + request.body.textSearch + '%');
+    /*if (request.body.province_id && request.body.province_id != 0)
+      data.whereIn('region',
+        ((await Region.query().where('province_id', request.body.province_id).fetch()).rows.map(e => e.id)),
+      );
+    console.log(((await Region.query().where('province_id', request.body.province_id).fetch()).rows.map(e => e.id)));*/
     return response.json(await data.select([
       'id',
       'name',

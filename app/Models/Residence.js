@@ -9,6 +9,10 @@ class Residence extends Model {
     return this.hasMany('App/Models/ResidenceFile');
   }
 
+  favorite() {
+    return this.hasMany('App/Models/FavoriteAd', 'id', 'ad_id');
+  }
+
   Option() {
     return this.hasMany('App/Models/ResidenceOptionConnect').with('Option');
   }

@@ -16,8 +16,28 @@ class FileArchive extends Task {
       let dayChanged = ((nowTime - timeStmp) / 60 / 60 / 24) / 1000;
       if (dayChanged > 45) {
         row.archive = 1;
-        row.save();
       }
+      if (row.different != 0) {
+        if (row.different < nowTime) {
+          row.different = 0;
+        }
+      }
+      if (row.instantaneous != 0) {
+        if (row.instantaneous < nowTime) {
+          row.instantaneous = 0;
+        }
+      }
+      if (row.occasion != 0) {
+        if (row.occasion < nowTime) {
+          row.occasion = 0;
+        }
+      }
+      if (row.Special != 0) {
+        if (row.Special < nowTime) {
+          row.Special = 0;
+        }
+      }
+      row.save();
     }
     console.log('Cron Job Running');
   }
