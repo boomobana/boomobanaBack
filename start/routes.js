@@ -197,6 +197,9 @@ Route.group(() => {
 
   Route.post('/wallet/request/add', 'WalletController.walletRequestPlus');
 
+  //
+  Route.post('/realestate/link', 'RealEstateController.indexFetchMyLinks');
+
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
   // blogger
@@ -358,4 +361,30 @@ Route.group(() => {
 
   //advisor
   Route.post('/advisor/request/fetch', 'AdvisorController.requestAdviserFetchAdmin');
+
+  // add realestate
+  Route.post('/melk/add', 'ResidenceController.addMelk');
+  Route.post('/upgrade/option/fetch', 'ResidenceController.fetchUpgradeOption');
+
+  Route.post('/residence/add', 'ResidenceController.add');
+  Route.post('/residence/capacity', 'ResidenceController.changeCapacity');
+  Route.post('/residence/location', 'ResidenceController.changeLocation');
+
+  Route.post('/residence/file/add', 'ResidenceFileController.addPicture');
+  Route.post('/residence/file/description', 'ResidenceFileController.changeDescription');
+  Route.post('/residence/file/fetch', 'ResidenceFileController.fetchFile');
+
+  Route.post('/residence/option/connect/reset', 'ResidenceOptionConnectController.delete');
+  Route.post('/residence/option/connect/add', 'ResidenceOptionConnectController.create');
+
+  Route.post('/residence/type/option/connect/add', 'ResidenceTypeOptionController.changeType');
+  Route.post('/residence/change/status', 'ResidenceTypeOptionController.changeStatus');
+
+  Route.post('/residence/room/add', 'RoomController.addRoom');
+
+  Route.post('/residence/season/add', 'SeasonConnectController.addSeason');
+  Route.post('/residence/change/date', 'ResidenceController.changeDate');
+  Route.post('/residence/price/max/man', 'ResidenceController.changePriceMaxMan');
+  Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
+  Route.post('/residence/level/change', 'ResidenceController.levelChange');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

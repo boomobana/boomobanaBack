@@ -65,6 +65,7 @@ class TicketController {
     const {
             title,
             description,
+            file_url,
           }             = request.all();
     const {
             rule,
@@ -96,6 +97,8 @@ class TicketController {
       jsonNewTicketPm.user_type = rule;
     }
     jsonNewTicketPm.pm = description;
+    if (file_url && file_url !== '')
+      jsonNewTicketPm.file_url = file_url;
 
     let newTicketPm = await TicketPm.create(jsonNewTicketPm);
     return response.json({ status_code: 200, status_text: 'successfully done', id: newTicket.id });
@@ -124,12 +127,16 @@ class TicketController {
           ticket_id,
           user_type,
           pm,
+          file_url,
         }               = request.all();
     let newTicket       = new TicketPm();
     newTicket.ticket_id = ticket_id;
     newTicket.user_id   = auth.user.id;
     newTicket.user_type = user_type;
     newTicket.pm        = pm;
+    if (file_url && file_url !== '')
+      newTicket.file_url = file_url;
+
     await newTicket.save();
 
     let ticket2sda    = await Ticket.query().where('id', ticket_id).last();

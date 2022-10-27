@@ -59,7 +59,7 @@ class ResidenceController {
       userIsExist.whereIn('id', res);
     }
     if (request.body.realestate && request.body.realestate != 0 && request.body.realestate != null) {
-      userIsExist.whereIn('user_id', [request.body.realestate]);
+      userIsExist.where('user_id', request.body.realestate);
     }
     if (typeof request.body.type === 'string') {
       if (request.body.type != 'nothing') {
@@ -375,6 +375,7 @@ class ResidenceController {
           rule,
         }   = request.headers();
     let res = new Residence();
+    res.user_id = auth.user.id;
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();
     }
@@ -384,7 +385,6 @@ class ResidenceController {
     res.region_id   = region_id;
     res.type        = type;
     res.rule        = rule;
-    res.user_id     = auth.user.id;
     await res.save();
     await sleep(1000);
     let residence = await Residence.query().where('title', '=', title).where('description', '=', description).where('user_id', '=', auth.user.id).last();

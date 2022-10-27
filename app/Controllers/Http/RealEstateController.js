@@ -4,9 +4,10 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-const RealEstate = use('App/Models/RealEstate'),
-      Region     = use('App/Models/Region'),
-      Residence  = use('App/Models/Residence');
+const RealEstate     = use('App/Models/RealEstate'),
+      Region         = use('App/Models/Region'),
+      RealestateLink = use('App/Models/RealestateLink'),
+      Residence      = use('App/Models/Residence');
 
 /**
  * Resourceful controller for interacting with realestates
@@ -24,6 +25,13 @@ class RealEstateController {
   async index({ request, response, view }) {
   }
 
+  async indexFetchMyLinks({ request, response, auth }) {
+    if (request.body.type == 1)
+      return response.json(await RealestateLink.query().with('Residence').where('user_id', auth.user.id).fetch());
+    else if (request.body.type == 2)
+      return response.json(await RealestateLink.query().with('Request').where('user_id', auth.user.id).fetch());
+  }
+
   async fetchOnly({ request, response, auth }) {
     let data = RealEstate.query().where('pageSignup', '3').whereNot('name', '-').where('active', '1');
     if (request.body.textSearch && request.body.textSearch != '' && request.body.textSearch !== null)
@@ -38,6 +46,14 @@ class RealEstateController {
         ((await Region.query().where('province_id', request.body.province_id).fetch()).rows.map(e => e.id)),
       );
     console.log(((await Region.query().where('province_id', request.body.province_id).fetch()).rows.map(e => e.id)));*/
+    if (request.body.firstname && request.body.firstname != '' && request.body.firstname != 0)
+      data.where('firstname', 'like', `%${request.body.firstname}%`);
+    if (request.body.lastname && request.body.lastname != '' && request.body.lastname != 0)
+      data.where('lastname', 'like', `%${request.body.lastname}%`);
+    if (request.body.name && request.body.name != '' && request.body.name != 0)
+      data.where('name', 'like', `%${request.body.name}%`);
+    if (request.body.mobile && request.body.mobile != '' && request.body.mobile != 0)
+      data.where('mobile', 'like', `%${request.body.mobile}%`);
     return response.json(await data.select([
       'id',
       'name',

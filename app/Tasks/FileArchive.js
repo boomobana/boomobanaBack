@@ -2,6 +2,7 @@
 
 const Task      = use('Task');
 const Residence = use('App/Models/Residence');
+const Database  = use('Database');
 
 class FileArchive extends Task {
   static get schedule() {
@@ -9,6 +10,7 @@ class FileArchive extends Task {
   }
 
   async handle() {
+    console.log('Cron Job Running');
     let data = await Residence.query().where('archive', 0).fetch();
     for (let row of data.rows) {
       let timeStmp   = new Date(row.updated_at).getTime();
@@ -39,7 +41,7 @@ class FileArchive extends Task {
       }
       row.save();
     }
-    console.log('Cron Job Running');
+    await Database.raw(`UPDATE tickets set status = '3' WHERE updated_at <= NOW() - INTERVAL 3 DAY`);
   }
 }
 
