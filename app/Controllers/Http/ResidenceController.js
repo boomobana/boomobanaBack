@@ -46,9 +46,15 @@ class ResidenceController {
       .with('Season')
       .where('archive', 0)
       .where('status', 2);
-    userIsExist.with('favorite', q => {
-      q.where('user_id', auth.user.id);
-    });
+    try {
+      if (await auth.check()) {
+        userIsExist.with('favorite', q => {
+          q.where('user_id', auth.user.id);
+        });
+      }
+    } catch (e) {
+      console.log('not loggedin');
+    }
     if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
       let userIsExist2 = await Residence.query()
         .orWhere('title', 'like', '%' + request.body.text + '%').orWhere('description', 'like', '%' + request.body.text + '%').fetch();
@@ -140,6 +146,7 @@ class ResidenceController {
     if (request.body.sen1 != 0 && request.body.sen2 != 0) {
       userIsExist.where('age', '>', request.body.sen1).where('age', '<', request.body.sen2);
     }
+    userIsExist.orderBy('different', 'desc').orderBy('id', 'desc');
     if (!!request.body.sort && request.body.sort != 0) {
       if (request.body.sort == 1)
         userIsExist.orderBy('created_at', 'desc');
@@ -150,6 +157,7 @@ class ResidenceController {
       else if (request.body.sort == 4)
         userIsExist.orderBy('month_discount', 'desc');
     }
+
     if (!!request.body.filter && request.body.filter.length != 0 && request.body.filter != 0) {
       if (request.body.filter.filter(e => e == 'different').length != 0)
         userIsExist.where('different', '!=', '0');
@@ -370,11 +378,11 @@ class ResidenceController {
           province_id,
           region_id,
           type,
-        }   = request.all();
+        }       = request.all();
     let {
           rule,
-        }   = request.headers();
-    let res = new Residence();
+        }       = request.headers();
+    let res     = new Residence();
     res.user_id = auth.user.id;
     if (request.body.residence_id != 0) {
       res = await Residence.query().where('id', request.body.residence_id).last();

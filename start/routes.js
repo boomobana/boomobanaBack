@@ -61,7 +61,6 @@ Route.group(() => {
   Route.post('/login/activity', 'UserController.loginActivityFetch');
 
   Route.post('/melk/add', 'ResidenceController.addMelk');
-  Route.post('/upgrade/option/fetch', 'ResidenceController.fetchUpgradeOption');
 
   Route.post('/residence/add', 'ResidenceController.add');
   Route.post('/residence/capacity', 'ResidenceController.changeCapacity');
@@ -232,6 +231,7 @@ Route.group(() => {
 
   Route.get('/request/payment/send/:slug', 'SaveRequestController.sendPayment');
   Route.get('/request/payment/get/:slug', 'SaveRequestController.getPayment');
+  Route.post('/upgrade/option/fetch', 'ResidenceController.fetchUpgradeOption');
 
   Route.post('/polici/fetch', 'PoliciController.index');
   Route.post('/festivals', 'FestivalController.index');
