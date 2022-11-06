@@ -85,12 +85,13 @@ class UserController {
   async fetchPostssearch({ auth, request, response }) {
     const {
             text,
+            province_id,
           } = request.all();
     if (text == '' || text == null) {
-      let province2 = await Province.query().fetch();
-      return response.json({ type: 'region', 'region': [], 'province': province2 });
+      let province2 = await Region.query().where('province_id', province_id).fetch();
+      return response.json({ type: 'region', 'province': [], 'region': province2 });
     }
-    let region2   = await Region.query().where('title', 'like', '%' + text + '%').fetch();
+    let region2   = await Region.query().where('province_id', province_id).fetch();
     let province2 = await Province.query().where('title', 'like', '%' + text + '%').fetch();
     if (region2.rows.length > 0) {
       return response.json({ type: 'region', 'region': region2, 'province': province2 });
