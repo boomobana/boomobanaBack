@@ -675,6 +675,7 @@ class AuthController {
                 address,
               }                      = request.all();
         userStart.pageSignup         = 3;
+        userStart.pageSignup         = 3;
         userStart.type               = type;
         userStart.shomare_hesab      = shomare_hesab;
         userStart.card_number        = card_number;
