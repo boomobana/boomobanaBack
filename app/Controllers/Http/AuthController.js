@@ -675,7 +675,7 @@ class AuthController {
                 address,
               }                      = request.all();
         userStart.pageSignup         = 3;
-        userStart.pageSignup         = 3;
+        userStart.active             = 1;
         userStart.type               = type;
         userStart.shomare_hesab      = shomare_hesab;
         userStart.card_number        = card_number;
@@ -785,6 +785,7 @@ class AuthController {
       user.lastname  = userIsExist.lastname;
       user.mobile    = userIsExist.mobile;
       user.password  = userIsExist.password;
+      user.active    = 1;
       // user.password = Hash.make(request.input('password'));
       user.save();
     } else if (rule === 'realEstate') {
@@ -802,6 +803,7 @@ class AuthController {
       user.lastname  = userIsExist.lastname;
       user.mobile    = userIsExist.mobile;
       user.password  = userIsExist.password;
+      user.active    = 1;
       // user.password = Hash.make(request.input('password'));
       user.save();
     }
