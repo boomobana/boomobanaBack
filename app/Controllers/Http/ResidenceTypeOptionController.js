@@ -66,6 +66,11 @@ class ResidenceTypeOptionController {
     let {
           residence_id,
           answer_name,
+          real_address,
+          lat,
+          lng,
+          province_id,
+          region_id,
           answer_mobile,
           showing_call,
         } = request.all();
@@ -75,6 +80,11 @@ class ResidenceTypeOptionController {
     res.showing_call  = showing_call;
     res.answer_name   = answer_name;
     res.answer_mobile = answer_mobile;
+    res.real_address  = real_address;
+    res.lat           = lat;
+    res.lng           = lng;
+    res.province_id   = province_id;
+    res.region_id     = region_id;
 
     await res.save();
     // todo send sms here if user accept to receive sms and if post added for the first time

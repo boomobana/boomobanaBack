@@ -404,23 +404,10 @@ class ResidenceController {
       title: 'required',
       description: 'required',
       archive: 'required',
-      lat: 'required',
-      lng: 'required',
-      all_area: 'required',
-      age: 'required',
-      province_id: 'required',
-      region_id: 'required',
       RTO1: 'required',
       RTO2: 'required',
       RTO3: 'required',
-      real_address: 'required',
-      month_discount: 'required',
-      floor_area: 'required',
-      width_area: 'required',
-      height_area: 'required',
       // room_count: 'required',
-      floor_count: 'required',
-      floor_unit_count: 'required',
     };
     const validation = await validate(request.all(), rules);
     if (validation.fails()) {
@@ -432,12 +419,7 @@ class ResidenceController {
     let {
           title,
           description,
-          real_address,
           type,
-          lat,
-          lng,
-          province_id,
-          region_id,
           RTO1,
           RTO2,
           RTO3,
@@ -455,7 +437,7 @@ class ResidenceController {
         }    = request.all();
     let res  = new Residence();
     res.rule = rule;
-    if (request.body.residence_id != 0) {
+    if (request.body.residence_id != 0 && request.body.residence_id != null) {
       res = await Residence.query().where('id', request.body.residence_id).last();
     } else {
       if (rule === 'realEstate') {
@@ -469,13 +451,8 @@ class ResidenceController {
     }
     res.title          = title;
     res.description    = description;
-    res.real_address   = real_address;
     res.type           = type;
     res.archive        = archive;
-    res.lat            = lat;
-    res.lng            = lng;
-    res.province_id    = province_id;
-    res.region_id      = region_id;
     res.all_area       = all_area;
     res.rto_1          = RTO1;
     res.rto_2          = RTO2;
