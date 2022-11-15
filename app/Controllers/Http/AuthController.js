@@ -551,7 +551,6 @@ class AuthController {
 
   async SendModirDet({ auth, request, response }) {
     const rules            = {
-      mobile: 'required',
       firstname: 'required',
       lastname: 'required',
       national_id: 'required',
@@ -575,7 +574,6 @@ class AuthController {
           } = request.headers();
     var userStart;
     const {
-            mobile,
             firstname,
             lastname,
             national_id,
@@ -614,7 +612,7 @@ class AuthController {
               kartMeli,
               about,
             }                = request.all();
-      userStart              = await RealEstate.query().where('mobile', mobile).last();
+      userStart              = await RealEstate.query().where('id', auth.user.id).last();
       userStart.firstname_en = firstname_en;
       userStart.lastname_en  = lastname_en;
       userStart.kartMeli     = kartMeli;
@@ -628,7 +626,7 @@ class AuthController {
       userStart.shaba_number       = shaba_number;
       userStart.card_number        = card_number;
     } else if (rule === 'user') {
-      userStart         = await User.query().where('mobile', mobile).last();
+      userStart = await User.query().where('id', auth.user.id).last();
       const rules2      = {
         kart_meli: 'required',
         bio: 'required',
@@ -648,7 +646,6 @@ class AuthController {
       userStart.lastname    = lastname;
       userStart.national_id = national_id;
       userStart.male        = male;
-      userStart.mobile      = mobile;
       userStart.avatar      = avatar;
       userStart.birthday    = birthday;
 
@@ -735,8 +732,34 @@ class AuthController {
       }
     }
 
+    const {
+            address,
+            province,
+            region,
+            lat,
+            lng,
+            username,
+            telegram,
+            whatsapp,
+            instagram,
+            linkedin,
+            twitter,
+          } = request.all();
+    console.log(request.all());
+    userStart.address   = address;
+    userStart.province  = province;
+    userStart.region    = region;
+    userStart.lat       = lat;
+    userStart.lng       = lng;
+    userStart.username  = username;
+    userStart.telegram  = telegram;
+    userStart.whatsapp  = whatsapp;
+    userStart.instagram = instagram;
+    userStart.linkedin  = linkedin;
+    userStart.twitter   = twitter;
+
     await userStart.save();
-    let us     = await User.query().where('mobile', mobile).last();
+    let us     = await User.query().where('id', auth.user.id).last();
     let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
     let ipA    = await request.ip();
     this.makeLoginActivity(us, userOs, ipA);
