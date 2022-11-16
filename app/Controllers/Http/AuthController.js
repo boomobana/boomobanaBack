@@ -579,6 +579,7 @@ class AuthController {
             national_id,
             male,
             avatar,
+            teaser,
             birthday,
           } = request.all();
     if (rule === 'realEstate' || rule === 'shobe') {
@@ -647,6 +648,7 @@ class AuthController {
       userStart.national_id = national_id;
       userStart.male        = male;
       userStart.avatar      = avatar;
+      userStart.teaser      = teaser;
       userStart.birthday    = birthday;
 
       if (request.input('type') == 1) {
