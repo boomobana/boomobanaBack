@@ -10,7 +10,7 @@ const { validate }          = use('Validator');
 const Env                   = use('Env');
 const ZarinpalCheckout      = require('zarinpal-checkout');
 const { randomNum }         = require('../Helper');
-const zarinpal              = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
+const zarinpal              = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), true);
 
 /**
  * Resourceful controller for interacting with saverequests
@@ -106,7 +106,6 @@ class SaveRequestController {
     const rules      = {
       type: 'required',
       name: 'required',
-      zaman_bazdid: 'required',
       zaman_karshenasi: 'required',
       metrazh: 'required',
       title: 'required',
@@ -124,7 +123,6 @@ class SaveRequestController {
     const {
             type,
             name,
-            zaman_bazdid,
             zaman_karshenasi,
             metrazh,
             title,
@@ -142,7 +140,6 @@ class SaveRequestController {
     newReq.user_id               = user.id;
     newReq.type                  = type;
     newReq.name                  = name;
-    newReq.zaman_bazdid          = zaman_bazdid;
     newReq.zaman_tamas_karshenas = zaman_karshenasi;
     newReq.metrazh               = metrazh;
     newReq.title                 = title;
@@ -171,7 +168,6 @@ class SaveRequestController {
       const rules3      = {
         rto_1: 'required',
         rto_2: 'required',
-        age: 'required',
         lat: 'required',
         lng: 'required',
         arz: 'required',
@@ -183,7 +179,6 @@ class SaveRequestController {
         return response.json(validation3.messages());
       }
       const {
-              age,
               lat,
               lng,
               rto_1,
@@ -192,7 +187,6 @@ class SaveRequestController {
               tool,
             }        = request.all();
       newReq.metrazh = metrazh;
-      newReq.age     = age;
       newReq.lat     = lat;
       newReq.lng     = lng;
       newReq.rto_2   = rto_1;

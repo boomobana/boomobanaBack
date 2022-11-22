@@ -8,7 +8,7 @@ const Residence        = use('App/Models/Residence');
 const Reserved         = use('App/Models/Reserved');
 const Env              = use('Env');
 const ZarinpalCheckout = require('zarinpal-checkout');
-const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
+const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), true);
 const {
         randomNum,
         makeidF, changeAmount,

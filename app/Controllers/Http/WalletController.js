@@ -10,7 +10,7 @@ const Ticket           = use('App/Models/Ticket');
 const TicketPm         = use('App/Models/TicketPm');
 const Env              = use('Env');
 const ZarinpalCheckout = require('zarinpal-checkout');
-const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
+const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), true);
 
 const {
         changeAmount,

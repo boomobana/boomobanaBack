@@ -13,7 +13,7 @@ const TicketPm         = use('App/Models/TicketPm');
 const Env              = use('Env');
 const ZarinpalCheckout = require('zarinpal-checkout');
 const { rule }         = require('@adonisjs/validator/src/Validator');
-const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), false);
+const zarinpal         = ZarinpalCheckout.create(Env.get('ZARINPAL_MERCHANT_KEY'), true);
 const Sms              = use('App/Controllers/Http/SmsSender');
 
 /**
