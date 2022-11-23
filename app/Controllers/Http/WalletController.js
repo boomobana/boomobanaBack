@@ -44,7 +44,7 @@ class WalletController {
         }    = await WalletRequest.query().where('slug', slug).last();
     let resp = await zarinpal.PaymentRequest({
       Amount: price, // In Tomans
-      CallbackURL: `${Env.get('APP_URL')}/api/user/wallet/money/get/${slug}`,
+      CallbackURL: `${Env.get('PAYMENT_URL')}/api/user/wallet/money/get/${slug}`,
       Description: 'شارژ کیف  پول سامانه بوم و بنا',
     });
     if (resp.status === 100) {

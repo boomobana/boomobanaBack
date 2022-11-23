@@ -57,7 +57,7 @@ class SaveRequestController {
       return response.send('payed before');
     let resp = await zarinpal.PaymentRequest({
       Amount: price_carshenas, // In Tomans
-      CallbackURL: `${Env.get('APP_URL')}/api/user/request/payment/get/${slug}`,
+      CallbackURL: `${Env.get('PAYMENT_URL')}/api/user/request/payment/get/${slug}`,
       Description: description,
     });
     if (resp.status === 100) {

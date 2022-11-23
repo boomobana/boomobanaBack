@@ -877,7 +877,7 @@ class ResidenceController {
     }
     let resp = await zarinpal.PaymentRequest({
       Amount: price,
-      CallbackURL: `${Env.get('APP_URL')}/api/user/verify/residence/upgrade/${slug}`,
+      CallbackURL: `${Env.get('PAYMENT_URL')}/api/user/verify/residence/upgrade/${slug}`,
       Description: `خرید ارتقاء دهنده پست`,
     });
     let tra  = await Transaction.create({

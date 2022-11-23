@@ -55,7 +55,7 @@ class TransactionController {
       return response.send('payed before');
     let resp = await zarinpal.PaymentRequest({
       Amount: price, // In Tomans
-      CallbackURL: `${Env.get('APP_URL')}/api/user/gateway/zarinpal/verify/${slug}`,
+      CallbackURL: `${Env.get('PAYMENT_URL')}/api/user/gateway/zarinpal/verify/${slug}`,
       Description: description,
     });
     if (resp.status === 100) {
