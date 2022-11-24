@@ -60,6 +60,7 @@ class RealEstateController {
       'avatar',
       'lastname',
       'firstname',
+      'username',
     ]).fetch());
   }
 

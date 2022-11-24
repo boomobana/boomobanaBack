@@ -79,6 +79,11 @@ class ResidenceFileController {
     return response.json(res);
   }
 
+  async removeFile({ request, response }) {
+    let res = await ResidenceFile.query().where('id', request.body.id).delete();
+    return response.json({ status_code: 200 });
+  }
+
   async changeDescription({ request, response }) {
     const rules      = {
       id: 'required',

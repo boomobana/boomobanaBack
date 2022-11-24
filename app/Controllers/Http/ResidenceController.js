@@ -227,8 +227,11 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = FavoriteAd.query().where('user_id', auth.user.id).orderBy('id', 'desc').with('Residence');
-
+    let userIsExist = FavoriteAd.query().where('user_id', auth.user.id).orderBy('id', 'desc').with('Residence', q => {
+      q.with('favorite', q => {
+        q.where('user_id', auth.user.id);
+      });
+    });
     return response.json(await userIsExist.fetch());
   }
 
