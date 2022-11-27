@@ -25,6 +25,11 @@ class BlogPostController {
       .with('comment')
       .with('category')
       .where('active', 1);
+    if (request.body.province_id) {
+      if (request.body.province_id != null) {
+        data.where('province', request.body.province_id);
+      }
+    }
     if (request.body.type === 'tag') {
 
     } else if (request.body.type === 'cat') {
@@ -40,6 +45,19 @@ class BlogPostController {
         }
       } else {
         subCatsArr.push(SubCat.id);
+      }
+      cats = await BlogCategoryPost.query().whereIn('category_id', subCatsArr).fetch();
+      for (let cat in cats.rows) {
+        catsArr.push(cats.rows[cat].post_id);
+      }
+      data.whereIn('id', catsArr);
+    } else if (request.body.type === 'typeResidence') {
+      let catsArr    = [];
+      let subCatsArr = [];
+      let cats;
+      let SubCats    = await BlogCategory.query().where('type_residence', request.body.id).fetch();
+      for (let cat in SubCats.rows) {
+        subCatsArr.push(SubCats.rows[cat].id);
       }
       cats = await BlogCategoryPost.query().whereIn('category_id', subCatsArr).fetch();
       for (let cat in cats.rows) {
@@ -84,13 +102,6 @@ class BlogPostController {
     if (validation.fails()) {
       return response.json(validation.messages());
     }
-    let {
-          title,
-          body,
-          body_more,
-          active,
-          price,
-        }              = request.all();
     let slug           = makeidF(20);
     let { categories } = request.all();
     let data           = request.body;
