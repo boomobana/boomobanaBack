@@ -86,20 +86,60 @@ class UserController {
     const {
             text,
             province_id,
-          } = request.all();
+          }     = request.all();
+    let region3 = Region.query().where('province_id', province_id);
+    if (text != '' && text != null)
+      region3.where('title', 'like', `%${text}%`);
+    let region2    = await region3.fetch();
+    let province2  = await Province.query().where('title', 'like', '%' + text + '%').fetch();
+    let residence3 = await Residence.query()
+      .select(['id'])
+      .where('title', 'like', '%' + text + '%').orWhere('description', 'like', '%' + text + '%').orWhere('real_address', 'like', '%' + text + '%')
+      .fetch();
+    let resIds     = [];
+    for (let row of residence3.rows) {
+      resIds.push(row.id);
+    }
+    let residence2 = await Residence.query()
+      .whereIn('id', resIds)
+      .where('archive', 0)
+      .where('status', 2)
+      .fetch();
+    if (residence2.rows.length != 0)
+      return response.json({ type: 'all', 'residence': residence2.rows });
+
+    let user3   = await User.query()
+      .select(['id'])
+      .where('firstname', 'like', '%' + text + '%')
+      .orWhere('lastname', 'like', '%' + text + '%')
+      .orWhere('firstname_en', 'like', '%' + text + '%')
+      .orWhere('lastname_en', 'like', '%' + text + '%')
+      .orWhere('name', 'like', '%' + text + '%')
+      .orWhere('name_en', 'like', '%' + text + '%')
+      .orWhere('mobile', 'like', '%' + text + '%')
+      .orWhere('address', 'like', '%' + text + '%')
+      .orWhere('username', 'like', '%' + text + '%')
+      .fetch();
+    let userIds = [];
+    for (let row of user3.rows) {
+      userIds.push(row.id);
+    }
+    let user2 = await User.query()
+      .whereIn('id', userIds)
+      .where('username', '!=', '-')
+      .select(['id', 'firstname', 'lastname', 'avatar', 'username'])
+      .fetch();
+    if (user2.rows.length != 0)
+      return response.json({ type: 'user', 'residence': [], 'user': user2.rows });
+
+    if (region2.rows.length != 0) {
+      return response.json({ type: 'region', 'region': region2, 'province': province2 });
+    } else if (province2.rows.length != 0) {
+      return response.json({ type: 'region', 'region': region2, 'province': province2 });
+    }
     if (text == '' || text == null) {
       let province2 = await Region.query().where('province_id', province_id).fetch();
       return response.json({ type: 'region', 'province': [], 'region': province2 });
-    }
-    let region2   = await Region.query().where('province_id', province_id).fetch();
-    let province2 = await Province.query().where('title', 'like', '%' + text + '%').fetch();
-    if (region2.rows.length > 0) {
-      return response.json({ type: 'region', 'region': region2, 'province': province2 });
-    } else if (province2.rows.length > 0) {
-      return response.json({ type: 'region', 'region': region2, 'province': province2 });
-    } else {
-      let residence2 = await Residence.query().where('title', 'like', '%' + text + '%').orWhere('description', 'like', '%' + text + '%').orWhere('real_address', 'like', '%' + text + '%').fetch();
-      return response.json({ type: 'all', 'residence': residence2.rows });
     }
     return response.json({ status_code: 200 });
   }
