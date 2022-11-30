@@ -12,6 +12,7 @@ const Residence          = use('App/Models/Residence');
 const ViewAd             = use('App/Models/ViewAd');
 const UserCode           = use('App/Models/UserCode');
 const FavoriteAd         = use('App/Models/FavoriteAd');
+const BlogPost           = use('App/Models/BlogPost');
 const User               = use('App/Models/User');
 const ResidenceComment   = use('App/Models/ResidenceComment');
 const Reserved           = use('App/Models/Reserved');
@@ -102,11 +103,10 @@ class UserController {
     }
     let residence2 = await Residence.query()
       .whereIn('id', resIds)
+      .where('province_id', province_id)
       .where('archive', 0)
       .where('status', 2)
       .fetch();
-    if (residence2.rows.length != 0)
-      return response.json({ type: 'all', 'residence': residence2.rows });
 
     let user3   = await User.query()
       .select(['id'])
@@ -129,19 +129,29 @@ class UserController {
       .where('username', '!=', '-')
       .select(['id', 'firstname', 'lastname', 'avatar', 'username'])
       .fetch();
-    if (user2.rows.length != 0)
-      return response.json({ type: 'user', 'residence': [], 'user': user2.rows });
 
-    if (region2.rows.length != 0) {
-      return response.json({ type: 'region', 'region': region2, 'province': province2 });
-    } else if (province2.rows.length != 0) {
-      return response.json({ type: 'region', 'region': region2, 'province': province2 });
+    let blogger3   = await BlogPost.query()
+      .select(['id'])
+      .where('title', 'like', '%' + text + '%')
+      .orWhere('body', 'like', '%' + text + '%')
+      .orWhere('body_more', 'like', '%' + text + '%')
+      .fetch();
+    let bloggerIds = [];
+    for (let row of blogger3.rows) {
+      bloggerIds.push(row.id);
     }
-    if (text == '' || text == null) {
-      let province2 = await Region.query().where('province_id', province_id).fetch();
-      return response.json({ type: 'region', 'province': [], 'region': province2 });
-    }
-    return response.json({ status_code: 200 });
+    let blogger2 = await BlogPost.query()
+      .whereIn('id', bloggerIds)
+      .where('province', province_id)
+      .fetch();
+    return response.json({
+      type: 'region',
+      'region': region2.rows,
+      'province': province2.rows,
+      'user': user2.rows,
+      'blogger': blogger2.rows,
+      'residence': residence2.rows,
+    });
   }
 
   async changePassword({ auth, request, response }) {
