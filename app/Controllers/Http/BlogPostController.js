@@ -55,7 +55,10 @@ class BlogPostController {
       let catsArr    = [];
       let subCatsArr = [];
       let cats;
-      let SubCats    = await BlogCategory.query().where('type_residence', request.body.id).fetch();
+      let SubCats2   = BlogCategory.query().where('type_residence', request.body.id);
+      if (request.body.category != 0 && request.body.category != null)
+        SubCats2.where('id', request.body.category);
+      let SubCats = await SubCats2.fetch();
       for (let cat in SubCats.rows) {
         subCatsArr.push(SubCats.rows[cat].id);
       }
