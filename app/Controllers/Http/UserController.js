@@ -308,9 +308,31 @@ class UserController {
   }
 
   async homeRegion({ auth, request, response }) {
-    let amlak     = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions where residences.region_id != 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC limit 4;`))[0];
-    let residence = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions,reserveds where residences.id = reserveds.residence_id and residences.type = 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC limit 4;`))[0];
-    return response.json({ amlak, residence });
+    let region    = (await Database.raw(`select * from regions where province_id = ${request.body.province_id};`))[0];
+    let amlak     = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions where residences.region_id != 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC;`))[0];
+    let residence = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions,reserveds where residences.id = reserveds.residence_id and residences.type = 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC;`))[0];
+    let exp       = [];
+    for (let regionElement of region) {
+      let amlakEx     = amlak.filter(e => e.id == regionElement.id);
+      let rahnEx      = amlakEx.filter(e => e.type == 2);
+      let fororshEx   = amlakEx.filter(e => e.type == 3);
+      let residenceEx = residence.filter(e => e.id == regionElement.id);
+      let da          = { ...regionElement };
+      if (rahnEx.length == 0)
+        da.rahn = 0;
+      else
+        da.rahn = rahnEx[0].count;
+      if (fororshEx.length == 0)
+        da.fororsh = 0;
+      else
+        da.fororsh = fororshEx[0].count;
+      if (residenceEx.length == 0)
+        da.eghamatgah = 0;
+      else
+        da.eghamatgah = residenceEx[0].count;
+      exp.push(da);
+    }
+    return response.json(exp);
   }
 
   async homeFetchCountingAdmin({ auth, request, response }) {

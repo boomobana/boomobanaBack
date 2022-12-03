@@ -33,7 +33,7 @@ class RealEstateController {
   }
 
   async fetchOnly({ request, response, auth }) {
-    let data = RealEstate.query().where('pageSignup', '3').whereNot('name', '-').where('active', '1');
+    let data = RealEstate.query().where('pageSignup', '3').whereNot('username', '-').whereNot('name', '-').where('active', '1');
     if (request.body.textSearch && request.body.textSearch != '' && request.body.textSearch !== null)
       data.where('name', 'like', '%' + request.body.textSearch + '%')
         .orWhere('name_en', 'like', '%' + request.body.textSearch + '%')
@@ -66,12 +66,13 @@ class RealEstateController {
 
   async searchNew({ request, response, auth }) {
     if (request.body.side === 'user') {
-      let data = RealEstate.query().where('pageSignup', 3).whereNot('name', '-').select([
+      let data = RealEstate.query().where('pageSignup', 3).whereNot('name', '-').whereNot('username', '-').select([
         'id',
         'name',
         'avatar',
         'lastname',
         'firstname',
+        'username',
       ]);
       if (request.body.textSearch != '' && request.body.textSearch !== null)
         data.where('name', 'like', '%' + request.body.textSearch + '%')
@@ -82,7 +83,9 @@ class RealEstateController {
           .orWhere('firstname_en', 'like', '%' + request.body.textSearch + '%');
       return response.json(await data.fetch());
     } else {
-      let data = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season').where('archive', 0);
+      let data = Residence.query().with('User').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Season')
+        .where('archive', 0)
+        .where('status', 2);
       if (request.body.side === 'rahnoejare') {
         data.where('type', 2);
       } else if (request.body.side === 'buysell') {
@@ -108,9 +111,17 @@ class RealEstateController {
         data.where('count_bathroom', request.body.roomChose);
       // if (request.body.regionChose != '' && request.body.regionChose !== null)
       //   data.where('region_id', request.body.regionChose)
-      if (request.body.textSearch != '' && request.body.textSearch !== null)
-        data.where('title', 'like', '%' + request.body.textSearch + '%')
-          .orWhere('description', 'like', '%' + request.body.textSearch + '%');
+      if (request.body.textSearch != '' && request.body.textSearch !== null) {
+        let datas = Residence.query().where('archive', 0);
+        datas.where('title', 'like', '%' + request.body.textSearch + '%')
+          .orWhere('description', 'like', '%' + request.body.textSearch + '%')
+          .select(['id']);
+        let da = [];
+        for (let row of (await datas.fetch()).rows) {
+          da.push(row.id);
+        }
+        data.whereIn(id, da);
+      }
       return response.json(await data.fetch());
 
     }
