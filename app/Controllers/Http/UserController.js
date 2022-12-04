@@ -309,8 +309,8 @@ class UserController {
 
   async homeRegion({ auth, request, response }) {
     let region    = (await Database.raw(`select * from regions where province_id = ${request.body.province_id};`))[0];
-    let amlak     = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions where residences.region_id != 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC;`))[0];
-    let residence = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions,reserveds where residences.id = reserveds.residence_id and residences.type = 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC;`))[0];
+    let amlak     = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions where residences.archive = 0 and residences.status = 2 and  residences.region_id != 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC;`))[0];
+    let residence = (await Database.raw(`select regions.id, regions.image ,regions.title ,count(*) as count,type from residences,regions,reserveds where residences.archive = 0 and residences.status = 2 and  residences.id = reserveds.residence_id and residences.type = 1 and residences.province_id = ${request.body.province_id} and residences.region_id = regions.id GROUP BY residences.region_id , type order by count DESC;`))[0];
     let exp       = [];
     for (let regionElement of region) {
       let amlakEx     = amlak.filter(e => e.id == regionElement.id);
