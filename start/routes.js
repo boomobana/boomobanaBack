@@ -347,6 +347,7 @@ Route.group(() => {
   Route.post('/blog/post/fetch', 'BlogPostController.indexAdmin');
   Route.post('/blog/post/find', 'BlogPostController.findAdmin');
   Route.post('/post/add', 'BlogPostController.create');
+  Route.post('/blog/post/create', 'BlogPostController.create');
   Route.post('/post/remove', 'BlogPostController.deletes');
   Route.post('/blog/post/file/create', 'BlogPostController.createPostCategoryAdmin');
   Route.post('/blog/post/category/create', 'BlogPostController.createPostFileAdmin');

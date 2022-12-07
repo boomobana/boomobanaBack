@@ -343,7 +343,23 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = await Residence.query().where('id', request.body.residence_id).with('User').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province').with('Comment').last();
+    let userIsExist = await Residence.query()
+      .where('id', request.body.residence_id)
+      .with('User')
+      .with('Files')
+      .with('Option')
+      .with('Season')
+      .with('Room')
+      .with('RTO1')
+      .with('RTO2')
+      .with('RTO3')
+      .with('Region')
+      .with('Province')
+      .with('Comment')
+      .with('favorite', q => {
+        q.where('user_id', auth.user.id);
+      })
+      .last();
     try {
       if (typeof request.body.save === 'boolean') {
         if (request.body.save === true) {
