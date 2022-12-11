@@ -343,7 +343,7 @@ class ResidenceController {
     let {
           rule,
         }           = request.headers();
-    let userIsExist = await Residence.query()
+    let userIsExist = Residence.query()
       .where('id', request.body.residence_id)
       .with('User')
       .with('Files')
@@ -355,11 +355,12 @@ class ResidenceController {
       .with('RTO3')
       .with('Region')
       .with('Province')
-      .with('Comment')
-      .with('favorite', q => {
+      .with('Comment');
+    if (auth.check() && auth.user && auth.user.id)
+      userIsExist.with('favorite', q => {
         q.where('user_id', auth.user.id);
-      })
-      .last();
+      });
+    userIsExist = await userIsExist.last();
     try {
       if (typeof request.body.save === 'boolean') {
         if (request.body.save === true) {

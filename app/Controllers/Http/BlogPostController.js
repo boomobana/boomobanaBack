@@ -67,6 +67,8 @@ class BlogPostController {
         catsArr.push(cats.rows[cat].post_id);
       }
       data.whereIn('id', catsArr);
+    } else if (request.body.type === 'userPosted') {
+      data.where('user_id', request.body.user_id);
     }
     return response.json(await data.paginate(page, limit));
   }
