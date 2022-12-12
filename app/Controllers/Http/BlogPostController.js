@@ -225,6 +225,11 @@ class BlogPostController {
   async findCategoryAdmin({ request, response }) {
     return response.json(await BlogCategory.query().with('sub').where('id', request.body.id).last());
   }
+
+  async acceptAdmin({ request, response }) {
+    await BlogPost.query().where('id', request.body.id).update(request.body);
+    return response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
 }
 
 module.exports = BlogPostController;

@@ -355,6 +355,7 @@ Route.group(() => {
   Route.post('/blog/comments/status', 'BlogCommentController.activeCommAdmin');
   Route.post('/blog/category/create', 'BlogPostController.createCategoryAdmin');
   Route.post('/blog/category/fetch', 'BlogPostController.fetchCategoryAdmin');
+  Route.post('/blog/change/status', 'BlogPostController.acceptAdmin');
   Route.post('/blog/category/find', 'BlogPostController.findCategoryAdmin');
 
   // comment
