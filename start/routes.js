@@ -200,6 +200,10 @@ Route.group(() => {
   //
   Route.post('/realestate/link', 'RealEstateController.indexFetchMyLinks');
 
+  //
+  Route.post('/motalebat/index', 'MotalebatController.indexMotalebat');
+  Route.post('/motalebat/add', 'MotalebatController.addMotalebat');
+
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
   // blogger
