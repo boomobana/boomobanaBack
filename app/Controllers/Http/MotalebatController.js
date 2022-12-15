@@ -25,7 +25,7 @@ class MotalebatController {
 
   async indexMotalebatMali({ request, response, auth }) {
     if (request.body.id) {
-      return response.json(await MotalebatMali.query().where('id', request.body.id).last());
+      return response.json(await MotalebatMali.query().where('id', request.body.id).with('Check').fetch());
     } else if (request.body.id) {
       return response.json(await MotalebatMali.query().fetch());
     }

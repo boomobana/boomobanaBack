@@ -203,6 +203,8 @@ Route.group(() => {
   //
   Route.post('/motalebat/index', 'MotalebatController.indexMotalebat');
   Route.post('/motalebat/add', 'MotalebatController.addMotalebat');
+  Route.post('/motalebat/mali/index', 'MotalebatController.indexMotalebatMali');
+  Route.post('/motalebat/mali/add', 'MotalebatController.addMotalebatMali');
 
 }).prefix('api/user').middleware(['auth', 'userRule']);
 Route.group(() => {
