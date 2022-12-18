@@ -32,18 +32,55 @@ class MotalebatController {
   }
 
   async addMotalebatMali({ request, response, auth }) {
+    const {
+            lastname,
+            national_id,
+            lastname_taken,
+            national_id_taken,
+            type_payment,
+            description,
+            type,
+            amount,
+            motalebat_id,
+          } = request.all();
+    let mm;
     if (request.body.id) {
-      let mm = await MotalebatMali.query().where('id', request.body.id).update(request.all());
-      await this.checkMotalebatMali(mm.id);
+      mm = await MotalebatMali.query().where('id', request.body.id).update({
+        lastname,
+        national_id,
+        lastname_taken,
+        national_id_taken,
+        type_payment,
+        description,
+        type,
+        amount,
+        motalebat_mali: motalebat_id,
+        user_id: auth.user.id,
+      });
+      await this.checkMotalebatMali(motalebat_id, amount);
+
+      return response.json({ status_code: 200, status_text: 'Successfully Done', mtalebat_mali: request.body.id });
     } else {
-      let mm = await MotalebatMali.create({ ...request.all(), user_id: auth.user.id });
-      await this.checkMotalebatMali(mm.id);
+      mm = await MotalebatMali.create({
+        lastname,
+        national_id,
+        lastname_taken,
+        national_id_taken,
+        type_payment,
+        description,
+        type,
+        amount,
+        motalebat_mali: motalebat_id,
+        user_id: auth.user.id,
+      });
+      await this.checkMotalebatMali(motalebat_id, amount);
+      return response.json({ status_code: 200, status_text: 'Successfully Done', mtalebat_mali: mm.id });
     }
-    return response.json({ status_code: 200, status_text: 'Successfully Done', mtalebat_mali: mm.id });
   }
 
   async checkMotalebatMali(motalebat_id, amount) {
-    let mm   = await MotalebatMali.query().where('motalebat_id', motalebat_id).orderBy('id', 'desc').last();
+    console.log(motalebat_id);
+    let mm   = await MotalebatMali.query().where('motalebat_mali', motalebat_id).orderBy('id', 'desc').last();
     let plus = 0;
     if (mm) {
       plus = parseInt(mm.amount) + parseInt(amount);
@@ -51,7 +88,7 @@ class MotalebatController {
       plus = parseInt(amount);
     }
     await Motalebat.query().where('id', motalebat_id).update({
-      amount: plus,
+      total: plus,
     });
   }
 
