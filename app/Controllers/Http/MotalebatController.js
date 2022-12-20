@@ -8,7 +8,18 @@ class MotalebatController {
     if (request.body.id) {
       return response.json(await Motalebat.query().where('id', request.body.id).last());
     } else {
-      return response.json(await Motalebat.query().fetch());
+      let data = Motalebat.query();
+      if (request.body.firstname && request.body.firstname != '')
+        data.where('firstname', request.body.firstname);
+      if (request.body.mobile && request.body.mobile != '')
+        data.where('mobile', request.body.mobile);
+      if (request.body.national_id && request.body.national_id != '')
+        data.where('national_id', request.body.national_id);
+      if (request.body.fathername && request.body.fathername != '')
+        data.where('fathername', request.body.fathername);
+      if (request.body.title && request.body.title != '')
+        data.where('title', request.body.title);
+      return response.json(await data.fetch());
     }
   }
 
@@ -27,7 +38,22 @@ class MotalebatController {
     if (request.body.id) {
       return response.json(await MotalebatMali.query().where('motalebat_mali', request.body.id).with('Check').fetch());
     } else if (request.body.id) {
-      return response.json(await MotalebatMali.query().fetch());
+      let data = MotalebatMali.query();
+
+      if (request.body.lastname)
+        data.where('lastname', request.body.lastname);
+      if (request.body.lastname_taken)
+        data.where('lastname_taken', request.body.lastname_taken);
+      if (request.body.amount)
+        data.where('amount', request.body.amount);
+      if (request.body.date_reminder)
+        data.where('date_reminder', request.body.date_reminder);
+      if (request.body.type_payment)
+        data.where('type_payment', request.body.type_payment);
+      if (request.body.type_s)
+        data.where('type_s', request.body.type_s);
+
+      return response.json(await data.fetch());
     }
   }
 
