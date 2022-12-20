@@ -362,11 +362,7 @@ class AuthController {
       const realEstateRule       = {
         name: 'required',
         name_en: 'required',
-        sos: 'required',
         logo: 'required',
-        email: 'required',
-        site_url: 'required',
-        social_url: 'required',
         tell: 'required',
         economic_code: 'required',
         postal_code: 'required',
@@ -397,11 +393,7 @@ class AuthController {
               bank_name,
               name,
               name_en,
-              sos,
               logo,
-              email,
-              site_url,
-              social_url,
               tell,
               economic_code,
               postal_code,
@@ -421,11 +413,7 @@ class AuthController {
       userStart.bank_name               = bank_name;
       userStart.name                    = name;
       userStart.name_en                 = name_en;
-      userStart.sos                     = sos;
       userStart.logo                    = logo;
-      userStart.email                   = email;
-      userStart.site_url                = site_url;
-      userStart.social_url              = social_url;
       userStart.address                 = address;
       userStart.tell                    = tell;
       userStart.economic_code           = economic_code;
@@ -523,12 +511,7 @@ class AuthController {
       name: 'required',
       name_en: 'required',
       tell: 'required',
-      sos: 'required',
-      site_url: 'required',
       logo: 'required',
-      social_url: 'required',
-      email: 'required',
-      mobile: 'required',
       economic_code: 'required',
       postal_code: 'required',
       business_license: 'required',
@@ -551,8 +534,6 @@ class AuthController {
 
   async SendModirDet({ auth, request, response }) {
     const rules            = {
-      firstname: 'required',
-      lastname: 'required',
       national_id: 'required',
       male: 'required',
       avatar: 'required',
@@ -574,8 +555,6 @@ class AuthController {
           } = request.headers();
     var userStart;
     const {
-            firstname,
-            lastname,
             national_id,
             male,
             avatar,
@@ -643,8 +622,6 @@ class AuthController {
       userStart.pageSignup  = 2;
       userStart.kart_meli   = kart_meli;
       userStart.bio         = bio;
-      userStart.firstname   = firstname;
-      userStart.lastname    = lastname;
       userStart.national_id = national_id;
       userStart.male        = male;
       userStart.avatar      = avatar;
