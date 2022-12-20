@@ -591,6 +591,10 @@ class AuthController {
               card_number,
               kartMeli,
               about,
+              male,
+              region,
+              province,
+              national_id,
             }                = request.all();
       userStart              = await RealEstate.query().where('id', auth.user.id).last();
       userStart.firstname_en = firstname_en;
@@ -604,6 +608,10 @@ class AuthController {
       userStart.bank_name          = bank_name;
       userStart.shaba_number       = shomare_hesab;
       userStart.shaba_number       = shaba_number;
+      userStart.male               = male;
+      userStart.region             = region;
+      userStart.province           = province;
+      userStart.national_id        = national_id;
       userStart.card_number        = card_number;
     } else if (rule === 'user') {
       userStart = await User.query().where('id', auth.user.id).last();
