@@ -532,227 +532,231 @@ class AuthController {
     response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
+  // async SendModirDet({ auth, request, response }) {
+  //   const rules            = {
+  //     national_id: 'required',
+  //     male: 'required',
+  //     avatar: 'required',
+  //     birthday: 'required',
+  //   };
+  //   const validation       = await validate(request.all(), rules);
+  //   const rulesHeader      = {
+  //     rule: 'required',
+  //   };
+  //   const validationHeader = await validate(request.headers(), rulesHeader);
+  //
+  //   if (validation.fails()) {
+  //     return response.json(validation.messages());
+  //   } else if (validationHeader.fails()) {
+  //     return response.json(validationHeader.messages());
+  //   }
+  //   const {
+  //           rule,
+  //         } = request.headers();
+  //   var userStart;
+  //   const {
+  //           national_id,
+  //           male,
+  //           avatar,
+  //           teaser,
+  //           birthday,
+  //         } = request.all();
+  //   if (rule === 'realEstate' || rule === 'shobe') {
+  //     const rules2      = {
+  //       firstname_en: 'required',
+  //       lastname_en: 'required',
+  //       kartMeli: 'required',
+  //       javazKasb: 'required',
+  //       account_owner_name: 'required',
+  //       fathername: 'required',
+  //       bank_name: 'required',
+  //       shomare_hesab: 'required',
+  //       shaba_number: 'required',
+  //       card_number: 'required',
+  //       about: 'required',
+  //     };
+  //     const validation2 = await validate(request.all(), rules2);
+  //     if (validation2.fails()) {
+  //       return response.json(validation.messages());
+  //     }
+  //     const {
+  //             firstname_en,
+  //             lastname_en,
+  //             javazKasb,
+  //             account_owner_name,
+  //             fathername,
+  //             bank_name,
+  //             shomare_hesab,
+  //             shaba_number,
+  //             card_number,
+  //             kartMeli,
+  //             about,
+  //             male,
+  //             region,
+  //             province,
+  //             national_id,
+  //           }                = request.all();
+  //     userStart              = await RealEstate.query().where('id', auth.user.id).last();
+  //     userStart.firstname_en = firstname_en;
+  //     userStart.lastname_en  = lastname_en;
+  //     userStart.kartMeli     = kartMeli;
+  //     userStart.about        = about;
+  //
+  //     userStart.javazKasb          = javazKasb;
+  //     userStart.account_owner_name = account_owner_name;
+  //     userStart.fathername         = fathername;
+  //     userStart.bank_name          = bank_name;
+  //     userStart.shaba_number       = shomare_hesab;
+  //     userStart.shaba_number       = shaba_number;
+  //     userStart.male               = male;
+  //     userStart.region             = region;
+  //     userStart.province           = province;
+  //     userStart.national_id        = national_id;
+  //     userStart.card_number        = card_number;
+  //   } else if (rule === 'user') {
+  //     userStart = await User.query().where('id', auth.user.id).last();
+  //     const rules2      = {
+  //       kart_meli: 'required',
+  //       bio: 'required',
+  //     };
+  //     const validation2 = await validate(request.all(), rules2);
+  //     if (validation2.fails()) {
+  //       return response.json(validation.messages());
+  //     }
+  //     const {
+  //             kart_meli,
+  //             bio,
+  //           }               = request.all();
+  //     userStart.pageSignup  = 2;
+  //     userStart.kart_meli   = kart_meli;
+  //     userStart.bio         = bio;
+  //     userStart.national_id = national_id;
+  //     userStart.male        = male;
+  //     userStart.avatar      = avatar;
+  //     userStart.teaser      = teaser;
+  //     userStart.birthday    = birthday;
+  //
+  //     if (request.input('type') == 1) {
+  //       const type1Validation = await validate(request.all(), {
+  //         type: 'required',
+  //         shomare_hesab: 'required',
+  //         card_number: 'required',
+  //         shaba_number: 'required',
+  //         account_owner_name: 'required',
+  //         bank_name: 'required',
+  //         address: 'required',
+  //       });
+  //       if (type1Validation.fails()) {
+  //         return response.json(type1Validation.messages());
+  //       }
+  //       const {
+  //               type,
+  //               shomare_hesab,
+  //               card_number,
+  //               shaba_number,
+  //               account_owner_name,
+  //               bank_name,
+  //               address,
+  //             }                      = request.all();
+  //       userStart.pageSignup         = 3;
+  //       userStart.active             = 1;
+  //       userStart.type               = type;
+  //       userStart.shomare_hesab      = shomare_hesab;
+  //       userStart.card_number        = card_number;
+  //       userStart.shaba_number       = shaba_number;
+  //       userStart.account_owner_name = account_owner_name;
+  //       userStart.bank_name          = bank_name;
+  //       userStart.address            = address;
+  //     }
+  //     if (request.input('type') == 2) {
+  //       const type2Validation = await validate(request.all(), {
+  //         economic_code: 'required',
+  //         tell: 'required',
+  //         postal_code: 'required',
+  //         business_license: 'required',
+  //         business_license_number: 'required',
+  //         statute: 'required',
+  //         type: 'required',
+  //         shomare_hesab: 'required',
+  //         card_number: 'required',
+  //         shaba_number: 'required',
+  //         account_owner_name: 'required',
+  //         bank_name: 'required',
+  //         address: 'required',
+  //
+  //       });
+  //       if (type2Validation.fails()) {
+  //         return response.json(type2Validation.messages());
+  //       }
+  //       const {
+  //               economic_code,
+  //               tell,
+  //               postal_code,
+  //               business_license,
+  //               business_license_number,
+  //               statute, type,
+  //               shomare_hesab,
+  //               card_number,
+  //               shaba_number,
+  //               account_owner_name,
+  //               bank_name,
+  //               address,
+  //             }                           = request.all();
+  //       userStart.pageSignup              = 3;
+  //       userStart.economic_code           = economic_code;
+  //       userStart.tell                    = tell;
+  //       userStart.postal_code             = postal_code;
+  //       userStart.business_license        = business_license;
+  //       userStart.business_license_number = business_license_number;
+  //       userStart.statute                 = statute;
+  //       userStart.type                    = type;
+  //       userStart.shomare_hesab           = shomare_hesab;
+  //       userStart.card_number             = card_number;
+  //       userStart.shaba_number            = shaba_number;
+  //       userStart.account_owner_name      = account_owner_name;
+  //       userStart.bank_name               = bank_name;
+  //       userStart.address                 = address;
+  //     }
+  //   }
+  //
+  //   const {
+  //           address,
+  //           province,
+  //           region,
+  //           lat,
+  //           lng,
+  //           username,
+  //           telegram,
+  //           whatsapp,
+  //           instagram,
+  //           linkedin,
+  //           twitter,
+  //         } = request.all();
+  //   console.log(request.all());
+  //   userStart.address   = address;
+  //   userStart.province  = province;
+  //   userStart.region    = region;
+  //   userStart.lat       = lat;
+  //   userStart.lng       = lng;
+  //   userStart.username  = username;
+  //   userStart.telegram  = telegram;
+  //   userStart.whatsapp  = whatsapp;
+  //   userStart.instagram = instagram;
+  //   userStart.linkedin  = linkedin;
+  //   userStart.twitter   = twitter;
+  //
+  //   await userStart.save();
+  //   let us     = await User.query().where('id', auth.user.id).last();
+  //   let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
+  //   let ipA    = await request.ip();
+  //   this.makeLoginActivity(us, userOs, ipA);
+  //
+  //   let logins = await auth.generate(us);
+  //   response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
+  // }
   async SendModirDet({ auth, request, response }) {
-    const rules            = {
-      national_id: 'required',
-      male: 'required',
-      avatar: 'required',
-      birthday: 'required',
-    };
-    const validation       = await validate(request.all(), rules);
-    const rulesHeader      = {
-      rule: 'required',
-    };
-    const validationHeader = await validate(request.headers(), rulesHeader);
-
-    if (validation.fails()) {
-      return response.json(validation.messages());
-    } else if (validationHeader.fails()) {
-      return response.json(validationHeader.messages());
-    }
-    const {
-            rule,
-          } = request.headers();
-    var userStart;
-    const {
-            national_id,
-            male,
-            avatar,
-            teaser,
-            birthday,
-          } = request.all();
-    if (rule === 'realEstate' || rule === 'shobe') {
-      const rules2      = {
-        firstname_en: 'required',
-        lastname_en: 'required',
-        kartMeli: 'required',
-        javazKasb: 'required',
-        account_owner_name: 'required',
-        fathername: 'required',
-        bank_name: 'required',
-        shomare_hesab: 'required',
-        shaba_number: 'required',
-        card_number: 'required',
-        about: 'required',
-      };
-      const validation2 = await validate(request.all(), rules2);
-      if (validation2.fails()) {
-        return response.json(validation.messages());
-      }
-      const {
-              firstname_en,
-              lastname_en,
-              javazKasb,
-              account_owner_name,
-              fathername,
-              bank_name,
-              shomare_hesab,
-              shaba_number,
-              card_number,
-              kartMeli,
-              about,
-              male,
-              region,
-              province,
-              national_id,
-            }                = request.all();
-      userStart              = await RealEstate.query().where('id', auth.user.id).last();
-      userStart.firstname_en = firstname_en;
-      userStart.lastname_en  = lastname_en;
-      userStart.kartMeli     = kartMeli;
-      userStart.about        = about;
-
-      userStart.javazKasb          = javazKasb;
-      userStart.account_owner_name = account_owner_name;
-      userStart.fathername         = fathername;
-      userStart.bank_name          = bank_name;
-      userStart.shaba_number       = shomare_hesab;
-      userStart.shaba_number       = shaba_number;
-      userStart.male               = male;
-      userStart.region             = region;
-      userStart.province           = province;
-      userStart.national_id        = national_id;
-      userStart.card_number        = card_number;
-    } else if (rule === 'user') {
-      userStart = await User.query().where('id', auth.user.id).last();
-      const rules2      = {
-        kart_meli: 'required',
-        bio: 'required',
-      };
-      const validation2 = await validate(request.all(), rules2);
-      if (validation2.fails()) {
-        return response.json(validation.messages());
-      }
-      const {
-              kart_meli,
-              bio,
-            }               = request.all();
-      userStart.pageSignup  = 2;
-      userStart.kart_meli   = kart_meli;
-      userStart.bio         = bio;
-      userStart.national_id = national_id;
-      userStart.male        = male;
-      userStart.avatar      = avatar;
-      userStart.teaser      = teaser;
-      userStart.birthday    = birthday;
-
-      if (request.input('type') == 1) {
-        const type1Validation = await validate(request.all(), {
-          type: 'required',
-          shomare_hesab: 'required',
-          card_number: 'required',
-          shaba_number: 'required',
-          account_owner_name: 'required',
-          bank_name: 'required',
-          address: 'required',
-        });
-        if (type1Validation.fails()) {
-          return response.json(type1Validation.messages());
-        }
-        const {
-                type,
-                shomare_hesab,
-                card_number,
-                shaba_number,
-                account_owner_name,
-                bank_name,
-                address,
-              }                      = request.all();
-        userStart.pageSignup         = 3;
-        userStart.active             = 1;
-        userStart.type               = type;
-        userStart.shomare_hesab      = shomare_hesab;
-        userStart.card_number        = card_number;
-        userStart.shaba_number       = shaba_number;
-        userStart.account_owner_name = account_owner_name;
-        userStart.bank_name          = bank_name;
-        userStart.address            = address;
-      }
-      if (request.input('type') == 2) {
-        const type2Validation = await validate(request.all(), {
-          economic_code: 'required',
-          tell: 'required',
-          postal_code: 'required',
-          business_license: 'required',
-          business_license_number: 'required',
-          statute: 'required',
-          type: 'required',
-          shomare_hesab: 'required',
-          card_number: 'required',
-          shaba_number: 'required',
-          account_owner_name: 'required',
-          bank_name: 'required',
-          address: 'required',
-
-        });
-        if (type2Validation.fails()) {
-          return response.json(type2Validation.messages());
-        }
-        const {
-                economic_code,
-                tell,
-                postal_code,
-                business_license,
-                business_license_number,
-                statute, type,
-                shomare_hesab,
-                card_number,
-                shaba_number,
-                account_owner_name,
-                bank_name,
-                address,
-              }                           = request.all();
-        userStart.pageSignup              = 3;
-        userStart.economic_code           = economic_code;
-        userStart.tell                    = tell;
-        userStart.postal_code             = postal_code;
-        userStart.business_license        = business_license;
-        userStart.business_license_number = business_license_number;
-        userStart.statute                 = statute;
-        userStart.type                    = type;
-        userStart.shomare_hesab           = shomare_hesab;
-        userStart.card_number             = card_number;
-        userStart.shaba_number            = shaba_number;
-        userStart.account_owner_name      = account_owner_name;
-        userStart.bank_name               = bank_name;
-        userStart.address                 = address;
-      }
-    }
-
-    const {
-            address,
-            province,
-            region,
-            lat,
-            lng,
-            username,
-            telegram,
-            whatsapp,
-            instagram,
-            linkedin,
-            twitter,
-          } = request.all();
-    console.log(request.all());
-    userStart.address   = address;
-    userStart.province  = province;
-    userStart.region    = region;
-    userStart.lat       = lat;
-    userStart.lng       = lng;
-    userStart.username  = username;
-    userStart.telegram  = telegram;
-    userStart.whatsapp  = whatsapp;
-    userStart.instagram = instagram;
-    userStart.linkedin  = linkedin;
-    userStart.twitter   = twitter;
-
-    await userStart.save();
-    let us     = await User.query().where('id', auth.user.id).last();
-    let userOs = (await request.header('user-agent')).split('(')[1].split(' ')[0];
-    let ipA    = await request.ip();
-    this.makeLoginActivity(us, userOs, ipA);
-
-    let logins = await auth.generate(us);
-    response.json({ status_code: 200, status_text: 'Successfully Done', token: logins.token });
+    await User.query().where('id', auth.user.id).update(request.all());
+    response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
   async FinalRegister({ request, response }) {
