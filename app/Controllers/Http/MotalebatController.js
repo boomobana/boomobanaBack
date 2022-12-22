@@ -79,10 +79,11 @@ class MotalebatController {
 
   async checkMotalebatMali(motalebat_id, amount) {
     console.log(motalebat_id);
-    let mm   = await MotalebatMali.query().where('motalebat_mali', motalebat_id).orderBy('id', 'desc').last();
     let plus = 0;
-    if (mm) {
-      plus = parseInt(mm.amount) + parseInt(amount);
+    let am   = await Motalebat.query().where('id', motalebat_id).last();
+    console.log(am);
+    if (am) {
+      plus = parseInt(am.total) + parseInt(amount);
     } else {
       plus = parseInt(amount);
     }
