@@ -19,6 +19,7 @@ class MotalebatController {
         data.where('fathername', request.body.fathername);
       if (request.body.title && request.body.title != '')
         data.where('title', request.body.title);
+      data.orderBy('id', 'desc');
       return response.json(await data.fetch());
     }
   }
@@ -35,26 +36,23 @@ class MotalebatController {
   }
 
   async indexMotalebatMali({ request, response, auth }) {
-    if (request.body.id) {
-      return response.json(await MotalebatMali.query().where('motalebat_mali', request.body.id).with('Check').fetch());
-    } else if (request.body.id) {
-      let data = MotalebatMali.query();
-
-      if (request.body.lastname)
-        data.where('lastname', request.body.lastname);
-      if (request.body.lastname_taken)
-        data.where('lastname_taken', request.body.lastname_taken);
-      if (request.body.amount)
-        data.where('amount', request.body.amount);
-      if (request.body.date_reminder)
-        data.where('date_reminder', request.body.date_reminder);
-      if (request.body.type_payment)
-        data.where('type_payment', request.body.type_payment);
-      if (request.body.type_s)
-        data.where('type_s', request.body.type_s);
-
-      return response.json(await data.fetch());
-    }
+    let data = MotalebatMali.query();
+    if (request.body.id)
+      data.where('motalebat_mali', request.body.id);
+    if (request.body.lastname)
+      data.where('lastname', request.body.lastname);
+    if (request.body.lastname_taken)
+      data.where('lastname_taken', request.body.lastname_taken);
+    if (request.body.amount)
+      data.where('amount', request.body.amount);
+    if (request.body.date_reminder)
+      data.where('date_reminder', request.body.date_reminder);
+    if (request.body.type_payment)
+      data.where('type_payment', request.body.type_payment);
+    if (request.body.type_s)
+      data.where('type_s', request.body.type_s);
+    data.orderBy('id', 'desc');
+    return response.json(await data.fetch());
   }
 
   async addMotalebatMali({ request, response, auth }) {
