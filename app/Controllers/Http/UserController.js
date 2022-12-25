@@ -22,6 +22,7 @@ const Region             = use('App/Models/Region');
 const Province           = use('App/Models/Province');
 const LoginActivity      = use('App/Models/LoginActivity');
 const RealEstate         = use('App/Models/RealEstate');
+const Moamelat         = use('App/Models/Moamelat');
 const PasswordReset      = use('App/Models/PasswordReset');
 const Database           = use('Database');
 const Sms                = use('App/Controllers/Http/SmsSender');
@@ -33,6 +34,32 @@ class UserController {
     return response.json(await User.query().where('username', request.body.slug).with('residence', q => {
       q.where('archive', 0).where('status', 2);
     }).last());
+  }
+
+  async findUserReport({ auth, request, response }) {
+    const id                  = request.body.id;
+    const filesSell           = await Residence.query().where('type', 3).where('user_id', id).count('*');
+    const filesSellCount      = filesSell[0][Object.keys(filesSell[0])];
+    const filesRent           = await Residence.query().where('type', 2).where('user_id', id).count('*');
+    const filesRentCount      = filesRent[0][Object.keys(filesRent[0])];
+    const filesResidence      = await Residence.query().where('type', 1).where('user_id', id).count('*');
+    const filesResidenceCount = filesResidence[0][Object.keys(filesResidence[0])];
+    const Shobe               = await User.query().where('parent_realestate_id', id).count('*');
+    const ShobeCount          = Shobe[0][Object.keys(Shobe[0])];
+    const advisor             = await Adviser.query().where('id', id).count('*');
+    const advisorCount        = advisor[0][Object.keys(advisor[0])];
+    const Moamelats          = await Moamelat.query().where('realestate_id', id).count('*');
+    const MoamelatsCount     = Moamelats[0][Object.keys(Moamelats[0])];
+
+    let json                  = {
+      filesSellCount,
+      filesRentCount,
+      filesResidenceCount,
+      ShobeCount,
+      MoamelatsCount,
+      advisorCount,
+    };
+    return response.json(json);
   }
 
   async changeProfile({ auth, request, response }) {
@@ -192,7 +219,7 @@ class UserController {
     if (!userIsExist) return response.json({ status_code: 401, status_text: 'کاربر موجود نمی باشد' });
     let passwordReset    = new PasswordReset();
     // userIsExist.password = await Hash.make(password);
-    let passsword = String(randomNum(6));
+    let passsword        = String(randomNum(6));
     passwordReset.token  = passsword;
     passwordReset.mobile = auth.user.mobile;
     passwordReset.save();

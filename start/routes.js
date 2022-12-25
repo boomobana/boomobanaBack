@@ -40,6 +40,7 @@ Route.group(() => {
 
 Route.get('/streamImage/url/:filename', 'UploadFileController.Download');
 Route.post('/find/user/details', 'UserController.findUser');
+Route.post('/find/user/report', 'UserController.findUserReport');
 Route.post('/find/realestate/details', 'RealEstateController.findOnly');
 Route.post('/api/user/find/realestate/details', 'RealEstateController.findOnly');
 

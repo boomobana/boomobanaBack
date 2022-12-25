@@ -55,18 +55,22 @@ class BlogPostController {
       let catsArr    = [];
       let subCatsArr = [];
       let cats;
-      let SubCats2   = BlogCategory.query().where('type_residence', request.body.id);
-      if (request.body.category != 0 && request.body.category != null)
-        SubCats2.where('id', request.body.category);
-      let SubCats = await SubCats2.fetch();
-      for (let cat in SubCats.rows) {
-        subCatsArr.push(SubCats.rows[cat].id);
+      if (request.body.id != 3) {
+        let SubCats2 = BlogCategory.query().where('type_residence', request.body.id);
+        if (request.body.category != 0 && request.body.category != null)
+          SubCats2.where('id', request.body.category);
+        let SubCats = await SubCats2.fetch();
+        for (let cat in SubCats.rows) {
+          subCatsArr.push(SubCats.rows[cat].id);
+        }
+        cats = await BlogCategoryPost.query().whereIn('category_id', subCatsArr).fetch();
+        for (let cat in cats.rows) {
+          catsArr.push(cats.rows[cat].post_id);
+        }
+        data.limit(4).whereIn('id', catsArr);
+      }else{
+        data.limit(3)
       }
-      cats = await BlogCategoryPost.query().whereIn('category_id', subCatsArr).fetch();
-      for (let cat in cats.rows) {
-        catsArr.push(cats.rows[cat].post_id);
-      }
-      data.whereIn('id', catsArr);
     } else if (request.body.type === 'userPosted') {
       data.where('user_id', request.body.user_id);
     }
