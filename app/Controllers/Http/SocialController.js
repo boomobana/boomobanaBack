@@ -20,8 +20,10 @@ class SocialController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async SocialIndex({ request, response, view }) {
-    return response.json(await Social.query().fetch());
+  async SocialIndex({ request, response, auth }) {
+    return response.json(await Social.query().with('SocialUser', q => {
+      q.where('user_id', auth.user.id);
+    }).fetch());
   }
 
   async SocialUserIndex({ request, response, auth }) {
@@ -29,8 +31,7 @@ class SocialController {
   }
 
   async SocialUserCreate({ request, response, auth }) {
-    console.log(request.all());
-    if (request.body.id != '')
+    if (request.body.id != '' && request.body.id != null)
       await SocialUser.query().where('id', request.body.id).update(request.all());
     else
       await SocialUser.create({ ...request.all(), user_id: auth.user.id });
