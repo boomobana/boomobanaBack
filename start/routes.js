@@ -61,6 +61,11 @@ Route.group(() => {
   Route.post('/residence/fetch/my/last', 'ResidenceController.FetchMy');
   Route.post('/login/activity', 'UserController.loginActivityFetch');
 
+  Route.post('/social/index', 'SocialController.SocialIndex');
+  Route.post('/social/user/index', 'SocialController.SocialUserIndex');
+  Route.post('/social/user/create', 'SocialController.SocialUserCreate');
+  Route.post('/social/user/delete', 'SocialController.SocialUserDelete');
+
   Route.post('/melk/add', 'ResidenceController.addMelk');
 
   Route.post('/residence/add', 'ResidenceController.add');
