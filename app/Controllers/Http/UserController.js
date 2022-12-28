@@ -31,7 +31,7 @@ const Hash               = use('Hash');
 
 class UserController {
   async findUser({ auth, request, response }) {
-    return response.json(await User.query().where('username', request.body.slug).with('residence', q => {
+    return response.json(await User.query().where('username', request.body.slug).with('SocialUsers').with('residence', q => {
       q.where('archive', 0).where('status', 2);
     }).last());
   }

@@ -469,6 +469,12 @@ class ResidenceController {
         await pack.save();
       }
     }
+    if (request.body.malek_name)
+      res.malek_name = request.body.malek_name;
+    if (request.body.malek_mobile)
+      res.malek_mobile = request.body.malek_mobile;
+    if (request.body.answer_id)
+      res.answer_id = request.body.answer_id;
     res.title          = title;
     res.description    = description;
     res.type           = type;

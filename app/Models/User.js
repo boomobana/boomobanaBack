@@ -39,6 +39,10 @@ class User extends Model {
     return this.hasMany('App/Models/Residence', 'id', 'user_id').with('Files').with('Option').with('Season').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');
   }
 
+  SocialUsers() {
+    return this.hasMany('App/Models/SocialUser', 'id', 'user_id').select(['link','social_id']).with('Social');
+  }
+
   favorite() {
     return this.hasMany('App/Models/FavoriteAd', 'id', 'user_id').with('Residence');
   }
