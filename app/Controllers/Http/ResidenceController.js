@@ -44,6 +44,7 @@ class ResidenceController {
       .with('Region')
       .with('Province')
       .with('Season')
+      .with('Answer')
       .where('archive', 0)
       .where('status', 2);
     try {
@@ -271,7 +272,7 @@ class ResidenceController {
         }
       }
     }
-    let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season')
+    let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Answer').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season')
     if (rule == 'user')
       userIsExist.where('rule', 'user');
     else
@@ -355,6 +356,7 @@ class ResidenceController {
       .with('RTO3')
       .with('Region')
       .with('Province')
+      .with('Answer')
       .with('Comment');
     if (auth.check() && auth.user && auth.user.id)
       userIsExist.with('favorite', q => {
@@ -692,7 +694,7 @@ class ResidenceController {
   async fileFetchAdmin({ auth, request, response }) {
     const { page } = request.qs;
     const limit    = 10;
-    let Res        = Residence.query().with('RTO1').with('RTO2').with('RTO3').with('User').orderBy('id', 'desc');
+    let Res        = Residence.query().with('Answer').with('RTO1').with('RTO2').with('RTO3').with('User').orderBy('id', 'desc');
     if (typeof request.body.user_id === 'string' && request.body.user_id !== null && request.body.user_id !== '') {
       Res.where('user_id', request.body.user_id);
     }

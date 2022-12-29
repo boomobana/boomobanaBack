@@ -22,7 +22,7 @@ const Region             = use('App/Models/Region');
 const Province           = use('App/Models/Province');
 const LoginActivity      = use('App/Models/LoginActivity');
 const RealEstate         = use('App/Models/RealEstate');
-const Moamelat         = use('App/Models/Moamelat');
+const Moamelat           = use('App/Models/Moamelat');
 const PasswordReset      = use('App/Models/PasswordReset');
 const Database           = use('Database');
 const Sms                = use('App/Controllers/Http/SmsSender');
@@ -48,10 +48,10 @@ class UserController {
     const ShobeCount          = Shobe[0][Object.keys(Shobe[0])];
     const advisor             = await Adviser.query().where('id', id).count('*');
     const advisorCount        = advisor[0][Object.keys(advisor[0])];
-    const Moamelats          = await Moamelat.query().where('realestate_id', id).count('*');
-    const MoamelatsCount     = Moamelats[0][Object.keys(Moamelats[0])];
+    const Moamelats           = await Moamelat.query().where('realestate_id', id).count('*');
+    const MoamelatsCount      = Moamelats[0][Object.keys(Moamelats[0])];
 
-    let json                  = {
+    let json = {
       filesSellCount,
       filesRentCount,
       filesResidenceCount,
@@ -59,6 +59,11 @@ class UserController {
       MoamelatsCount,
       advisorCount,
     };
+    return response.json(json);
+  }
+
+  async fetchMyUser({ auth, request, response }) {
+    console.log(auth);
     return response.json(json);
   }
 

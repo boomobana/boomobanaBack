@@ -21,6 +21,15 @@ class Residence extends Model {
     return this.hasOne('App/Models/User', 'user_id', 'id');
   }
 
+  Answer() {
+    return this.hasOne('App/Models/User', 'answer_id', 'id').select([
+      'id', 'lastname', 'firstname', 'avatar',
+      'is_advisor',
+      'is_realestate',
+      'is_shobe',
+    ]);
+  }
+
   Region() {
     return this.hasOne('App/Models/Region', 'region_id', 'id').select('title', 'id', 'province_id');
   }
