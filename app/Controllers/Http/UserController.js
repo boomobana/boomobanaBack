@@ -10,7 +10,7 @@ const TicketPm           = use('App/Models/TicketPm');
 const RealEstateEvent    = use('App/Models/RealEstateEvent');
 const Residence          = use('App/Models/Residence');
 const ViewAd             = use('App/Models/ViewAd');
-const UserCode           = use('App/Models/UserCode');
+const AdviserRealEstate  = use('App/Models/AdviserRealEstate');
 const FavoriteAd         = use('App/Models/FavoriteAd');
 const BlogPost           = use('App/Models/BlogPost');
 const User               = use('App/Models/User');
@@ -65,6 +65,64 @@ class UserController {
   async fetchMyUser({ auth, request, response }) {
     console.log(auth);
     return response.json(json);
+  }
+
+  async fetchAllUserRealEstate({ auth, request, response }) {
+    let userIds = [auth.user.id];
+    if (auth.user.is_shobe == 1)
+      userIds.push(parseInt(auth.user.parent_realestate_id));
+    let shobes = await User.query().whereIn('parent_realestate_id', userIds).fetch();
+    for (let shobe of shobes.rows) {
+      if (userIds.filter(e => e == shobe.id).length === 0) {
+        userIds.push(parseInt(shobe.id));
+      }
+    }
+    let advisors = await AdviserRealEstate.query().whereIn('status', [1, 4]).whereIn('real_estate_id', userIds).fetch();
+    for (let advisor of advisors.rows) {
+      if (userIds.filter(e => e == advisor.adviser_id).length === 0) {
+        userIds.push(parseInt(advisor.adviser_id));
+      }
+    }
+
+    let reals2 = await AdviserRealEstate.query().whereIn('status', [1, 4]).whereIn('adviser_id', userIds).fetch();
+    for (let real of reals2.rows) {
+      if (userIds.filter(e => e == real.real_estate_id && real.real_estate_id != 0).length === 0) {
+        userIds.push(parseInt(real.real_estate_id));
+      }
+    }
+    let shobes2 = await User.query().whereIn('id', userIds).fetch();
+    for (let shobe of shobes2.rows) {
+      if (userIds.filter(e => e == shobe.parent_realestate_id).length === 0) {
+        if (shobe.parent_realestate_id != 0)
+          userIds.push(parseInt(shobe.parent_realestate_id));
+      }
+    }
+    let shobes3 = await User.query().whereIn('parent_realestate_id', userIds).fetch();
+    for (let shobe of shobes3.rows) {
+      if (userIds.filter(e => e == shobe.id).length === 0) {
+        userIds.push(parseInt(shobe.id));
+      }
+    }
+    let advisors2 = await AdviserRealEstate.query().whereIn('status', [1, 4]).whereIn('real_estate_id', userIds).fetch();
+    for (let advisor of advisors2.rows) {
+      if (userIds.filter(e => e == advisor.adviser_id).length === 0) {
+        userIds.push(parseInt(advisor.adviser_id));
+      }
+    }
+    let reals22 = await AdviserRealEstate.query().whereIn('status', [1, 4]).whereIn('adviser_id', userIds).fetch();
+    for (let real of reals22.rows) {
+      if (userIds.filter(e => e == real.real_estate_id && real.real_estate_id != 0).length === 0) {
+        userIds.push(parseInt(real.real_estate_id));
+      }
+    }
+    return response.json(await User.query().whereIn('id', userIds).select([
+      'id',
+      'lastname',
+      'firstname',
+      'is_shobe',
+      'is_realestate',
+      'is_advisor',
+    ]).fetch());
   }
 
   async changeProfile({ auth, request, response }) {

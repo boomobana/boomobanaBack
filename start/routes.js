@@ -121,6 +121,7 @@ Route.group(() => {
   Route.post('/sub/realestate/realestate/request/check/code', 'SubRealEstateController.checkRequestCode');
   Route.post('/sub/realestate/exist/add', 'SubRealEstateController.isExistSubRealEstate');
   Route.post('/sub/realestate/exist/add/request', 'SubRealEstateController.isReqesutExistAdvisor');
+  Route.post('/get/all/users', 'UserController.fetchAllUserRealEstate');
 
   Route.post('/panel/residence/favorite', 'ResidenceController.favoriteFetch');
   Route.post('/panel/search/save/text', 'ResidenceController.searchSaveText');
