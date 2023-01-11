@@ -282,6 +282,10 @@ class AdvisorController {
       return response.json(await AdviserRealEstate.query().where('real_estate_id', auth.user.id).where('status', 3).with('Realestate').with('Advisor').fetch());
   }
 
+  async fetchRequestAdvisorFetch({ auth, request, response }) {
+    return response.json(await AdviserRealEstate.query().where('adviser_id', auth.user.id).orWhere('real_estate_id', auth.user.id).with('Realestate').with('Advisor').fetch());
+  }
+
   async isExistAdvisor({ auth, request, response }) {
     let ad = await User.query()
       .where('firstname', request.input('firstname'))
@@ -304,11 +308,33 @@ class AdvisorController {
     return response.json({ ex: ad.rows.length == 1, exa: false, exaa: false });
   }
 
+  async isExistRealestate({ auth, request, response }) {
+    let ad = await User.query()
+      .where('firstname', request.input('firstname'))
+      .where('lastname', request.input('lastname'))
+      .where('mobile', request.input('mobile'))
+      .where('is_advisor', '!=', 1)
+      .where('is_shobe', '!=', 1)
+      .fetch();
+    if (ad.rows.length != 0) {
+      let ada  = await AdviserRealEstate.query()
+        .where('real_estate_id', auth.user.id)
+        .where('adviser_id', ad.rows[0].id)
+        .fetch();
+      let adaa = await AdviserRealEstate.query()
+        .where('adviser_id', ad.rows[0].id)
+        .where('real_estate_id', '!=', auth.user.id)
+        .fetch();
+      return response.json({ ex: ad.rows.length == 1, exa: ada.rows.length != 0, exaa: adaa.rows.length != 0 });
+    }
+    return response.json({ ex: ad.rows.length == 1, exa: false, exaa: false });
+  }
+
   async codeRequest({ auth, request, response }) {
     let { id } = request.all();
     let re     = await AdviserRealEstate.query().where('id', id).last();
     if (re.status == 0 || re.status == 3) {
-      let code = randomNum(6);
+      let code   = randomNum(6);
       re.smsCode = code;
       await re.save();
       await new Sms().acceptAdvisor(code, auth.user.mobile);
@@ -359,6 +385,54 @@ class AdvisorController {
       newRealAdviserRealEstate.adviser_id         = newAdviser.id;
     }
     newRealAdviserRealEstate.status = 0;
+    await newRealAdviserRealEstate.save();
+
+    return response.json({ status_code: 200 });
+  }
+
+  async isReqesutExistRealestate({ auth, request, response }) {
+    const {
+            fileUrl,
+            firstname,
+            lastname,
+            mobile,
+            email,
+            password,
+            type,
+            male,
+            count_file_rent,
+            count_file_sell,
+            count_occasion,
+            count_instant,
+            count_ladder,
+            count_video,
+            count_file_adviser,
+            count_file_archive,
+          }                      = request.all();
+    let newAdviser               = await Adviser.query()
+      .where('firstname', request.input('firstname'))
+      .where('lastname', request.input('lastname'))
+      .where('mobile', request.input('mobile'))
+      .last();
+    let newRealAdviserRealEstate = new AdviserRealEstate();
+    if (typeof request.body.id != undefined && request.body.id != null) {
+      newRealAdviserRealEstate = await AdviserRealEstate.query()
+        .where('adviser_id', auth.user.id)
+        .where('real_estate_id', newAdviser.id)
+        .last();
+    } else {
+      newRealAdviserRealEstate.count_file_rent    = 0;
+      newRealAdviserRealEstate.count_file_sell    = 0;
+      newRealAdviserRealEstate.count_occasion     = 0;
+      newRealAdviserRealEstate.count_instant      = 0;
+      newRealAdviserRealEstate.count_ladder       = 0;
+      newRealAdviserRealEstate.count_video        = 0;
+      newRealAdviserRealEstate.count_file_adviser = 0;
+      newRealAdviserRealEstate.count_file_archive = 0;
+      newRealAdviserRealEstate.real_estate_id     = newAdviser.id;
+      newRealAdviserRealEstate.adviser_id         = auth.user.id;
+    }
+    newRealAdviserRealEstate.status = 3;
     await newRealAdviserRealEstate.save();
 
     return response.json({ status_code: 200 });

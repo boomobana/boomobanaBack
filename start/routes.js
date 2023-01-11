@@ -105,10 +105,13 @@ Route.group(() => {
   Route.post('/advisor/find', 'AdvisorController.find');
   Route.post('/advisor/disable/by/realestate', 'AdvisorController.advisorDisableByRealestate');
   Route.post('/advisor/realestate/request', 'AdvisorController.fetchRequestAdvisor');
+  Route.post('/advisor/realestate/request/fetch', 'AdvisorController.fetchRequestAdvisorFetch');
   Route.post('/advisor/realestate/request/get/code', 'AdvisorController.codeRequest');
   Route.post('/advisor/realestate/request/check/code', 'AdvisorController.checkRequestCode');
   Route.post('/advisor/exist/add', 'AdvisorController.isExistAdvisor');
   Route.post('/advisor/exist/add/request', 'AdvisorController.isReqesutExistAdvisor');
+  Route.post('/realestate/exist/add', 'AdvisorController.isExistRealestate');
+  Route.post('/realestate/exist/add/request', 'AdvisorController.isReqesutExistRealestate');
   Route.post('/sub/realestate/add', 'SubRealEstateController.create');
   Route.post('/sub/realestate/address', 'SubRealEstateController.address');
   Route.post('/sub/realestate/fetch', 'SubRealEstateController.index');

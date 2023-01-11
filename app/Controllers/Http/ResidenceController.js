@@ -304,6 +304,7 @@ class ResidenceController {
         userIds.push(parseInt(real.real_estate_id));
       }
     }
+    console.log(userIds);
     let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Answer').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season')
     if (rule == 'user')
       userIsExist.where('rule', 'user');
