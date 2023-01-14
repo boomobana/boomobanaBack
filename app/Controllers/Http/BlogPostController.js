@@ -18,8 +18,10 @@ const { makeidF }      = require('../Helper');
 class BlogPostController {
   async index({ request, response }) {
     const { page } = request.qs;
-    const limit    = 10;
-    let data       = BlogPost.query()
+    let limit      = 10;
+    if (request.body.limit != null)
+      limit = request.body.limit;
+    let data = BlogPost.query()
       .orderBy('id', 'desc')
       .with('user')
       .with('comment')
@@ -52,13 +54,16 @@ class BlogPostController {
       }
       data.whereIn('id', catsArr);
     } else if (request.body.type === 'typeResidence') {
+      console.log(request.body);
       let catsArr    = [];
       let subCatsArr = [];
       let cats;
       if (request.body.id != 3) {
         let SubCats2 = BlogCategory.query().where('type_residence', request.body.id);
-        if (request.body.category != 0 && request.body.category != null)
-          SubCats2.where('id', request.body.category);
+        if (request.body.category != 0 && request.body.category != null) {
+          SubCats2.where('sub_cat', request.body.category);
+          // subCatsArr.push(request.body.category);
+        }
         let SubCats = await SubCats2.fetch();
         for (let cat in SubCats.rows) {
           subCatsArr.push(SubCats.rows[cat].id);
@@ -67,9 +72,7 @@ class BlogPostController {
         for (let cat in cats.rows) {
           catsArr.push(cats.rows[cat].post_id);
         }
-        data.limit(4).whereIn('id', catsArr);
-      }else{
-        data.limit(3)
+        data.whereIn('id', catsArr);
       }
     } else if (request.body.type === 'userPosted') {
       data.where('user_id', request.body.user_id);

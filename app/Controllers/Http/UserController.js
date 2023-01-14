@@ -422,6 +422,19 @@ class UserController {
         da.eghamatgah = residenceEx[0].count;
       exp.push(da);
     }
+    exp.sort((a, b) => {
+      if (a.rahn > b.rahn) {
+        return -1;
+      }
+    }).sort((a, b) => {
+      if (a.fororsh > b.fororsh) {
+        return -1;
+      }
+    }).sort((a, b) => {
+      if (a.eghamatgah > b.eghamatgah) {
+        return -1;
+      }
+    });
     return response.json(exp);
   }
 
