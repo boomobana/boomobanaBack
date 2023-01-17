@@ -391,10 +391,15 @@ class ResidenceController {
       .with('Province')
       .with('Answer')
       .with('Comment');
-    if (auth.check() && auth.user && auth.user.id)
-      userIsExist.with('favorite', q => {
-        q.where('user_id', auth.user.id);
-      });
+    try {
+      if (await auth.check()) {
+        userIsExist.with('favorite', q => {
+          q.where('user_id', auth.user.id);
+        });
+      }
+    } catch (e) {
+      console.log('not loggedin');
+    }
     userIsExist = await userIsExist.last();
     try {
       if (typeof request.body.save === 'boolean') {
