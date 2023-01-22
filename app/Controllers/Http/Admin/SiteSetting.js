@@ -1,9 +1,10 @@
 'use strict';
 
-const { validate }   = require('@adonisjs/validator/src/Validator');
-const SiteModalPages = use('App/Models/SiteModalPages');
-const StaticPages    = use('App/Models/StaticPages');
-const SiteSettings   = use('App/Models/SiteSetting');
+const { validate }    = require('@adonisjs/validator/src/Validator');
+const SiteModalPages  = use('App/Models/SiteModalPages');
+const StaticPages     = use('App/Models/StaticPages');
+const SiteSettings    = use('App/Models/SiteSetting');
+const ResidenceOption = use('App/Models/ResidenceOption');
 
 /**
  * Resourceful controller for interacting with creators
@@ -35,6 +36,11 @@ class SiteSetting {
 
   async staticPagesEdit({ request, response }) {
     await StaticPages.query().where('id', request.input('id')).update(request.all());
+    return response.json({ status_code: 200, status_text: 'Successfully Done' });
+  }
+
+  async optionEdit({ request, response }) {
+    await ResidenceOption.query().where('id', request.input('id')).update(request.all());
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 }

@@ -314,7 +314,6 @@ class AdvisorController {
       .where('lastname', request.input('lastname'))
       .where('mobile', request.input('mobile'))
       .where('is_advisor', '!=', 1)
-      .where('is_shobe', '!=', 1)
       .fetch();
     if (ad.rows.length != 0) {
       let ada  = await AdviserRealEstate.query()

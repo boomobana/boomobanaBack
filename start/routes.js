@@ -171,6 +171,7 @@ Route.group(() => {
   Route.post('/request/save/add', 'SaveRequestController.create');
 
   Route.post('/reserve/fetch', 'ReserveController.index');
+  Route.post('/reserve/fetch/by', 'ReserveController.indexBy');
   Route.post('/reserve/add', 'ReserveController.create');
 
   Route.post('/creators/list', 'CreatorController.index');
@@ -250,6 +251,10 @@ Route.group(() => {
   Route.get('/request/payment/get/:slug', 'SaveRequestController.getPayment');
   Route.post('/upgrade/option/fetch', 'ResidenceController.fetchUpgradeOption');
 
+  Route.post('/username/not/exist', 'UserController.notExistUsername');
+
+  Route.post('/fetch/resaneha', 'UserController.ResanehaFetch');
+
   Route.post('/polici/fetch', 'PoliciController.index');
   Route.post('/festivals', 'FestivalController.index');
   Route.post('/region', 'RegionController.index');
@@ -287,8 +292,13 @@ Route.group(() => {
   Route.post('/region', 'RegionController.index');
   Route.post('/province', 'ProvinceController.index');
 
+  Route.post('/request/user/add', 'UserController.addRequestUser');
+  Route.post('/request/user/fetch', 'UserController.fetchRequestUser');
   Route.post('/auth/residence/fetch/favorite/add', 'ResidenceController.FetchFavoriteAd');
   Route.post('/auth/residence/fetch/viewad', 'ResidenceController.FetchViewAd');
+
+  Route.post('/fetch/resaneha', 'UserController.ResanehaAdminFetch');
+  Route.post('/add/resaneha', 'UserController.ResanehaAdd');
 
   Route.post('/file/active', 'ResidenceController.fileActiveAdmin');
   Route.post('/customer/fetch', 'RealEstateCustomerController.customerFetchAdmin');
@@ -348,6 +358,9 @@ Route.group(() => {
 
   //region edit
   Route.post('/site/setting/update/region', 'RegionController.regionEdit');
+
+  //residence type option
+  Route.post('/site/setting/update/option', 'Admin/SiteSetting.optionEdit');
 
   //Static Pages
   Route.post('/site/static/pages/fetch', 'Admin/SiteSetting.staticPagesFetch');

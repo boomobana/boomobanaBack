@@ -73,20 +73,29 @@ class ResidenceTypeOptionController {
           region_id,
           answer_mobile,
           showing_call,
+          tahator_product,
+          tahator,
         } = request.all();
+    try {
 
-    let res           = await Residence.query().where('id', residence_id).last();
-    res.status        = 1;
-    res.showing_call  = showing_call;
-    res.answer_name   = answer_name;
-    res.answer_mobile = answer_mobile;
-    res.real_address  = real_address;
-    res.lat           = lat;
-    res.lng           = lng;
-    res.province_id   = province_id;
-    res.region_id     = region_id;
+      let res           = await Residence.query().where('id', residence_id).last();
+      res.status        = 1;
+      res.showing_call  = showing_call;
+      res.answer_name   = answer_name;
+      res.answer_mobile = answer_mobile;
+      res.real_address  = real_address;
+      res.lat           = lat;
+      res.lng           = lng;
+      res.province_id   = province_id;
+      res.region_id     = region_id;
 
-    await res.save();
+      res.tahator_product = tahator_product;
+      res.tahator         = tahator;
+
+      await res.save();
+
+    } catch (e) {
+    }
     // todo send sms here if user accept to receive sms and if post added for the first time
     var sms = await new Sms().addMelk(0, auth.user.mobile);
     response.json({ status_code: 200, status_text: 'Successfully Done' });

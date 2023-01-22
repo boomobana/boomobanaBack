@@ -1,39 +1,55 @@
 'use strict';
 
-const { randomNum }      = require('../Helper');
-const Adviser            = use('App/Models/Adviser');
-const Transaction        = use('App/Models/Transaction');
-const RealEstateCustomer = use('App/Models/RealEstateCustomer');
-const Creator            = use('App/Models/Creator');
-const Ticket             = use('App/Models/Ticket');
-const TicketPm           = use('App/Models/TicketPm');
-const RealEstateEvent    = use('App/Models/RealEstateEvent');
-const Residence          = use('App/Models/Residence');
-const ViewAd             = use('App/Models/ViewAd');
-const AdviserRealEstate  = use('App/Models/AdviserRealEstate');
-const FavoriteAd         = use('App/Models/FavoriteAd');
-const BlogPost           = use('App/Models/BlogPost');
-const User               = use('App/Models/User');
-const ResidenceComment   = use('App/Models/ResidenceComment');
-const Reserved           = use('App/Models/Reserved');
-const StaticPages        = use('App/Models/StaticPages');
-const SiteModalPages     = use('App/Models/SiteModalPages');
-const Region             = use('App/Models/Region');
-const Province           = use('App/Models/Province');
-const LoginActivity      = use('App/Models/LoginActivity');
-const RealEstate         = use('App/Models/RealEstate');
-const Moamelat           = use('App/Models/Moamelat');
-const PasswordReset      = use('App/Models/PasswordReset');
-const Database           = use('Database');
-const Sms                = use('App/Controllers/Http/SmsSender');
-const { validate }       = use('Validator');
-const Hash               = use('Hash');
+const { randomNum }          = require('../Helper');
+const Adviser                = use('App/Models/Adviser');
+const Transaction            = use('App/Models/Transaction');
+const RealEstateCustomer     = use('App/Models/RealEstateCustomer');
+const Creator                = use('App/Models/Creator');
+const Ticket                 = use('App/Models/Ticket');
+const TicketPm               = use('App/Models/TicketPm');
+const RealEstateEvent        = use('App/Models/RealEstateEvent');
+const Residence              = use('App/Models/Residence');
+const ViewAd                 = use('App/Models/ViewAd');
+const AdviserRealEstate      = use('App/Models/AdviserRealEstate');
+const FavoriteAd             = use('App/Models/FavoriteAd');
+const BlogPost               = use('App/Models/BlogPost');
+const User                   = use('App/Models/User');
+const ResidenceComment       = use('App/Models/ResidenceComment');
+const Reserved               = use('App/Models/Reserved');
+const StaticPages            = use('App/Models/StaticPages');
+const SiteModalPages         = use('App/Models/SiteModalPages');
+const Region                 = use('App/Models/Region');
+const Province               = use('App/Models/Province');
+const LoginActivity          = use('App/Models/LoginActivity');
+const RealEstate             = use('App/Models/RealEstate');
+const RequestUsersRealestate = use('App/Models/RequestUsersRealestate');
+const SaveRequest            = use('App/Models/SaveRequest');
+const Moamelat               = use('App/Models/Moamelat');
+const PasswordReset          = use('App/Models/PasswordReset');
+const Resaneha               = use('App/Models/Resaneha');
+const Database               = use('Database');
+const Sms                    = use('App/Controllers/Http/SmsSender');
+const { validate }           = use('Validator');
+const Hash                   = use('Hash');
 
 class UserController {
-  async findUser({ auth, request, response }) {
+  async findUser({ request, response }) {
     return response.json(await User.query().where('username', request.body.slug).with('SocialUsers').with('residence', q => {
       q.where('archive', 0).where('status', 2);
     }).last());
+  }
+
+  async ResanehaFetch({ response }) {
+    return response.json(await Resaneha.query().where('type', 1).fetch());
+  }
+
+  async ResanehaAdminFetch({ response }) {
+    return response.json(await Resaneha.query().fetch());
+  }
+
+  async ResanehaAdd({ auth, request, response }) {
+    await Resaneha.query().where('id', request.body.id).update({ ...request.body });
+    return response.json({ status_code: 200 });
   }
 
   async findUserReport({ auth, request, response }) {
@@ -63,7 +79,6 @@ class UserController {
   }
 
   async fetchMyUser({ auth, request, response }) {
-    console.log(auth);
     return response.json(json);
   }
 
@@ -650,6 +665,20 @@ class UserController {
     return response.json({ status_code: 200 });
   }
 
+  async addRequestUser({ auth, request, response }) {
+    await RequestUsersRealestate.create({ ...request.body });
+    return response.json({ status_code: 200 });
+  }
+
+  async fetchRequestUser({ auth, request, response }) {
+    const { page } = request.qs;
+    let limit      = 10;
+    if (request.body.limit != null)
+      limit = request.body.limit;
+    let data = SaveRequest.query();
+    return response.json(await data.paginate(page, limit));
+  }
+
   async userCreateAdmin({ auth, request, response }) {
     if (request.body.id == 0 || request.body.id == null) {
       await User.create({
@@ -687,6 +716,15 @@ class UserController {
     user.make_residence   = make_residence;
     await user.save();
     return response.json({ status_code: 200 });
+  }
+
+  async notExistUsername({ auth, request, response }) {
+    return response.json({
+      userNotExist: (await User.query().whereNot('id', auth.user.id).where('username', request.body.username).select([
+        'id',
+        'username',
+      ]).fetch()).rows.length === 0,
+    });
   }
 }
 

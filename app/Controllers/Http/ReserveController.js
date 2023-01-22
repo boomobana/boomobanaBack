@@ -32,6 +32,13 @@ class ReserveController {
     return response.json(await Reserved.query().with('Residence').where('user_id', auth.user.id).where('status', 1).fetch());
   }
 
+  async indexBy({ request, response, auth }) {
+    const { rule } = request.headers();
+    return response.json(await Reserved.query().with('Residence', q => {
+      q.where('user_id', auth.user.id);
+    }).where('status', 1).fetch());
+  }
+
   /**
    * Render a form to be used for creating a new region.
    * GET regions/create

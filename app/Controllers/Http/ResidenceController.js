@@ -54,7 +54,6 @@ class ResidenceController {
         });
       }
     } catch (e) {
-      console.log('not loggedin');
     }
     if (typeof request.body.text == 'string' && request.body.text != '' && request.body.text != null) {
       let userIsExist2 = await Residence.query()
@@ -145,7 +144,7 @@ class ResidenceController {
       userIsExist.whereBetween('floor_area', [String(request.body.meter1), String(request.body.meter2)]);
     }
     if (request.body.sen1 != 0 && request.body.sen2 != 0) {
-      userIsExist.where('age', '>', request.body.sen1).where('age', '<', request.body.sen2);
+      userIsExist.where('age', '>=', request.body.sen1).where('age', '<=', request.body.sen2);
     }
     userIsExist.orderBy('different', 'desc').orderBy('id', 'desc');
     if (!!request.body.sort && request.body.sort != 0) {
@@ -304,7 +303,6 @@ class ResidenceController {
         userIds.push(parseInt(real.real_estate_id));
       }
     }
-    console.log(userIds);
     let userIsExist = Residence.query().orderBy('id', 'desc').whereIn('user_id', userIds).with('Answer').with('Files').with('Option').with('Room').with('RTO1').with('RTO2').with('RTO3').with('Region').with('Province');//.with('Season')
     if (rule == 'user')
       userIsExist.where('rule', 'user');
@@ -398,7 +396,6 @@ class ResidenceController {
         });
       }
     } catch (e) {
-      console.log('not loggedin');
     }
     userIsExist = await userIsExist.last();
     try {

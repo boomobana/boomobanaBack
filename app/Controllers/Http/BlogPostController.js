@@ -54,7 +54,6 @@ class BlogPostController {
       }
       data.whereIn('id', catsArr);
     } else if (request.body.type === 'typeResidence') {
-      console.log(request.body);
       let catsArr    = [];
       let subCatsArr = [];
       let cats;

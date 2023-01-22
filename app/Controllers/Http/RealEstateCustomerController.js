@@ -219,12 +219,10 @@ class RealEstateCustomerController {
             emkanat,
             show_on,
           } = request.all();
-    console.log(request.all());
     let re = new RealEstateCustomer();
     if (!!request.body.id && request.body.id != '') {
       re = await RealEstateCustomer.query().where('id', request.body.id).last();
     }
-    console.log(re);
     re.firstname      = firstname;
     re.lastname       = lastname;
     re.mobile         = mobile;
