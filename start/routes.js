@@ -299,6 +299,7 @@ Route.group(() => {
 
   Route.post('/fetch/resaneha', 'UserController.ResanehaAdminFetch');
   Route.post('/add/resaneha', 'UserController.ResanehaAdd');
+  Route.post('/remove/resaneha', 'UserController.ResanehaRemove');
 
   Route.post('/file/active', 'ResidenceController.fileActiveAdmin');
   Route.post('/customer/fetch', 'RealEstateCustomerController.customerFetchAdmin');

@@ -22,14 +22,14 @@ class BlogPostController {
     if (request.body.limit != null)
       limit = request.body.limit;
     let data = BlogPost.query()
-      .orderBy('id', 'desc')
+      .orderBy('id', 'asc')
       .with('user')
       .with('comment')
       .with('category')
       .where('active', 1);
     if (request.body.province_id) {
       if (request.body.province_id != null) {
-        data.where('province', request.body.province_id);
+        // data.where('province', request.body.province_id);
       }
     }
     if (request.body.type === 'tag') {

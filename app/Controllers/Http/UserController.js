@@ -48,7 +48,19 @@ class UserController {
   }
 
   async ResanehaAdd({ auth, request, response }) {
-    await Resaneha.query().where('id', request.body.id).update({ ...request.body });
+    if (request.body.id == 0)
+      await Resaneha.create({
+        title: request.body.title,
+        url: request.body.url,
+        type: request.body.type,
+      });
+    else
+      await Resaneha.query().where('id', request.body.id).update({ ...request.body });
+    return response.json({ status_code: 200 });
+  }
+
+  async ResanehaRemove({ auth, request, response }) {
+    await Resaneha.query().where('id', request.body.id).delete();
     return response.json({ status_code: 200 });
   }
 
