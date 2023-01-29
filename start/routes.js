@@ -225,6 +225,9 @@ Route.group(() => {
   Route.post('/category/post/fetch', 'BlogPostController.categoryPostFetch');
   Route.post('/post/find', 'BlogPostController.show');
   Route.post('/post/fetch', 'BlogPostController.index');
+
+  Route.post('/contact_us', 'UserController.addContactUs');
+
   // attachment
   Route.post('/blog/categories', 'BlogCategoryController.index');
   Route.post('/blog/post/categories', 'BlogCategoryPostController.index');
@@ -294,6 +297,7 @@ Route.group(() => {
 
   Route.post('/request/user/add', 'UserController.addRequestUser');
   Route.post('/request/user/fetch', 'UserController.fetchRequestUser');
+  Route.post('/request/user/find', 'UserController.findRequestUser');
   Route.post('/auth/residence/fetch/favorite/add', 'ResidenceController.FetchFavoriteAd');
   Route.post('/auth/residence/fetch/viewad', 'ResidenceController.FetchViewAd');
 
@@ -319,6 +323,7 @@ Route.group(() => {
   Route.post('/package/fetch', 'PackageController.packageFetchAdmin');
   Route.post('/package/find', 'PackageController.packageFindAdmin');
   Route.post('/package/add', 'PackageController.packageAddAdmin');
+  Route.post('/package/disable', 'PackageController.packageEnableAdmin');
 
   //transaction
   Route.post('/transaction/fetch', 'TransactionController.transactionFetchAdmin');
@@ -366,6 +371,8 @@ Route.group(() => {
   //Static Pages
   Route.post('/site/static/pages/fetch', 'Admin/SiteSetting.staticPagesFetch');
   Route.post('/site/static/pages/edit', 'Admin/SiteSetting.staticPagesEdit');
+  Route.post('/site/static/pages/add', 'Admin/SiteSetting.staticPagesAccordingAdd');
+  Route.post('/site/static/pages/remove', 'Admin/SiteSetting.staticPagesAccordingRemove');
 
   //Residence Type Option edit
   Route.post('/site/setting/update/residence/type/option', 'ResidenceTypeOptionController.edit');
@@ -420,4 +427,6 @@ Route.group(() => {
   Route.post('/residence/price/max/man', 'ResidenceController.changePriceMaxMan');
   Route.post('/residence/rules/accept', 'ResidenceController.changeRules');
   Route.post('/residence/level/change', 'ResidenceController.levelChange');
+
+  Route.post('/contact/us/fetch', 'UserController.fetchContactUs');
 }).prefix('api/admin').middleware(['auth', 'userRule']);

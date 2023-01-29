@@ -7,6 +7,10 @@ class StaticPages extends Model {
   static get table() {
     return 'static_pages';
   }
+
+  according() {
+    return this.hasMany('App/Models/StaticPagesAccordion', 'id', 'site_id');
+  }
 }
 
 module.exports = StaticPages;

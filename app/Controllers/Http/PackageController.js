@@ -24,7 +24,7 @@ class PackageController {
    * @param {View} ctx.view
    */
   async index({ request, response }) {
-    return response.json(await Package.query().where('are_load', 1).fetch());
+    return response.json(await Package.query().where('are_load', 1).where('status', 1).fetch());
   }
 
   /**
@@ -127,6 +127,15 @@ class PackageController {
     } else {
       await Package.create({ ...request.body, are_load: 1 });
     }
+    return response.json({ status_code: 200 });
+  }
+
+  async packageEnableAdmin({ request, response }) {
+    let pack   = await Package.query().where('id', request.body.id).last();
+    let status = 0;
+    if (pack.status == 1)
+      status = 0;
+    await Package.query().where('id', request.body.id).update({ status });
     return response.json({ status_code: 200 });
   }
 }

@@ -4,7 +4,6 @@
 const Model = use('Model');
 
 class SiteSetting extends Model {
-
 }
 
 module.exports = SiteSetting;

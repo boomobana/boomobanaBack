@@ -208,7 +208,7 @@ class BlogPostController {
   }
 
   async createCategoryAdmin({ request, response }) {
-    if (request.body.id != undefined && request.body.id != null && request.body.id != 0 && request.body.id != '') {
+    if (request.body.id != 0) {
       await BlogCategory.query().where('id', request.body.id).update(request.body);
     } else {
       await BlogCategory.create(request.body);

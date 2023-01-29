@@ -1,10 +1,11 @@
 'use strict';
 
-const { validate }    = require('@adonisjs/validator/src/Validator');
-const SiteModalPages  = use('App/Models/SiteModalPages');
-const StaticPages     = use('App/Models/StaticPages');
-const SiteSettings    = use('App/Models/SiteSetting');
-const ResidenceOption = use('App/Models/ResidenceOption');
+const { validate }         = require('@adonisjs/validator/src/Validator');
+const SiteModalPages       = use('App/Models/SiteModalPages');
+const StaticPages          = use('App/Models/StaticPages');
+const SiteSettings         = use('App/Models/SiteSetting');
+const StaticPagesAccordion = use('App/Models/StaticPagesAccordion');
+const ResidenceOption      = use('App/Models/ResidenceOption');
 
 /**
  * Resourceful controller for interacting with creators
@@ -31,7 +32,28 @@ class SiteSetting {
   }
 
   async staticPagesFetch({ request, response }) {
-    return response.json(await StaticPages.query().orderBy('id', 'desc').fetch());
+    return response.json(await StaticPages.query().with('according').orderBy('id', 'desc').fetch());
+  }
+
+  async staticPagesAccordingAdd({ request, response }) {
+    if (request.input('id') != 0)
+      await StaticPagesAccordion.query().where('id', request.input('id')).update({
+        title: request.body.title,
+        description: request.body.description,
+      });
+    else
+      await StaticPagesAccordion.create({
+        title: request.body.title,
+        description: request.body.description,
+        site_id: request.body.site_id,
+      });
+
+    return response.json({ status_code: 200, status_text: 'successfully Done' });
+  }
+
+  async staticPagesAccordingRemove({ request, response }) {
+    await StaticPagesAccordion.query().where('id', request.input('id')).delete();
+    return response.json({ status_code: 200, status_text: 'successfully Done' });
   }
 
   async staticPagesEdit({ request, response }) {

@@ -25,6 +25,7 @@ const RealEstate             = use('App/Models/RealEstate');
 const RequestUsersRealestate = use('App/Models/RequestUsersRealestate');
 const SaveRequest            = use('App/Models/SaveRequest');
 const Moamelat               = use('App/Models/Moamelat');
+const ContactUs              = use('App/Models/ContactUs');
 const PasswordReset          = use('App/Models/PasswordReset');
 const Resaneha               = use('App/Models/Resaneha');
 const Database               = use('Database');
@@ -406,12 +407,12 @@ class UserController {
 
   async staticPage({ request, response }) {
     const { slug } = request.all();
-    let json       = await StaticPages.query().where('slug', slug).last();
+    let json       = await StaticPages.query().with('according').where('slug', slug).last();
     return response.json(json);
   }
 
   async staticPages({ response }) {
-    let json = await StaticPages.query().fetch();
+    let json = await StaticPages.query().with('according').fetch();
     return response.json(json);
   }
 
@@ -691,6 +692,11 @@ class UserController {
     return response.json(await data.paginate(page, limit));
   }
 
+  async findRequestUser({ auth, request, response }) {
+    let data = SaveRequest.query().where('id', request.body.id);
+    return response.json(await data.last());
+  }
+
   async userCreateAdmin({ auth, request, response }) {
     if (request.body.id == 0 || request.body.id == null) {
       await User.create({
@@ -737,6 +743,18 @@ class UserController {
         'username',
       ]).fetch()).rows.length === 0,
     });
+  }
+
+  async addContactUs({ auth, request, response }) {
+    await ContactUs.create(request.body);
+    return response.json({ status_code: 200, status_text: 'successfully done' });
+  }
+
+  async fetchContactUs({ auth, request, response }) {
+    const { page } = request.qs;
+    const limit    = 10;
+    let data       = await ContactUs.query().orderBy('id', 'desc').paginate(page, limit);
+    return response.json(data);
   }
 }
 
