@@ -57,7 +57,10 @@ class SiteSetting {
   }
 
   async staticPagesEdit({ request, response }) {
-    await StaticPages.query().where('id', request.input('id')).update(request.all());
+    await StaticPages.query().where('id', request.input('id')).update({
+      title: request.body.title,
+      body: request.body.body,
+    });
     return response.json({ status_code: 200, status_text: 'Successfully Done' });
   }
 
